@@ -1,4 +1,5 @@
 ﻿using System;
+using media_tracker.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 
@@ -15,7 +16,7 @@ namespace media_tracker
         {
         }
 
-        public virtual DbSet<Users> Users { get; set; }
+        public virtual DbSet<User> Users { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -28,18 +29,6 @@ namespace media_tracker
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.HasAnnotation("ProductVersion", "2.2.4-servicing-10062");
-
-            modelBuilder.Entity<Users>(entity =>
-            {
-                entity.Property(e => e.Id).HasDefaultValueSql("nextval('users_id_seq'::regclass)");
-
-                entity.Property(e => e.Email).HasMaxLength(30);
-
-                entity.Property(e => e.Username).HasMaxLength(30);
-
-                entity.Property(e => e.Password).HasMaxLength(30).HasColumnName("password");
-
-            });
 
             modelBuilder.HasSequence<int>("users_id_seq");
         }

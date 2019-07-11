@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Data.SqlClient;
 using System.Security.Cryptography;
+using media_tracker.Models;
 using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -8,20 +9,20 @@ using Microsoft.EntityFrameworkCore;
 
 /// <summary>
 /// Manages the Actions for the Users Model/Controller
-///
-namespace media_tracker.Controllers
+/// </summary>
+namespace media_tracker.Services
 {
-    public interface IUsersService
+    public interface IUserService
     {
-        ActionResult<Users> GetUser(int id);
-        ActionResult<int> AddUser(Users userInformation);
+        ActionResult<User> GetUser(int id);
+        ActionResult<int> AddUser(User userInformation);
     }
 
-    public class UsersService : IUsersService
+    public class UserService : IUserService
     {
         private readonly MediaTrackerContext _context;
 
-        public UsersService(MediaTrackerContext _context)
+        public UserService(MediaTrackerContext _context)
         {
             this._context = _context;
         }
@@ -31,7 +32,7 @@ namespace media_tracker.Controllers
         /// </summary>
         /// <param name="id">Id of the user</param>
         /// <returns> User information </returns>
-        public ActionResult<Users> GetUser(int id) =>
+        public ActionResult<User> GetUser(int id) =>
             _context.Users.Find(id);
 
         /// <summary>
@@ -39,7 +40,7 @@ namespace media_tracker.Controllers
         /// </summary>
         /// <param name="userInformation">User Information</param>
         /// <returns> Status code with the result of the operatioj </returns>
-        public ActionResult<int> AddUser(Users userInformation)
+        public ActionResult<int> AddUser(User userInformation)
         {
             // Generating the salt for hashing the password
             byte[] salt = new byte[128 / 8];
@@ -58,6 +59,9 @@ namespace media_tracker.Controllers
 
             userInformation.Password = hashedPassword;
             userInformation.Salt = salt;
+
+            // Creation and Modification dates
+            userInformation.CreationDate = userInformation.ModificationDate = DateTime.Now;
 
             // Adding the new user to the DB
             _context.Users.Add(userInformation);

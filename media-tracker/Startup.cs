@@ -11,7 +11,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.EntityFrameworkCore;
-using media_tracker.Controllers;
+using media_tracker.Services;
 
 namespace media_tracker
 {
@@ -30,7 +30,7 @@ namespace media_tracker
             services.AddDbContext<MediaTrackerContext>(options =>
                 options.UseNpgsql(Configuration.GetConnectionString("DefaultConnection")));
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
-            services.AddScoped<IUsersService, UsersService>();
+            services.AddScoped<IUserService, UserService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
