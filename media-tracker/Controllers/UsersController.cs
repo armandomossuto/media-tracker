@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
 using System.Security.Cryptography;
 using Microsoft.AspNetCore.Cryptography.KeyDerivation;
+using media_tracker.Controllers;
 
 namespace media_tracker.UsersControllers
 {
@@ -13,18 +14,18 @@ namespace media_tracker.UsersControllers
     [ApiController]
     public class UsersController : ControllerBase
     {
-        private readonly MediaTrackerContext _context;
+        //Injecting Service with controller actions
+        private readonly IUsersService _usersService;
 
-        public UsersController(MediaTrackerContext _context)
+        public UsersController(IUsersService usersService)
         {
-            this._context = _context;
+            this._usersService = usersService;
         }
 
-        // GET api/values/5
         [HttpGet("{id}")]
         public ActionResult<Users> Get(int id)
         {
-            var user = _context.Users.Find(id);
+            var user = _usersService.GetUser(id);
             if (user == null)
             {
                 return NotFound();
@@ -35,25 +36,11 @@ namespace media_tracker.UsersControllers
 
         [HttpPost()]
         [ProducesResponseType(StatusCodes.Status201Created)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public void Post([FromBody] Users userInformation)
+        [ProducesResponseType(StatusCodes.Status409Conflict)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public ActionResult<int> Post([FromBody] Users userInformation)
         {
-            byte[] salt = new byte[128 / 8];
-            using (var rng = RandomNumberGenerator.Create())
-            {
-                rng.GetBytes(salt);
-            }
-            string password = Convert.ToBase64String(KeyDerivation.Pbkdf2(
-            password: userInformation.Password,
-            salt: salt,
-            prf: KeyDerivationPrf.HMACSHA1,
-            iterationCount: 10000,
-            numBytesRequested: 256 / 8));
-            userInformation.Password = password;
-            userInformation.Salt = salt;
-            Console.WriteLine("Password is {0}", userInformation.Password);
-            _context.Users.Add(userInformation);
-            _context.SaveChanges();
+            return _usersService.AddUser(userInformation);
         }
     }
 }

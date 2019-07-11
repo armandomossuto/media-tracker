@@ -8,7 +8,7 @@ namespace media_tracker.Models
         public string Email { get; set; }
         public DateTime CreationDate { get; set; }
         public DateTime ModificationTime { get; set; }
-        public string Password { get; set; }
+        private string Password { get; set; }
         public string Salt { get; set; }
     }
 }
