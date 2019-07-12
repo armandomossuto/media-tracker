@@ -34,7 +34,7 @@ namespace media_tracker.UsersControllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public ActionResult<UserView> Get(int id)
         {
-            var user = _userService.GetUser(id);
+            var user = _userService.GetUserById(id);
             if (user == null)
             {
                 return NotFound();
@@ -90,7 +90,7 @@ namespace media_tracker.UsersControllers
         public ActionResult<UserView> CheckLogin([FromBody] User userInformation)
         {
             // First we verify if the user exists and if not we return error code 401
-            var userDb = _userService.GetUser(userInformation.Id);
+            var userDb = _userService.GetUserByUsername(userInformation.Username);
             if (userDb == null)
             {
                 return Unauthorized();

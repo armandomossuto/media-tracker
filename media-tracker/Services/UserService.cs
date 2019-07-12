@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Security.Cryptography;
 using media_tracker.Models;
 using Microsoft.AspNetCore.Cryptography.KeyDerivation;
@@ -10,7 +11,8 @@ namespace media_tracker.Services
     /// </summary>
     public interface IUserService
     {
-        User GetUser(int id);
+        User GetUserById(int id);
+        User GetUserByUsername(string username);
         User PreparesUser(User userInformation);
         void AddUser(User userInformation);
         Boolean CheckPassword(User userInformation, User UserDb);
@@ -30,8 +32,16 @@ namespace media_tracker.Services
         /// </summary>
         /// <param name="id">Id of the user</param>
         /// <returns> User information </returns>
-        public User GetUser(int id) =>
+        public User GetUserById(int id) =>
             _context.Users.Find(id);
+
+        /// <summary>
+        /// Returns a user information from the DB from a given Username
+        /// </summary>
+        /// <param name="username"></param>
+        /// <returns> User information </returns>
+        public User GetUserByUsername(string username) =>
+            _context.Users.SingleOrDefault(c => c.Username == username);
 
         /// <summary>
         /// Hash user password with generated salt
