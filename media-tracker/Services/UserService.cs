@@ -13,9 +13,10 @@ namespace media_tracker.Services
     {
         User GetUserById(int id);
         User GetUserByUsername(string username);
-        User PreparesUser(User userInformation);
+        User PreparesNewUser(User userInformation);
         void AddUser(User userInformation);
-        Boolean CheckPassword(User userInformation, User UserDb);
+        void UpdateUser(int id, User userInfomation);
+        Boolean CheckPassword(string password, User UserDb);
     }
 
     public class UserService : IUserService
@@ -48,7 +49,7 @@ namespace media_tracker.Services
         /// </summary>
         /// <param name="userInformation"></param>
         /// <returns> User information ready to be stored on the DB</returns>
-        public User PreparesUser(User userInformation)
+        public User PreparesNewUser(User userInformation)
         {
             // Generating the salt for hashing the password
             byte[] salt = GeneratesSalt();
@@ -77,14 +78,32 @@ namespace media_tracker.Services
         }
 
         /// <summary>
+        /// Updates New User Properties in DB
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="newUserInformation"></param>
+        public void UpdateUser(int id, User newUserInformation)
+        {
+            User user = _context.Users.Find(id);
+            if(newUserInformation.Password != null)
+            {
+                newUserInformation.Salt = GeneratesSalt();
+                newUserInformation.Password = HashPassword(newUserInformation.Password, newUserInformation.Salt);
+            }
+            newUserInformation.ModificationDate = DateTime.Now;
+            user.UpdateExistingUser(newUserInformation);
+            _context.SaveChanges();
+        }
+
+        /// <summary>
         /// Checks if User password (not hashed) matches hashed password from DB
         /// </summary>
-        /// <param name="userInformation">User information with password not hashed</param>
+        /// <param name="password">Password not hashed</param>
         /// <param name="userDb">Data from the DB</param>
         /// <returns>Whether or not password is correct</returns>
-        public Boolean CheckPassword(User userInformation, User userDb)
+        public Boolean CheckPassword(string password, User userDb)
         {
-                return HashPassword(userInformation.Password, userDb.Salt) == userDb.Password;
+                return HashPassword(password, userDb.Salt) == userDb.Password;
         }
 
         /// <summary>

@@ -54,7 +54,7 @@ namespace media_tracker.UsersControllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public ActionResult<UserView> Post([FromBody] User userInformation)
         {
-            User preparedUser = _userService.PreparesUser(userInformation);
+            User preparedUser = _userService.PreparesNewUser(userInformation);
             
             try
             {
@@ -95,11 +95,50 @@ namespace media_tracker.UsersControllers
             {
                 return Unauthorized();
             }
-            if(_userService.CheckPassword(userInformation, userDb))
+            if(_userService.CheckPassword(userInformation.Password, userDb))
             {
                 return new UserView(userDb);
             }
             return Unauthorized();
+        }
+
+        /// <summary>
+        /// Updates any of the User attribues in the DB if password is correct
+        /// </summary>
+        /// <param name="updateUser"></param>
+        /// <returns>Updated User information</returns>
+        [HttpPost("edit")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public ActionResult<UserView> UpdateUser([FromBody] UpdateUser updateUser)
+        {
+            // First we check if the user exists
+            var userDb = _userService.GetUserById(updateUser.Id);
+            if (userDb == null)
+            {
+                return StatusCode(500);
+            }
+            // We verify that the password is currect
+            if (!_userService.CheckPassword(updateUser.Password, userDb))
+            {
+                return Unauthorized();
+            }
+            try
+            {
+                _userService.UpdateUser(updateUser.Id, updateUser.NewUserInformation);
+            }
+            catch (DbUpdateException ex)
+            {
+                // Handling if the username or the email, which have unique constraints in the DB
+                // have already been created
+                if (ex.InnerException is Npgsql.PostgresException postgresException)
+                {
+                    return StatusCode(500);
+                }
+            }
+
+            return new UserView(userDb);
         }
     }
 }
