@@ -1,6 +1,9 @@
 ﻿using System;
 namespace media_tracker.Models
 {
+    /// <summary>
+    /// User information that can be shared with the client side
+    /// </summary>
     public class UserView
     {
         public int Id { get; set; }

@@ -1,21 +1,19 @@
 ﻿using System;
-using System.Data.SqlClient;
 using System.Security.Cryptography;
 using media_tracker.Models;
 using Microsoft.AspNetCore.Cryptography.KeyDerivation;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
-/// <summary>
-/// Manages the Actions for the Users Model/Controller
-/// </summary>
 namespace media_tracker.Services
 {
+    /// <summary>
+    /// Manages the Actions for the Users Model/Controller
+    /// </summary>
     public interface IUserService
     {
-        ActionResult<User> GetUser(int id);
-        ActionResult<int> AddUser(User userInformation);
+        User GetUser(int id);
+        User PreparesUser(User userInformation);
+        void AddUser(User userInformation);
+        Boolean CheckPassword(User userInformation, User UserDb);
     }
 
     public class UserService : IUserService
@@ -32,30 +30,21 @@ namespace media_tracker.Services
         /// </summary>
         /// <param name="id">Id of the user</param>
         /// <returns> User information </returns>
-        public ActionResult<User> GetUser(int id) =>
+        public User GetUser(int id) =>
             _context.Users.Find(id);
 
         /// <summary>
-        /// Adds a new user to the DB if everything is correct
+        /// Hash user password with generated salt
         /// </summary>
-        /// <param name="userInformation">User Information</param>
-        /// <returns> Status code with the result of the operatioj </returns>
-        public ActionResult<int> AddUser(User userInformation)
+        /// <param name="userInformation"></param>
+        /// <returns> User information ready to be stored on the DB</returns>
+        public User PreparesUser(User userInformation)
         {
             // Generating the salt for hashing the password
-            byte[] salt = new byte[128 / 8];
-            using (var rng = RandomNumberGenerator.Create())
-            {
-                rng.GetBytes(salt);
-            }
+            byte[] salt = GeneratesSalt();
 
             // Hashing the password
-            string hashedPassword = Convert.ToBase64String(KeyDerivation.Pbkdf2(
-                password: userInformation.Password,
-                salt: salt,
-                prf: KeyDerivationPrf.HMACSHA1,
-                iterationCount: 10000,
-                numBytesRequested: 256 / 8));
+            string hashedPassword = HashPassword(userInformation.Password, salt);
 
             userInformation.Password = hashedPassword;
             userInformation.Salt = salt;
@@ -63,33 +52,59 @@ namespace media_tracker.Services
             // Creation and Modification dates
             userInformation.CreationDate = userInformation.ModificationDate = DateTime.Now;
 
+            return userInformation;
+        }
+
+        /// <summary>
+        /// Adds a new user to the DB
+        /// </summary>
+        /// <param name="userInformation">User Information</param>
+        public void AddUser(User userInformation)
+        {
             // Adding the new user to the DB
             _context.Users.Add(userInformation);
+            _context.SaveChanges();
+        }
 
-            var result = StatusCodes.Status201Created;
-            try
-            {
-                _context.SaveChanges();
-            }
-            catch (DbUpdateException ex)
-            {
-                // Handling if the username or the email, which have unique constraints in the DB
-                // have already been created
-                if (ex.InnerException is Npgsql.PostgresException postgresException)
-                {
-                    if (postgresException.SqlState == "23505")
-                    {
-                        result = StatusCodes.Status409Conflict;
-                    }
-                    else
-                    {
-                        result = StatusCodes.Status500InternalServerError;
-                    }
+        /// <summary>
+        /// Checks if User password (not hashed) matches hashed password from DB
+        /// </summary>
+        /// <param name="userInformation">User information with password not hashed</param>
+        /// <param name="userDb">Data from the DB</param>
+        /// <returns>Whether or not password is correct</returns>
+        public Boolean CheckPassword(User userInformation, User userDb)
+        {
+                return HashPassword(userInformation.Password, userDb.Salt) == userDb.Password;
+        }
 
-                }
+        /// <summary>
+        /// Hashes a password with the given salt
+        /// </summary>
+        /// <param name="password"></param>
+        /// <param name="salt"></param>
+        /// <returns></returns>
+        private String HashPassword(string password, byte[] salt)
+        {
+            return Convert.ToBase64String(KeyDerivation.Pbkdf2(
+                password: password,
+                salt: salt,
+                prf: KeyDerivationPrf.HMACSHA1,
+                iterationCount: 10000,
+                numBytesRequested: 256 / 8));
+        }
+
+        /// <summary>
+        /// Generates a random salt
+        /// </summary>
+        /// <returns>Random salt</returns>
+        private byte[] GeneratesSalt()
+        {
+            byte[] salt = new byte[128 / 8];
+            using (var rng = RandomNumberGenerator.Create())
+            {
+                rng.GetBytes(salt);
             }
-            
-            return result;
+            return salt;
         }
     }
 }

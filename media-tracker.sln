@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "media-tracker", "media-tracker\media-tracker.csproj", "{2E0ED3CE-DD8F-41C2-9CE1-5376FE676225}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "web-api-test", "web-api-test\web-api-test.csproj", "{FE0A6B9D-C8B3-48ED-B0B7-038121A4F241}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "media-tracker.UnitTests", "web-api-test\media-tracker.UnitTests.csproj", "{FE0A6B9D-C8B3-48ED-B0B7-038121A4F241}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

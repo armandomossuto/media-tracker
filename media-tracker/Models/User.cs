@@ -1,6 +1,9 @@
 ﻿using System;
 namespace media_tracker.Models
 {
+    /// <summary>
+    /// User class as used in the DB to store the user information
+    /// </summary>
     public class User
     {
         public int Id { get; set; }
