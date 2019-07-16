@@ -17,6 +17,7 @@ namespace media_tracker.Services
         List<UserItemView> GetAllItemsFromUserCategory(UserCategory userCategory);
         void AddUserItem(UserItem userItem);
         Item AddNewItem(Item newItem, int userId);
+        void DeleteUserItem(UserItem userItemToDelete);
     }
 
     public class UserItemService : IUserItemService
@@ -80,6 +81,13 @@ namespace media_tracker.Services
         private void CreateItem(Item newItem)
         {
             _context.Items.Add(newItem);
+            _context.SaveChanges();
+        }
+
+        public void DeleteUserItem(UserItem userItemToDelete)
+        {
+            UserItem userItemDb = _context.UsersItems.SingleOrDefault(userItem => userItem.UserId == userItemToDelete.UserId & userItem.ItemId == userItemToDelete.ItemId);
+            _context.UsersItems.Remove(userItemDb);
             _context.SaveChanges();
         }
 

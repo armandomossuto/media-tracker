@@ -98,6 +98,25 @@ namespace media_tracker.Controllers
                 return StatusCode(500);
             }
         }
+
+        /// <summary>
+        /// Removes one item from User's tracker
+        /// </summary>
+        /// <param name="userItemToDelete"></param>
+        /// <returns></returns>
+        [HttpDelete()]
+        public ActionResult DeleteItemFromUser([FromBody] UserItem userItemToDelete)
+        {
+            try
+            {
+                _userItemService.DeleteUserItem(userItemToDelete);
+            }
+            catch
+            {
+                return StatusCode(500);
+            }
+            return Ok();
+        }
     }
 
 }
