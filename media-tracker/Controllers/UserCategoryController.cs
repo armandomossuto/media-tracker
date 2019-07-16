@@ -10,7 +10,7 @@ using media_tracker.Services;
 using media_tracker.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace media_tracker.UsersControllers
+namespace media_tracker.Controllers
 {
     [Route("api/categories")]
     [ApiController]

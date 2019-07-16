@@ -32,6 +32,7 @@ namespace media_tracker
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IUserCategoryService, UserCategoryService>();
+            services.AddScoped<IUserItemService, UserItemService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

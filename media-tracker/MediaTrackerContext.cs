@@ -20,11 +20,11 @@ namespace media_tracker
 
         public virtual DbSet<Category> Categories { get; set; }
 
-        //public virtual DbSet<Item> Items { get; set; }
+        public virtual DbSet<Item> Items { get; set; }
 
         public virtual DbSet<UserCategory> UsersCategories { get; set; }
 
-        //public virtual DbSet<UserItem> UsersItems { get; set; }
+        public virtual DbSet<UserItem> UsersItems { get; set; }
 
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
