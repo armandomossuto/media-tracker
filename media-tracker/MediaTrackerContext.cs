@@ -43,6 +43,8 @@ namespace media_tracker
 
             modelBuilder.HasSequence<int>("userscategories_id_seq");
 
+            modelBuilder.HasSequence<int>("usersitems_id_seq");
+
         }
     }
 }

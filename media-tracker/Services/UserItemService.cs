@@ -15,6 +15,8 @@ namespace media_tracker.Services
     {
         List<Item> GetAllItemsFromCategory(int categoryId);
         List<UserItemView> GetAllItemsFromUserCategory(UserCategory userCategory);
+        void AddUserItem(UserItem userItem);
+        Item AddNewItem(Item newItem, int userId);
     }
 
     public class UserItemService : IUserItemService
@@ -44,6 +46,41 @@ namespace media_tracker.Services
                     join item in _context.Items on userItem.ItemId equals item.Id
                     where item.CategoryId == userCategory.CategoryId & userItem.UserId == userCategory.UserId 
                     select new UserItemView(userItem, item)).ToList();
+        }
+
+        /// <summary>
+        /// Adds a new UserItem to the DB
+        /// </summary>
+        /// <param name="newUserItem"></param>
+        public void AddUserItem(UserItem newUserItem)
+        {
+            _context.UsersItems.Add(newUserItem);
+            _context.SaveChanges();
+        }
+
+        /// <summary>
+        /// Adds a new Item to Items and UsersItems tables
+        /// </summary>
+        /// <param name="newItem"></param>
+        /// <param name="userId"></param>
+        /// <returns>The new Item</returns>
+        public Item AddNewItem(Item newItem, int userId)
+        {
+            CreateItem(newItem);
+            UserItem newUserItem = new UserItem { UserId = userId, ItemId = newItem.Id };
+            _context.UsersItems.Add(newUserItem);
+            _context.SaveChanges();
+            return newItem;
+        }
+
+        /// <summary>
+        /// Adds a new Item to the Items table
+        /// </summary>
+        /// <param name="newItem"></param>
+        private void CreateItem(Item newItem)
+        {
+            _context.Items.Add(newItem);
+            _context.SaveChanges();
         }
 
     }
