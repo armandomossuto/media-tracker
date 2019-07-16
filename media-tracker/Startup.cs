@@ -31,6 +31,7 @@ namespace media_tracker
                 options.UseNpgsql(Configuration.GetConnectionString("DefaultConnection")));
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
             services.AddScoped<IUserService, UserService>();
+            services.AddScoped<IUserCategoryService, UserCategoryService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

@@ -18,6 +18,15 @@ namespace media_tracker
 
         public virtual DbSet<User> Users { get; set; }
 
+        public virtual DbSet<Category> Categories { get; set; }
+
+        //public virtual DbSet<Item> Items { get; set; }
+
+        public virtual DbSet<UserCategory> UsersCategories { get; set; }
+
+        //public virtual DbSet<UserItem> UsersItems { get; set; }
+
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             if (!optionsBuilder.IsConfigured)
@@ -31,6 +40,9 @@ namespace media_tracker
             modelBuilder.HasAnnotation("ProductVersion", "2.2.4-servicing-10062");
 
             modelBuilder.HasSequence<int>("users_id_seq");
+
+            modelBuilder.HasSequence<int>("userscategories_id_seq");
+
         }
     }
 }

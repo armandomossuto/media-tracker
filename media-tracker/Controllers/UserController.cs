@@ -52,7 +52,7 @@ namespace media_tracker.UsersControllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status409Conflict)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public ActionResult<UserView> Post([FromBody] User userInformation)
+        public ActionResult<UserView> CreateUser([FromBody] User userInformation)
         {
             User preparedUser = _userService.PreparesNewUser(userInformation);
             
