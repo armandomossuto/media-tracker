@@ -1,5 +1,23 @@
 @import 'variables';
+@import '../components/common/style';
 
-.test {
-    color: blue;
+html {
+	position: relative;
+	width: 100%;
+	height: 100%;
+}
+
+body {
+	@include primary-combo;
+	display: flex;
+	align-items: stretch;
+	flex-direction: column;	
+	width: 100%;
+	height: 100%;
+	margin: 0;
+}
+
+.main-content {
+	flex: 1;
+	min-height: 90vh;
 }

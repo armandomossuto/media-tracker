@@ -1,0 +1,39 @@
+/* Variables and Mixins for the project */
+
+$primary-color: #66B9BF;
+$secondary-color: #07889B;
+$font-color: hsla(200,0%,0%,.7);
+$navbar-color: #081112;
+
+$font-small: 15px;
+$font-normal: 16px;
+$font-big: 20px;
+
+@mixin primary-combo {
+	background-color: $primary-color;
+	color: $font-color;
+}
+
+@mixin secondary-combo {
+	background-color: $secondary-color;
+	color: $font-color;
+	border-color: $font-color;
+}
+
+@mixin third-combo {
+	background-color: white;
+	color: $secondary-color;
+}
+
+@mixin generic-button {
+        cursor: pointer;
+
+        &:hover {
+            font-weight: bold;
+        }
+}
+
+@mixin styled-button {
+	@include generic-button;
+	@include secondary-combo;
+}

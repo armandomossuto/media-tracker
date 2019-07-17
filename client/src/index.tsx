@@ -6,9 +6,9 @@ import * as ReactDOM from "react-dom";
 import './app/styles/index.scss';
 
 // Index for the App
-import { Index } from './app/index';
+import Index from './app/index';
 
 ReactDOM.render(
-    <Index compiler="TypeScript" framework="React"/>
+    <Index />
     , document.getElementById('root')
 );
