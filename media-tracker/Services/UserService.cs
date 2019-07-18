@@ -1,8 +1,14 @@
 ﻿using System;
+using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
+using System.Security.Claims;
 using System.Security.Cryptography;
+using System.Text;
+using media_tracker.Helpers;
 using media_tracker.Models;
 using Microsoft.AspNetCore.Cryptography.KeyDerivation;
+using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
 
 namespace media_tracker.Services
 {
@@ -13,6 +19,7 @@ namespace media_tracker.Services
     {
         User GetUserById(int id);
         User GetUserByUsername(string username);
+        string GeneratesUserToken(int id);
         User PreparesNewUser(User userInformation);
         void AddUser(User userInformation);
         void UpdateUser(int id, User userInfomation);
@@ -23,10 +30,15 @@ namespace media_tracker.Services
     {
         private readonly MediaTrackerContext _context;
 
-        public UserService(MediaTrackerContext _context)
+        private readonly AppSettings _appSettings;
+
+        public UserService(MediaTrackerContext _context, IOptions<AppSettings> appSettings)
         {
             this._context = _context;
+            _appSettings = appSettings.Value;
         }
+
+        
 
         /// <summary>
         /// Returns a user information from the DB from a given ID
@@ -45,6 +57,28 @@ namespace media_tracker.Services
             _context.Users.SingleOrDefault(c => c.Username == username);
 
         /// <summary>
+        /// Generates a token for an user session
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <returns></returns>
+        public string GeneratesUserToken(int userId)
+        {
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var key = Encoding.ASCII.GetBytes(_appSettings.TokenKey);
+            var tokenDescriptor = new SecurityTokenDescriptor
+            {
+                Subject = new ClaimsIdentity(new Claim[]
+                {
+                    new Claim(ClaimTypes.Name, userId.ToString())
+                }),
+                Expires = DateTime.UtcNow.AddDays(7),
+                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+            };
+            var token = tokenHandler.CreateToken(tokenDescriptor);
+            return tokenHandler.WriteToken(token);
+        }
+
+        /// <summary>
         /// Hash user password with generated salt
         /// </summary>
         /// <param name="userInformation"></param>
@@ -59,7 +93,6 @@ namespace media_tracker.Services
 
             userInformation.Password = hashedPassword;
             userInformation.Salt = salt;
-
             // Creation and Modification dates
             userInformation.CreationDate = userInformation.ModificationDate = DateTime.Now;
 

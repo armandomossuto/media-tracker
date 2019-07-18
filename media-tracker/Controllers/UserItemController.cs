@@ -9,11 +9,13 @@ using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 using media_tracker.Services;
 using media_tracker.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authorization;
 
 namespace media_tracker.Controllers
 {
     [Route("api/entries")]
     [ApiController]
+    [Authorize(AuthenticationSchemes = "Bearer")]
     public class UserItemController : ControllerBase
     {
         //Injecting Service with controller actions

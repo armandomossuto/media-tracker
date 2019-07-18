@@ -9,11 +9,13 @@ using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 using media_tracker.Services;
 using media_tracker.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authorization;
 
 namespace media_tracker.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize(AuthenticationSchemes = "Bearer")]
     public class UserController : ControllerBase
     {
         //Injecting Service with controller actions
@@ -48,6 +50,7 @@ namespace media_tracker.Controllers
         /// </summary>
         /// <param name="userInformation"></param>
         /// <returns>UserView</returns>
+        [AllowAnonymous]
         [HttpPost()]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status409Conflict)]
@@ -76,7 +79,9 @@ namespace media_tracker.Controllers
                     }
                 }
             }
-            return new UserView(preparedUser);
+            UserView userView = new UserView(preparedUser);
+            userView.Token = _userService.GeneratesUserToken(userView.Id);
+            return userView;
         }
 
         /// <summary>
@@ -84,6 +89,7 @@ namespace media_tracker.Controllers
         /// </summary>
         /// <param name="userInformation"></param>
         /// <returns>StatusCode</returns>
+        [AllowAnonymous]
         [HttpGet("login")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
@@ -97,7 +103,9 @@ namespace media_tracker.Controllers
             }
             if(_userService.CheckPassword(userInformation.Password, userDb))
             {
-                return new UserView(userDb);
+                UserView userView = new UserView(userDb);
+                userView.Token = _userService.GeneratesUserToken(userView.Id);
+                return userView;
             }
             return Unauthorized();
         }
