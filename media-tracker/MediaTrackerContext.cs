@@ -26,6 +26,8 @@ namespace media_tracker
 
         public virtual DbSet<UserItem> UsersItems { get; set; }
 
+        public virtual DbSet<UserToken> UsersTokens { get; set; }
+
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {

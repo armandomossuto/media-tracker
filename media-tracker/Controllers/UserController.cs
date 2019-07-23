@@ -10,6 +10,7 @@ using media_tracker.Services;
 using media_tracker.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.IdentityModel.Tokens;
 
 namespace media_tracker.Controllers
 {
@@ -18,12 +19,14 @@ namespace media_tracker.Controllers
     [Authorize(AuthenticationSchemes = "Bearer")]
     public class UserController : ControllerBase
     {
-        //Injecting Service with controller actions
+        //Injecting Services
         private readonly IUserService _userService;
+        private readonly IUserTokenService _userTokenService;
 
-        public UserController(IUserService userService)
+        public UserController(IUserService userService, IUserTokenService userTokenService)
         {
-            this._userService = userService;
+            _userService = userService;
+            _userTokenService = userTokenService;
         }
 
         /// <summary>
@@ -80,7 +83,8 @@ namespace media_tracker.Controllers
                 }
             }
             UserView userView = new UserView(preparedUser);
-            userView.Token = _userService.GeneratesUserToken(userView.Id);
+            userView.AccessToken = _userTokenService.GenerateUserAccessToken(userView.Id);
+            userView.RefreshToken = _userTokenService.GenerateUserRefreshToken(userView.Id);
             return userView;
         }
 
@@ -104,7 +108,8 @@ namespace media_tracker.Controllers
             if(_userService.CheckPassword(userInformation.Password, userDb))
             {
                 UserView userView = new UserView(userDb);
-                userView.Token = _userService.GeneratesUserToken(userView.Id);
+                userView.AccessToken = _userTokenService.GenerateUserAccessToken(userView.Id);
+                userView.RefreshToken = _userTokenService.GenerateUserRefreshToken(userView.Id);
                 return userView;
             }
             return Unauthorized();
@@ -147,6 +152,27 @@ namespace media_tracker.Controllers
             }
 
             return new UserView(userDb);
+        }
+
+        [AllowAnonymous]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [HttpPost("refresh")]
+        public ActionResult RefreshTokens([FromBody] UserTokenView userTokenView)
+        {
+            try
+            {
+                UserTokenView newTokens = _userTokenService.RefreshTokens(userTokenView);
+                return Ok(newTokens);
+            }
+            catch (Exception ex)
+            {
+                if(ex.InnerException is SecurityTokenException)
+                {
+                    return Unauthorized();
+                }
+                return StatusCode(500);
+            }
         }
     }
 }
