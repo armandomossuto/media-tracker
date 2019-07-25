@@ -2,11 +2,14 @@ import * as React from "react";
 
 import { BrowserRouter as Router, Route } from 'react-router-dom';
 
-import Home from './components/home';
-import Tracker from './components/tracker';
-import Account from './components/account';
-import Navbar from './components/common/navbar';
-import Footer from './components/common/footer';
+import Home from 'components/home';
+import Tracker from 'components/tracker';
+import Account from 'components/account';
+import Navbar from 'components/common/navbar';
+import Footer from 'components/common/footer';
+
+// With Sesion Service, which will handle the user session
+import WithSessionService from 'services/session';
 
 const Index: React.FunctionComponent = () =>
   <Router>
@@ -17,4 +20,4 @@ const Index: React.FunctionComponent = () =>
     <Footer />
   </Router>
 
-export default Index;
+export default WithSessionService(Index);
