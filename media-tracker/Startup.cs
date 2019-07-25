@@ -49,6 +49,8 @@ namespace media_tracker
             var appSettings = appSettingsSection.Get<AppSettings>();
             var key = Encoding.ASCII.GetBytes(appSettings.TokenKey);
 
+            services.AddCors();
+
             services.AddAuthentication(x =>
             {
                 x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -81,10 +83,10 @@ namespace media_tracker
                 app.UseHsts();
             }
 
+            app.UseCors(builder => builder.AllowAnyHeader().AllowAnyOrigin().WithMethods("GET", "POST", "OPTIONS"));
             app.UseHttpsRedirection();
             app.UseMvc();
             app.UseAuthentication();
-
         }
 
     }

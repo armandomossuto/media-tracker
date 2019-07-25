@@ -94,7 +94,7 @@ namespace media_tracker.Controllers
         /// <param name="userInformation"></param>
         /// <returns>StatusCode</returns>
         [AllowAnonymous]
-        [HttpGet("login")]
+        [HttpPost("login")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public ActionResult<UserView> CheckLogin([FromBody] User userInformation)
@@ -158,7 +158,7 @@ namespace media_tracker.Controllers
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [HttpPost("refresh")]
-        public ActionResult RefreshTokens([FromBody] UserTokenView userTokenView)
+        public ActionResult<UserTokenView> RefreshTokens([FromBody] UserTokenView userTokenView)
         {
             try
             {

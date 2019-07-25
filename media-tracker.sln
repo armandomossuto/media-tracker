@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "media-tracker", "media-tracker\media-tracker.csproj", "{2E0ED3CE-DD8F-41C2-9CE1-5376FE676225}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "media-tracker.UnitTests", "web-api-test\media-tracker.UnitTests.csproj", "{FE0A6B9D-C8B3-48ED-B0B7-038121A4F241}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "media-tracker.Tests", "media-tracker.Tests\media-tracker.Tests.csproj", "{C1237F28-B217-42AE-9D55-DA934C1F03B6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,9 +15,9 @@ Global
 		{2E0ED3CE-DD8F-41C2-9CE1-5376FE676225}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2E0ED3CE-DD8F-41C2-9CE1-5376FE676225}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2E0ED3CE-DD8F-41C2-9CE1-5376FE676225}.Release|Any CPU.Build.0 = Release|Any CPU
-		{FE0A6B9D-C8B3-48ED-B0B7-038121A4F241}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{FE0A6B9D-C8B3-48ED-B0B7-038121A4F241}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{FE0A6B9D-C8B3-48ED-B0B7-038121A4F241}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{FE0A6B9D-C8B3-48ED-B0B7-038121A4F241}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C1237F28-B217-42AE-9D55-DA934C1F03B6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C1237F28-B217-42AE-9D55-DA934C1F03B6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C1237F28-B217-42AE-9D55-DA934C1F03B6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C1237F28-B217-42AE-9D55-DA934C1F03B6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
