@@ -28,7 +28,7 @@ const WithSessionService = (WrappedComponent: React.FunctionComponent) => ({ ...
     if(sessionState.status === SessionStatus.notInitialised) {
       // Even if the tokens are present, we do a fetch request to get the user information
       if(tokens) {
-        fetchRequest(`api/users/${tokens.userId}`, 'GET', dispatch)
+        fetchRequest(`api/user/${tokens.userId}`, 'GET', dispatch)
           .then((accountInfo: User) => {
             dispatch(setAccountInfo(accountInfo));
             dispatch(setAccountStatus(SessionStatus.ok));

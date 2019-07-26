@@ -40,7 +40,7 @@ export const buildRequestConfig = (requestType: RequestType, accessToken: string
   const config: RequestInit = { 
     method: requestType, 
     mode: 'cors', 
-    headers: { 'Content-Type': 'application/json', 'Authorization': `Token ${accessToken}` },
+    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${accessToken}` },
     credentials: 'include'
   };
   return config;
