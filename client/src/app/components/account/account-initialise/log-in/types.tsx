@@ -1,8 +1,14 @@
-import { EnumLiteralsOf } from "types";
+import { EnumLiteralsOf, User } from "types";
+import { UserAccessToken } from "services/session/types";
 
 export type UserLogIn = {
     username: string,
     [password: string]: string
+}
+
+export type UserLogInResponse = {
+    userInformation: User,
+    userToken: UserAccessToken,
 }
 
 export type LogInNotification = EnumLiteralsOf<typeof LogInNotification>

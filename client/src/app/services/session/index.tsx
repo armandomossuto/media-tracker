@@ -5,7 +5,7 @@ import { useEffect } from 'react';
 import { useSessionState } from './state';
 
 // Types
-import { SessionStatus, User, UserToken } from './types';
+import { SessionStatus, User, UserAccessToken } from './types';
 
 // Reducer Actions and utils
 import { setAccountStatus, setAccountInfo } from './actions';
@@ -22,13 +22,13 @@ const WithSessionService = (WrappedComponent: React.FunctionComponent) => ({ ...
 
   // We check current status of the session and perform actions according to it
   const checkStatus = () => {
-    const tokens: UserToken = getAuthenticationCookie();
+    const tokens: UserAccessToken = getAuthenticationCookie();
 
     // Status should be not initialed at this step, but we check it anyway
     if(sessionState.status === SessionStatus.notInitialised) {
       // Even if the tokens are present, we do a fetch request to get the user information
       if(tokens) {
-        fetchRequest(`api/users/${tokens.userId}`, 'GET', sessionState, dispatch)
+        fetchRequest(`api/users/${tokens.userId}`, 'GET', dispatch)
           .then((accountInfo: User) => {
             dispatch(setAccountInfo(accountInfo));
             dispatch(setAccountStatus(SessionStatus.ok));

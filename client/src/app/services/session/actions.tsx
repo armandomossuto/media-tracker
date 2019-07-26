@@ -1,4 +1,4 @@
-import { User, SessionActionType, SessionStatus, SessionActionCreator, UserToken } from './types';
+import { User, SessionActionType, SessionStatus, SessionActionCreator, UserAccessToken } from './types';
 
 export const setAccountInfo: SessionActionCreator = (accountInfo: User) => ({
     type: SessionActionType.SET_INFO,
@@ -10,7 +10,7 @@ export const setAccountInfo: SessionActionCreator = (accountInfo: User) => ({
     payload: status,
   });
 
-  export const  setTokens: SessionActionCreator = (tokens: UserToken) => ({
+  export const  setTokens: SessionActionCreator = (tokens: UserAccessToken) => ({
     type: SessionActionType.CHANGE_STATUS,
     payload: tokens,
   });

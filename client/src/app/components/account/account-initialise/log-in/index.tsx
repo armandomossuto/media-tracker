@@ -1,14 +1,14 @@
 import * as React from 'react';
 import { useState } from 'react';
 
-import { UserLogIn, LogInNotification } from './types';
+import { UserLogIn, LogInNotification, UserLogInResponse } from './types';
 
 import { AccountInitialiseStatus, AccountInitialiseProps } from '../type';
 
 import { simpleFetch } from 'utils/fetch'
 import { useSessionState, setAccountInfo, setAccountStatus } from 'state'
-import { User } from 'types';
 import { SessionStatus } from 'services/session/types';
+import { createAuthenticationCookie } from 'utils/cookies';
 
 /**
  * Account Log In Page component
@@ -52,9 +52,10 @@ const LogIn = ({ setAccountIntialiseStatus }: AccountInitialiseProps) => {
       setNotification(LogInNotification.shortPassword);
     } else {
       simpleFetch('api/user/login', 'POST', logInInfo)
-        .then((data: User) => {
-          sessionStateDispatch(setAccountInfo(data));
+        .then((data: UserLogInResponse) => {
+          sessionStateDispatch(setAccountInfo(data.userInformation));
           sessionStateDispatch(setAccountStatus(SessionStatus.ok));
+          createAuthenticationCookie(data.userToken);
         })
         .catch((error: Response) => {
           if(error.status === 401) {

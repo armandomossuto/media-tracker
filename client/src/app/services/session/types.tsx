@@ -9,7 +9,6 @@ import { EnumLiteralsOf } from 'types/index';
  */
 export type SessionStatus = EnumLiteralsOf<typeof SessionStatus>
 
-
 export const SessionStatus = Object.freeze({
     notInitialised: 'notInitialised' as 'notInitialised',
     notLogged: 'notLogged' as 'notLogged',
@@ -34,20 +33,16 @@ export type User = {
     username: string,
     email: string,
     creationDate: Date,
-    modificationDate: Date,
-    accessToken: string,
-    refreshToken: string
+    modificationDate: Date
   }
 
   /**
    * User tokens
    */
-  export type UserToken = {
-    refreshToken: string,
+  export type UserAccessToken = {
     accessToken: string,
     userId?: string,
   }
-
 
   /**
    * Action types for the session state reducer
@@ -69,7 +64,6 @@ export type User = {
    * Action function type for the session reducer
    */
   export type SessionActionCreator = (message: any) => (SessionAction)
-
 
   /**
    * Type of the object to be sent to the server for updating the user information

@@ -21,7 +21,7 @@ namespace media_tracker.Services
     {
         string GenerateUserAccessToken(int userId);
         string GenerateUserRefreshToken(int userId);
-        UserTokenView RefreshTokens(UserTokenView userTokens);
+        UserTokenView RefreshTokens(string refreshToken, string accessToken);
     }
 
     public class UserTokenService : IUserTokenService
@@ -127,18 +127,19 @@ namespace media_tracker.Services
         /// <summary>
         /// Refresh tokens when the current access token has expired
         /// </summary>
-        /// <param name="userTokenView"></param>
-        public UserTokenView RefreshTokens(UserTokenView userTokenView)
+        /// <param name="refreshToken"></param>
+        /// <param name="accessToken"></param>
+        public UserTokenView RefreshTokens(string refreshToken, string accessToken)
         {
-            ClaimsPrincipal principal = GetPrincipalFromExpiredToken(userTokenView.AccessToken);
+            ClaimsPrincipal principal = GetPrincipalFromExpiredToken(accessToken);
             int userId = Convert.ToInt32(principal.Identity.Name);
             string savedRefreshToken = GetRefreshTokenFromDb(userId);
-            if (savedRefreshToken != userTokenView.RefreshToken)
+            if (savedRefreshToken != refreshToken)
                 throw new SecurityTokenException("Invalid Refresh Token");
 
             string newAccessToken = GenerateUserAccessToken(userId);
             string newRefreshToken = GenerateUserRefreshToken(userId);
-            return new UserTokenView(newRefreshToken, newAccessToken);
+            return new UserTokenView(userId, newAccessToken);
 
         }
     }

@@ -61,7 +61,7 @@ namespace media_tracker.Controllers
         public ActionResult<UserView> CreateUser([FromBody] User userInformation)
         {
             User preparedUser = _userService.PreparesNewUser(userInformation);
-            
+
             try
             {
                 _userService.AddUser(preparedUser);
@@ -83,8 +83,9 @@ namespace media_tracker.Controllers
                 }
             }
             UserView userView = new UserView(preparedUser);
-            userView.AccessToken = _userTokenService.GenerateUserAccessToken(userView.Id);
-            userView.RefreshToken = _userTokenService.GenerateUserRefreshToken(userView.Id);
+            string accessToken = _userTokenService.GenerateUserAccessToken(userView.Id);
+            string refreshToken = _userTokenService.GenerateUserRefreshToken(userView.Id);
+            // Missing code
             return userView;
         }
 
@@ -97,7 +98,7 @@ namespace media_tracker.Controllers
         [HttpPost("login")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        public ActionResult<UserView> CheckLogin([FromBody] User userInformation)
+        public ActionResult<UserLoginView> CheckLogin([FromBody] User userInformation)
         {
             // First we verify if the user exists and if not we return error code 401
             var userDb = _userService.GetUserByUsername(userInformation.Username);
@@ -107,10 +108,22 @@ namespace media_tracker.Controllers
             }
             if(_userService.CheckPassword(userInformation.Password, userDb))
             {
+                string accessToken = _userTokenService.GenerateUserAccessToken(userDb.Id);
+                UserTokenView userTokenView = new UserTokenView(userDb.Id, accessToken);
+       
+                string refreshToken = _userTokenService.GenerateUserRefreshToken(userDb.Id);
+                Response.Cookies.Append(
+                    "media-tracker-refresh",
+                    refreshToken,
+                    new CookieOptions()
+                    {
+                        Path = "/",
+                        HttpOnly = true,
+                    });
+
                 UserView userView = new UserView(userDb);
-                userView.AccessToken = _userTokenService.GenerateUserAccessToken(userView.Id);
-                userView.RefreshToken = _userTokenService.GenerateUserRefreshToken(userView.Id);
-                return userView;
+
+                return new UserLoginView(userView, userTokenView);
             }
             return Unauthorized();
         }
@@ -162,7 +175,7 @@ namespace media_tracker.Controllers
         {
             try
             {
-                UserTokenView newTokens = _userTokenService.RefreshTokens(userTokenView);
+                UserTokenView newTokens = _userTokenService.RefreshTokens("modify this", userTokenView.AccessToken);
                 return Ok(newTokens);
             }
             catch (Exception ex)

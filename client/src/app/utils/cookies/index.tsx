@@ -1,11 +1,13 @@
 import { Cookies } from 'react-cookie';
 
 // types
-import { UserToken } from 'services/session/types';
+import { UserAccessToken } from 'services/session/types';
 
 const cookies = new Cookies();
 
-export const createAuthenticationCookie = (userToken: UserToken) => {
+const accessTokenCookieName = 'media-tracker-access';
+
+export const createAuthenticationCookie = (userAccessToken: UserAccessToken) => {
   // For the expiration date, we will add one year to the current date
   var expirationDate = new Date();
   expirationDate.setFullYear(expirationDate.getFullYear() + 1);
@@ -13,15 +15,13 @@ export const createAuthenticationCookie = (userToken: UserToken) => {
   const cookieOptions = {
     path: "/",
     expires: expirationDate,
-    secure: true,
-    httpOnly: true,
   }
 
-  cookies.set('media-tracker-authentication', userToken, cookieOptions);
+  cookies.set(accessTokenCookieName, userAccessToken, cookieOptions);
 }
 
 export const getAuthenticationCookie = () => {
-  const tokens: UserToken = cookies.get('media-tracker-authentication');
-  return  tokens;
+  const userAccesstoken: UserAccessToken = cookies.get(accessTokenCookieName);
+  return  userAccesstoken;
 }
   

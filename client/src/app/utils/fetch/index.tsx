@@ -3,18 +3,19 @@ import { serverUrl } from 'configuration';
 
 // types
 import { RequestType  } from './types';
-import { UserToken, SessionState, SessionAction } from 'types';
+import { SessionAction } from 'types';
 import { Dispatch } from 'react';
+import { getAuthenticationCookie } from 'utils/cookies';
 
 /**
  * Utility function for handling fetch requests
  * @returns deserialized response
  * @throws error
  */
-export const fetchRequest = async (path: string, requestType: RequestType, sessionState: SessionState, dispatch: Dispatch<SessionAction>, requestBody: object = null) => {
+export const fetchRequest = async (path: string, requestType: RequestType, dispatch: Dispatch<SessionAction>, requestBody: object = null) => {
   const URL = `${serverUrl}/${path}`;
 
-  const { accessToken, refreshToken } = sessionState.accountInfo;
+  const accessToken = getAuthenticationCookie().accessToken;
   
   let config: RequestInit =  buildRequestConfig(requestType, accessToken);
   
@@ -25,7 +26,7 @@ export const fetchRequest = async (path: string, requestType: RequestType, sessi
   let response: Response = await fetch(URL, config);
 
   if(!response.ok && response.status === 401) {
-    const tokens = await handleFetchAuthErrors(refreshToken, accessToken, dispatch);
+    const tokens = await handleFetchAuthErrors(accessToken, dispatch);
     config = buildRequestConfig(requestType, tokens.accessToken);
     response = await fetch(URL, config);
   }
@@ -36,7 +37,12 @@ export const fetchRequest = async (path: string, requestType: RequestType, sessi
 };
 
 export const buildRequestConfig = (requestType: RequestType, accessToken: string = '') =>  {
-  const config: RequestInit = { method: requestType, mode: 'cors', headers: { 'Content-Type': 'application/json', 'Authorization': `Token ${accessToken}` }};
+  const config: RequestInit = { 
+    method: requestType, 
+    mode: 'cors', 
+    headers: { 'Content-Type': 'application/json', 'Authorization': `Token ${accessToken}` },
+    credentials: 'include'
+  };
   return config;
 }
 

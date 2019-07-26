@@ -11,8 +11,6 @@ namespace media_tracker.Models
         public string Email { get; set; }
         public DateTime? CreationDate { get; set; }
         public DateTime? ModificationDate { get; set; }
-        public string AccessToken { get; set; }
-        public string RefreshToken { get; set; }
 
         /// <summary>
         /// Creates a new userView object from user object

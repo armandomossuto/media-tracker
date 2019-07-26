@@ -3,14 +3,13 @@ namespace media_tracker.Models
 {
     public class UserTokenView
     {
-        public string RefreshToken { get; set; }
-
         public string AccessToken { get; set; }
+        public int UserId { get; set; }
 
-        public UserTokenView(string refreshToken, string accessToken)
+        public UserTokenView(int userId, string accessToken)
         {
-            RefreshToken = refreshToken;
             AccessToken = accessToken;
+            UserId = userId;
         }
     }
 }
