@@ -1,6 +1,6 @@
 import * as React from "react";
 import { useState } from 'react';
-import { AccountInitialiseStatus } from "./type";
+import { AccountInitialiseStatus } from "./types";
 
 import LogIn from './log-in';
 import Create from './create'

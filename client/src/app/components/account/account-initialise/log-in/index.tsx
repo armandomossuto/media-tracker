@@ -1,13 +1,14 @@
 import * as React from 'react';
 import { useState } from 'react';
 
+// Types
 import { UserLogIn, LogInNotification, UserLogInResponse } from './types';
+import { AccountInitialiseStatus, AccountInitialiseProps } from '../types';
+import { SessionStatus } from 'types';
 
-import { AccountInitialiseStatus, AccountInitialiseProps } from '../type';
-
+// Utilities and state actions 
 import { simpleFetch } from 'utils/fetch'
 import { useSessionState, setAccountInfo, setAccountStatus } from 'state'
-import { SessionStatus } from 'services/session/types';
 import { createAuthenticationCookie } from 'utils/cookies';
 
 /**

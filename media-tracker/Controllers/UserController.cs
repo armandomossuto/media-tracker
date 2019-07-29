@@ -58,7 +58,7 @@ namespace media_tracker.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status409Conflict)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public ActionResult<UserView> CreateUser([FromBody] User userInformation)
+        public ActionResult<UserLoginView> CreateUser([FromBody] User userInformation)
         {
             User preparedUser = _userService.PreparesNewUser(userInformation);
 
@@ -84,10 +84,20 @@ namespace media_tracker.Controllers
             }
             UserView userView = new UserView(preparedUser);
             string accessToken = _userTokenService.GenerateUserAccessToken(userView.Id);
+            UserTokenView userTokenView = new UserTokenView(userView.Id, accessToken);
+
             string refreshToken = _userTokenService.GenerateUserRefreshToken(userView.Id);
-            // Missing code
-            return userView;
-        }
+            Response.Cookies.Append(
+              "media-tracker-refresh",
+              refreshToken,
+              new CookieOptions()
+              {
+                  Path = "/",
+                  HttpOnly = true,
+              });
+               
+            return new UserLoginView(userView, userTokenView);
+            }
 
         /// <summary>
         /// Returns a StatusCode depending if the user information is correct to Login or not
