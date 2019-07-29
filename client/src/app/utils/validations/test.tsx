@@ -1,4 +1,4 @@
-import { validateEmail } from './index.js';
+import { validateEmail } from './index';
 
 it('validateEmail', () => {
     expect(validateEmail('aSADSAD')).toEqual(false);
