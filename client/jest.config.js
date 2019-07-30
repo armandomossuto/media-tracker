@@ -1,6 +1,6 @@
 module.exports = {
 
-  roots: ["<rootDir>/src"],
+  roots: ["<rootDir>/src/app/"],
 
   transform: {
     "^.+\\.tsx?$": "ts-jest"
@@ -11,5 +11,8 @@ module.exports = {
   moduleFileExtensions: ["ts", "tsx", "js", "jsx", "json", "node"],
 
   snapshotSerializers: ["enzyme-to-json/serializer"],
-  setupTestFrameworkScriptFile: "<rootDir>/src/tests/setupEnzyme.ts"
+  setupTestFrameworkScriptFile: "<rootDir>/src/tests/setupEnzyme.ts",
+
+  moduleDirectories: ['node_modules', 'src/app']
+
 }
