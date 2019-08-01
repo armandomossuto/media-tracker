@@ -48,8 +48,11 @@ const LogIn = ({ setAccountIntialiseStatus }: AccountInitialiseProps) => {
    * Sends Account Information to the server
    */
   const onSubmitAccount = () => {
-    // Validating the password length before submiting any request
-    if (logInInfo.password.length < 6) {
+    // Validating that the user introduced an username
+    if (logInInfo.username.length < 1) {
+      setNotification(LogInNotification.noUsername);
+    } else if (logInInfo.password.length < 6) {
+      // Validating the password length before submiting any request
       setNotification(LogInNotification.shortPassword);
     } else {
       simpleFetch('api/user/login', 'POST', logInInfo)

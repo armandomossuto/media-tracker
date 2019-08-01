@@ -46,7 +46,10 @@ const Create = ({ setAccountIntialiseStatus }: AccountInitialiseProps) => {
    * Sends Account Information to the server
    */
   const onSubmitAccount = () => {
-    if (newAccountInfo.password.length < 6) {
+     // Validating that the user introduced an username
+     if (newAccountInfo.username.length < 1) {
+      setNotification(CreateAccountNotification.noUsername);
+    } else if (newAccountInfo.password.length < 6) {
       // Password submitted is incorrect. We display notification message
       setNotification(CreateAccountNotification.shortPassword);
     } else if (!validateEmail(newAccountInfo.email)) {

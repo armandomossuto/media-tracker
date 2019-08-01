@@ -1,11 +1,11 @@
 import * as React from "react";
 import { mount, ReactWrapper } from "enzyme";
-import { act } from 'react-dom/test-utils';
 import * as nock  from 'nock';
-import { serverUrl } from 'configuration'
+import { serverUrl } from 'configuration';
 
 import LogIn from "./index";
 import { LogInNotification } from "./types";
+import { simulateInputChange, genericUsername, genericValidPassword, invalidPassword, noUsername } from "../../../../../tests/testUtils";
 
 describe('Log In Account component', () => {
 
@@ -30,22 +30,26 @@ describe('Log In Account component', () => {
 
   });
  
+  it('Shows no username notification correctly', async (done) => {
+
+    simulateInputChange(usernameInput, noUsername);
+
+    await flushPromises();
+    container.update();
+
+    submitButton.simulate('click');
+    const invalidPasswordNotification = container.find('div[className="log-in__notification"]');
+    expect(invalidPasswordNotification.text()).toBe(LogInNotification.noUsername);
+    done();
+  });
+
   it('Shows short password notification correctly', async (done) => {
 
     const initialNotification = container.find('div[className="log-in__notification"]');
     expect(initialNotification.text()).toBe(LogInNotification.initial);
 
-    usernameInput.simulate('change', {
-      target: {
-        value: 'testUser'
-      }
-    });
-
-    passwordInput.simulate('change', {
-      target: {
-        value: '1234'
-      }
-    });
+    simulateInputChange(usernameInput, genericUsername);
+    simulateInputChange(passwordInput, invalidPassword);
 
     await flushPromises();
     container.update();
@@ -62,12 +66,8 @@ describe('Log In Account component', () => {
       .post('/api/user/login')
       .reply(401);
   
-
-    passwordInput.simulate('change', {
-      target: {
-        value: '1234567'
-      }
-    });
+    simulateInputChange(usernameInput, genericUsername);
+    simulateInputChange(passwordInput, genericValidPassword);
 
     submitButton.simulate('click');
     
@@ -87,11 +87,8 @@ describe('Log In Account component', () => {
       userToken: {} 
     });
 
-    passwordInput.simulate('change', {
-      target: {
-        value: '1234567'
-      }
-    });
+    simulateInputChange(usernameInput, genericUsername);
+    simulateInputChange(passwordInput, genericValidPassword);
 
     submitButton.simulate('click');
     
