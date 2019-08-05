@@ -29,6 +29,9 @@ namespace media_tracker.Tests.MockedData
             // Mocking add method in the context
             mockSet.Setup(m => m.Add(It.IsAny<Model>())).Callback((Model data) => mockedData.Add(data));
 
+            // Mocking remove method in the context
+            mockSet.Setup(m => m.Remove(It.IsAny<Model>())).Callback((Model data) => mockedData.Remove(data));
+
             // Mocking Find method in the context
             Type type = typeof(Model);
             string colName = "Id";

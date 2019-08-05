@@ -4,6 +4,7 @@ using media_tracker.Models;
 using media_tracker.Services;
 using media_tracker.Tests.MockedData;
 using Moq;
+using Newtonsoft.Json;
 using Xunit;
 
 namespace media_tracker.Tests.UnitTests
@@ -79,26 +80,6 @@ namespace media_tracker.Tests.UnitTests
         }
 
         /// <summary>
-        /// Generates Mocked Set and Context for the testing
-        /// </summary>
-        /// <param name="categories"></param>
-        /// <returns></returns>
-        public MockedContext<Category> GetCategoryMockedContext(List<Category> categories)
-        {
-            var mockSet = new MockedSet<Category>(categories);
-
-            // Mocking UserToken context
-            var mockContext = new Mock<MediaTrackerContext>();
-            mockContext.Setup(m => m.Categories).Returns(mockSet.Data.Object);
-
-            return new MockedContext<Category>
-            {
-                Context = mockContext,
-                Set = mockSet.Data
-            };
-        }
-
-        /// <summary>
         /// Generating the service to test with a mocked context
         /// </summary>
         /// <returns></returns>
@@ -143,7 +124,7 @@ namespace media_tracker.Tests.UnitTests
 
             // Checking that we have the correct list of categories
             Assert.Single(categoriesInUser);
-            Assert.Equal(expectedCategory, categoriesInUser[0]);
+            Assert.Equal(JsonConvert.SerializeObject(expectedCategory), JsonConvert.SerializeObject(categoriesInUser[0]));
         }
 
         [Fact]
