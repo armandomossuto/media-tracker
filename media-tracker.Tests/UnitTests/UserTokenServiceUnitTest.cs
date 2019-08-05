@@ -66,7 +66,7 @@ namespace media_tracker.Tests.UnitTests
             string token = userTokenService.GenerateUserAccessToken(100);
 
             // Verifying token result
-            Assert.IsType(typeof(String), token);
+            Assert.Equal(typeof(String), token.GetType());
         }
 
         public List<UserToken> GetMockedData()

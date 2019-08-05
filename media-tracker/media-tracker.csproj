@@ -7,7 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.App" />
+    <PackageReference Include="Microsoft.AspNetCore.App">
+      <PrivateAssets Condition="'%(PackageReference.Version)' == ''">all</PrivateAssets>
+      <Publish Condition="'%(PackageReference.Version)' == ''">true</Publish>
+    </PackageReference>
     <PackageReference Include="Microsoft.AspNetCore.Razor.Design" Version="2.2.0" PrivateAssets="All" />
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="2.2.4" />
   </ItemGroup>
@@ -22,5 +25,9 @@
     <Folder Include="Controllers\" />
     <Folder Include="Services\" />
     <Folder Include="Helpers\" />
+    <Folder Include="Models\UserToken\" />
+    <Folder Include="Models\User\" />
+    <Folder Include="Models\Category\" />
+    <Folder Include="Models\Item\" />
   </ItemGroup>
 </Project>

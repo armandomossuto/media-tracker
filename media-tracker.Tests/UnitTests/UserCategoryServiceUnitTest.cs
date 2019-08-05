@@ -142,8 +142,8 @@ namespace media_tracker.Tests.UnitTests
             };
 
             // Checking that we have the correct list of categories
-            Assert.Equal(categoriesInUser.Count, 1);
-            Assert.Equal(categoriesInUser[0], expectedCategory);
+            Assert.Single(categoriesInUser);
+            Assert.Equal(expectedCategory, categoriesInUser[0]);
         }
 
         [Fact]
@@ -171,8 +171,8 @@ namespace media_tracker.Tests.UnitTests
 
             // Getting the list of user categories and checking that the new user category is there
             List<Category> categoriesInUser = userCategoryService.GetUserCategories(userId);
-            Assert.Equal(categoriesInUser.Count, 2);
-            Assert.True(categoriesInUser.Contains(usersCategoriesMockedData.Categories.Find(u => u.Id == categoryId)));
+            Assert.Equal(2, categoriesInUser.Count);
+            Assert.Contains(usersCategoriesMockedData.Categories.Find(u => u.Id == categoryId), categoriesInUser);
 
         }
     }
