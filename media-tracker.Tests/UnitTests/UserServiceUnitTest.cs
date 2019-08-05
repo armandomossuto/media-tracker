@@ -148,5 +148,29 @@ namespace media_tracker.Tests.UnitTests
             mockSet.Verify(m => m.Add(It.IsAny<User>()), Times.Once());
             mockContext.Verify(m => m.SaveChanges(), Times.Once());
         }
+
+        [Fact]
+        public void UpdateUser()
+        {
+            List<User> usersContext = GenerateMockedData();
+
+            // Creating a new instance of the service that we desire to test with the mocked data
+            MockedContext<User> mockedContext = GetMockedContext(usersContext);
+            UserService userService = GetMockedService(mockedContext.Context);
+
+            int userId = 13;
+            User newUserInformation = new User
+            {
+                Username = "newUsername",
+            };
+
+            userService.UpdateUser(userId, newUserInformation);
+
+            User user = userService.GetUserById(userId);
+
+            // Verify results
+            Assert.Equal(user.Username, newUserInformation.Username);
+            mockedContext.Context.Verify(m => m.SaveChanges(), Times.Once());
+        }
     }
 }
