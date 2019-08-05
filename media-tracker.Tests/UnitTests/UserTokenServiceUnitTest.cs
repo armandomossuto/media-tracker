@@ -129,21 +129,28 @@ namespace media_tracker.Tests.UnitTests
                 TokenKey = "asdsdasdasdasdasdasdasdasdasdsadasdadasdada"
             });
 
+            int userId = 1;
+
             // Creating a new instance of the service that we desire to test with the mocked data
             UserTokenService userTokenService = new UserTokenService(mockContext.Object, options);
 
             // Creating a refresh and a access tokens
-            string refreshToken = userTokenService.GenerateUserRefreshToken(1);
-            string accessToken = userTokenService.GenerateUserAccessToken(1);
-            UserTokenView oldTokens = new UserTokenView(refreshToken, accessToken);
+            string refreshToken = userTokenService.GenerateUserRefreshToken(userId);
+            string accessToken = userTokenService.GenerateUserAccessToken(userId);
+            Tokens oldTokens = new Tokens(userId, refreshToken, accessToken);
 
             // Excuting refreshTokens
-            UserTokenView newTokens = userTokenService.RefreshTokens(oldTokens);
+            Tokens newTokens = userTokenService.RefreshTokens(refreshToken, accessToken);
        
             // Verify the mocked context method that ran
             mockContext.Verify(m => m.SaveChanges(), Times.Exactly(2));
 
             // Verify result
+
+            // UserId should be the same between both objects
+            Assert.Equal(oldTokens.UserTokenView.UserId, newTokens.UserTokenView.UserId);
+
+            // Tokens should be different
             Assert.NotEqual(oldTokens, newTokens);
         }
     }

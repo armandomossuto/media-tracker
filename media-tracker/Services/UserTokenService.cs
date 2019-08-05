@@ -21,7 +21,7 @@ namespace media_tracker.Services
     {
         string GenerateUserAccessToken(int userId);
         string GenerateUserRefreshToken(int userId);
-        UserTokenView RefreshTokens(string refreshToken, string accessToken);
+        Tokens RefreshTokens(string refreshToken, string accessToken);
     }
 
     public class UserTokenService : IUserTokenService
@@ -129,7 +129,7 @@ namespace media_tracker.Services
         /// </summary>
         /// <param name="refreshToken"></param>
         /// <param name="accessToken"></param>
-        public UserTokenView RefreshTokens(string refreshToken, string accessToken)
+        public Tokens RefreshTokens(string refreshToken, string accessToken)
         {
             ClaimsPrincipal principal = GetPrincipalFromExpiredToken(accessToken);
             int userId = Convert.ToInt32(principal.Identity.Name);
@@ -139,7 +139,7 @@ namespace media_tracker.Services
 
             string newAccessToken = GenerateUserAccessToken(userId);
             string newRefreshToken = GenerateUserRefreshToken(userId);
-            return new UserTokenView(userId, newAccessToken);
+            return new Tokens(userId, newRefreshToken, newAccessToken);
 
         }
     }

@@ -29,6 +29,8 @@ namespace media_tracker.Controllers
             _userTokenService = userTokenService;
         }
 
+        public string RefreshTokenCookieKey = "media-tracker-refresh";
+
         /// <summary>
         /// Returns User information (@see UserView) from a specific User.Id
         /// </summary>
@@ -88,7 +90,7 @@ namespace media_tracker.Controllers
 
             string refreshToken = _userTokenService.GenerateUserRefreshToken(userView.Id);
             Response.Cookies.Append(
-              "media-tracker-refresh",
+              RefreshTokenCookieKey,
               refreshToken,
               new CookieOptions()
               {
@@ -123,7 +125,7 @@ namespace media_tracker.Controllers
        
                 string refreshToken = _userTokenService.GenerateUserRefreshToken(userDb.Id);
                 Response.Cookies.Append(
-                    "media-tracker-refresh",
+                    RefreshTokenCookieKey,
                     refreshToken,
                     new CookieOptions()
                     {
@@ -185,8 +187,17 @@ namespace media_tracker.Controllers
         {
             try
             {
-                UserTokenView newTokens = _userTokenService.RefreshTokens("modify this", userTokenView.AccessToken);
-                return Ok(newTokens);
+                string refreshToken = Request.Cookies[RefreshTokenCookieKey];
+                Tokens newTokens = _userTokenService.RefreshTokens(refreshToken, userTokenView.AccessToken);
+                Response.Cookies.Append(
+                    RefreshTokenCookieKey,
+                    refreshToken,
+                    new CookieOptions()
+                    {
+                        Path = "/",
+                        HttpOnly = true,
+                    });
+                return Ok(newTokens.UserTokenView);
             }
             catch (Exception ex)
             {
