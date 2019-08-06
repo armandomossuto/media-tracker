@@ -28,13 +28,14 @@ export type SessionState = {
 /**
  * User information
  */
-export type User = {
+export interface User {
     id: string,
     username: string,
     email: string,
     creationDate: Date,
     modificationDate: Date
-  }
+    [key: string]: string | Date;
+}
 
   /**
    * User tokens
