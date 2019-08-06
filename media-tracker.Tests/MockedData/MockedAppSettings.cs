@@ -1,5 +1,5 @@
 ﻿using System;
-namespace media_tracker.Tests
+namespace media_tracker.MockedData
 {
     public class MockedAppSettings
     {

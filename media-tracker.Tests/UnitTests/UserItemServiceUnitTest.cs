@@ -11,74 +11,6 @@ namespace media_tracker.Tests.UnitTests
 {
     public class UserItemServiceUnitTest
     {
-        public class UserItemMockedData
-        {
-            public List<UserItem> UsersItems { get; set; }
-            public List<Item> Items { get; set; }
-
-        }
-
-        /// <summary>
-        /// Generates mocked data
-        /// </summary>
-        /// <returns></returns>
-        public UserItemMockedData GenerateMockedData()
-        {
-            var usersItems = new List<UserItem>();
-            for (int i = 0; i < 5; i++)
-            {
-                usersItems.Add(new UserItem
-                {
-                    Id = i,
-                    ItemId = i,
-                    UserId = i
-                });
-            }
-
-            var items = new List<Item>();
-
-            for (int i = 0; i < 5; i++)
-            {
-                items.Add(new Item
-                {
-                    Id = i,
-                    CategoryId = 1,
-                    Name = "item" + i,
-                    Description = "description" + i
-                });
-            }
-
-            return new UserItemMockedData
-            {
-                UsersItems = usersItems,
-                Items = items
-            };
-        }
-
-        /// <summary>
-        /// Generates Mocked Set and Context for the testing
-        /// </summary>
-        /// <param name="mockedData"></param>
-        /// <returns></returns>
-        public MockedContext<UserItem> GetMockedContext(UserItemMockedData mockedData)
-        {
-            var usersItemsMockSet = new MockedSet<UserItem>(mockedData.UsersItems);
-            var itemsMockSet = new MockedSet<Item>(mockedData.Items);
-
-
-            // Mocking context
-            var mockContext = new Mock<MediaTrackerContext>();
-            mockContext.Setup(m => m.UsersItems).Returns(usersItemsMockSet.Data.Object);
-            mockContext.Setup(m => m.Items).Returns(itemsMockSet.Data.Object);
-
-            return new MockedContext<UserItem>
-            {
-                Context = mockContext,
-                Set = usersItemsMockSet.Data
-            };
-        }
-
-
         /// <summary>
         /// Generating the service to test with a mocked context
         /// </summary>
@@ -92,10 +24,9 @@ namespace media_tracker.Tests.UnitTests
         [Fact]
         public void GetUserById()
         {
-            var usersItemsMockedData = GenerateMockedData();
-
-            // Creating a new instance of the service that we desire to test with the mocked data
-            MockedContext<UserItem> mockedContext = GetMockedContext(usersItemsMockedData);
+            // Creating context, data and a new instance of the service that we want to test
+            var mockedData = new MockedDbData();
+            MockedContext mockedContext = new MockedContext(mockedData);
             UserItemService userItemService = GetMockedService(mockedContext.Context);
 
             int categoryId = 1;
@@ -103,16 +34,15 @@ namespace media_tracker.Tests.UnitTests
             List<Item> itemsInCategory = userItemService.GetAllItemsFromCategory(categoryId);
 
             // Checking that we got all the list of categories
-            Assert.Equal(usersItemsMockedData.Items, itemsInCategory);
+            Assert.Equal(mockedData.Items.FindAll(i => i.CategoryId == categoryId), itemsInCategory);
         }
 
         [Fact]
         public void GetAllItemsFromUserCategory()
         {
-            var usersItemsMockedData = GenerateMockedData();
-
-            // Creating a new instance of the service that we desire to test with the mocked data
-            MockedContext<UserItem> mockedContext = GetMockedContext(usersItemsMockedData);
+            // Creating context, data and a new instance of the service that we want to test
+            var mockedData = new MockedDbData();
+            MockedContext mockedContext = new MockedContext(mockedData);
             UserItemService userItemService = GetMockedService(mockedContext.Context);
 
             var userCategory = new UserCategory {
@@ -123,16 +53,15 @@ namespace media_tracker.Tests.UnitTests
             List<UserItemView> itemsInCategory = userItemService.GetAllItemsFromUserCategory(userCategory);
 
             // Checking that we got all the list of categories
-            Assert.Single(itemsInCategory);
+            Assert.Equal(2, itemsInCategory.Count);
         }
 
         [Fact]
         public void AddNewItem()
         {
-            var usersItemsMockedData = GenerateMockedData();
-
-            // Creating a new instance of the service that we desire to test with the mocked data
-            MockedContext<UserItem> mockedContext = GetMockedContext(usersItemsMockedData);
+            // Creating context, data and a new instance of the service that we want to test
+            var mockedData = new MockedDbData();
+            MockedContext mockedContext = new MockedContext(mockedData);
             UserItemService userItemService = GetMockedService(mockedContext.Context);
 
             var newItem = new Item
@@ -145,8 +74,9 @@ namespace media_tracker.Tests.UnitTests
             int userId = 1;
 
             userItemService.AddNewItem(newItem, userId);
+
             // Checking that the new Item was added correctly
-            mockedContext.Set.Verify(m => m.Add(It.IsAny<UserItem>()), Times.Once());
+            mockedContext.UsersItemsSet.Data.Verify(m => m.Add(It.IsAny<UserItem>()), Times.Once());
             mockedContext.Context.Verify(m => m.SaveChanges(), Times.Exactly(2));
 
 
@@ -157,17 +87,15 @@ namespace media_tracker.Tests.UnitTests
                 UserId = userId
             };
             var itemsInUser = userItemService.GetAllItemsFromUserCategory(expectedUserCategory);
-            Assert.Single(itemsInUser);
-            Assert.Equal(newItem.Name, itemsInUser[0].Name);
+            Assert.Equal(newItem.Name, itemsInUser.Find(i => i.Name == newItem.Name).Name);
         }
 
         [Fact]
         public void DeleteUserItem()
         {
-            var usersItemsMockedData = GenerateMockedData();
-
-            // Creating a new instance of the service that we desire to test with the mocked data
-            MockedContext<UserItem> mockedContext = GetMockedContext(usersItemsMockedData);
+            // Creating context, data and a new instance of the service that we want to test
+            var mockedData = new MockedDbData();
+            MockedContext mockedContext = new MockedContext(mockedData);
             UserItemService userItemService = GetMockedService(mockedContext.Context);
 
             var userItemToDelete = new UserItem
@@ -185,14 +113,14 @@ namespace media_tracker.Tests.UnitTests
 
             var itemsInCategory = userItemService.GetAllItemsFromUserCategory(userCategory);
 
-            // Checking that the item is initially there
-            Assert.Single(itemsInCategory);
+            // Checking that the items are initially there
+            Assert.Equal(2, itemsInCategory.Count);
 
             userItemService.DeleteUserItem(userItemToDelete);
 
             // Checking that the item was deleted
             var updatedItemsInCategory = userItemService.GetAllItemsFromUserCategory(userCategory);
-            Assert.Empty(updatedItemsInCategory);
+            Assert.Single(updatedItemsInCategory);
 
         }
 
