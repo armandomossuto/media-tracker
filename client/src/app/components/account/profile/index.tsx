@@ -14,6 +14,8 @@ import { fetchRequest } from 'utils/fetch';
 import { object } from 'prop-types';
 import AddValueInput from 'components/common/add-value-input';
 import ShowButton from 'components/common/add-value-input/show-button';
+import Elements from './elements';
+import UpdateBox from './update-box';
 
 const Profile: React.FunctionComponent = () => {
   
@@ -42,7 +44,6 @@ const Profile: React.FunctionComponent = () => {
    * @param elementName - Name of the element that we will update the value
    */
   const onNewValuesInputChange = (value: string, elementName: string) => {
-    debugger
     const updatedAccountInfo = { ...newAccountInfo };
     updatedAccountInfo[elementName] = value;
     setNewAccountInfo(updatedAccountInfo);
@@ -70,7 +71,7 @@ const Profile: React.FunctionComponent = () => {
   const updatedElements: UpdatedElements = determineUpdatedElements(newAccountInfo);
   
   // Whether or not we have a new value to update
-  const doWeHaveANewValue: boolean = !!updatedElements
+  const doWeHaveANewValue: boolean = Object.entries(updatedElements).length !== 0;
 
   /**
    * Sends Updated Account Information to the server
@@ -88,17 +89,23 @@ const Profile: React.FunctionComponent = () => {
     
     // Using UpdateUser class for creating the Object that we are going to send to the server
     const updateUser = new UpdateUser(accountInfo.id, currentPassword, updatedElements);
-  
-   if (updateUser.validateNewPassword()) {
+   if (!updateUser.validateNewPassword()) {
     // Password submitted is incorrect. We display notification message
     setNotification(UpdateAccountNotification.shortPassword);
-  } else if (updateUser.validateNewEmail()) {
+  } else if (!updateUser.validateNewEmail()) {
      // Email is incorrect. We display notification message
      setNotification(UpdateAccountNotification.invalidEmail);
    } else {
      fetchRequest('api/user/edit', 'POST', sessionStateDispatch, updateUser)
        .then((data: User) => {
          sessionStateDispatch(setAccountInfo(data));
+         setNewAccountInfo({
+          email: '',
+          username: '',
+          password: '',
+        });
+        setCurrentPassword('');
+        setNotification(UpdateAccountNotification.successful);
        })
        .catch(error => {
          switch(error.status) {
@@ -119,40 +126,25 @@ const Profile: React.FunctionComponent = () => {
 
   return(
     <div className="profile">
-      <h2>Account Information</h2>
-
-      {Object.keys(accountInfoView).map(elementName =>
-        <div className="profile__element" key={`profile-element-${elementName}`}>
-          <div className="profile__element__name">
-            {elementName}
-          </div>
-          <div className="profile__element__value">
-            {accountInfoView[elementName]}
-          </div>
-          {changeEnum[elementName] 
-          ? <AddValueInput 
-              onAddValue={(value: string) => onNewValuesInputChange(value, elementName)}
-              showButton={true}
-            />
-          : null
-          }
-        </div>
-      )}
-
-      <div className="profile_notification">
-        {notification}
-      </div>
-
-      {doWeHaveANewValue
-        ? (<button
-            className="profile__submit"
-            onClick={onSubmitUpdateAccount}
-           >
-            Submit
-          </button>)
+      <h2 className="profile__title">User Settings</h2>
+      <Elements 
+        accountInfoView={accountInfoView}
+        updatedElements={updatedElements}
+        onElementsChange={onNewValuesInputChange} 
+      />
+      {doWeHaveANewValue 
+        ? <UpdateBox 
+            notification={notification}
+            currentPassword={currentPassword}
+            setCurrentPassword={setCurrentPassword}
+            onSubmitUpdateAccount={onSubmitUpdateAccount} 
+          />
         : null
       }
-      
+      {notification === UpdateAccountNotification.successful 
+        ? <div className="profile__success-notification"> {notification} </div>
+        : null
+      }
     </div>
   )
 }

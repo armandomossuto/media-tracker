@@ -1,34 +1,21 @@
+@import './update-box/style';
+@import './elements/style';
+
 .profile {
   display: flex;
 	flex-direction: column;
 	width: 80%;
-	margin: auto;
   margin-top: 100px;
-  text-align: center;
+  margin: auto;
 
-  &__element {
-    display: flex;
-    flex-direction: row;
-    width: 500px;
-    margin: auto;
-
-    &__name {
-      text-align: left;
-      width: 300px;
-    }
-
-    &__value {
-      text-align: left;
-      width: 400px;
-    }
+  &__title {
+    border-bottom: solid 1px $font-color;
+    margin-bottom: 50px;
+    width: 600px;
   }
 
-  &__submit {
-    @include account__submit-button;
-    width: 80px;
-  }
-
-  &__notification {
-     @include account__notification;
+  &__success-notification {
+    color: $font-color-success;
+    font-size: $font-big;
   }
 }

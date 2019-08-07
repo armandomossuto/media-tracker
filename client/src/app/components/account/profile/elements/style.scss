@@ -1,0 +1,28 @@
+.profile__element {
+  width: 600px;
+  display: flex;
+  flex-direction: row;
+  margin-bottom: 50px;
+    
+  &__name {
+    text-align: left;
+    font-size: $font-big;
+  }
+    
+  &__value {
+    color: $font-color-light;
+    text-align: left;
+    width: 400px;
+    
+    &--updated {
+      color: $font-color-alert;
+      text-align: left;
+      width: 400px;
+    }
+  }
+    
+  &__change-value {
+    margin-left: auto;
+    display: flex;
+  }
+}
