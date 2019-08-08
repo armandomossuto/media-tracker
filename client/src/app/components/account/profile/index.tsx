@@ -6,14 +6,11 @@ import { useSessionState, setAccountInfo } from 'state';
 
 // Types
 import { User } from 'types';
-import { UpdateUser, UpdateAccountNotification, UpdatedElements, ChangeEnum, changeEnum, UserView } from './types';
+import { UpdateUser, UpdateAccountNotification, UpdatedElements, UserView } from './types';
 import { UserCreate } from '../account-initialise/create/types';
 
 // Utils
 import { fetchRequest } from 'utils/fetch';
-import { object } from 'prop-types';
-import AddValueInput from 'components/common/add-value-input';
-import ShowButton from 'components/common/add-value-input/show-button';
 import Elements from './elements';
 import UpdateBox from './update-box';
 
@@ -78,6 +75,7 @@ const Profile: React.FunctionComponent = () => {
    */
   const onSubmitUpdateAccount = () => {
     // Validating that there is a change to update and if not, do nothing
+    // Submit button is only available if there is a change, but adding this step just in case
     if (!doWeHaveANewValue) {
      return;
     }
@@ -89,40 +87,55 @@ const Profile: React.FunctionComponent = () => {
     
     // Using UpdateUser class for creating the Object that we are going to send to the server
     const updateUser = new UpdateUser(accountInfo.id, currentPassword, updatedElements);
-   if (!updateUser.validateNewPassword()) {
-    // Password submitted is incorrect. We display notification message
-    setNotification(UpdateAccountNotification.shortPassword);
-  } else if (!updateUser.validateNewEmail()) {
-     // Email is incorrect. We display notification message
-     setNotification(UpdateAccountNotification.invalidEmail);
-   } else {
-     fetchRequest('api/user/edit', 'POST', sessionStateDispatch, updateUser)
-       .then((data: User) => {
-         sessionStateDispatch(setAccountInfo(data));
-         setNewAccountInfo({
+
+   // If new password is incorrect, we display notification message
+    if (!updateUser.validateNewPassword()) {
+      return setNotification(UpdateAccountNotification.shortPassword);
+    }
+
+    // If email is incorrect. We display notification message
+    if (!updateUser.validateNewEmail()) {
+      return setNotification(UpdateAccountNotification.invalidEmail);
+    }
+
+    // Validating if the user is trying to change to the email already configured
+    if(updatedElements.email === accountInfo.email) {
+      return setNotification(UpdateAccountNotification.sameEmail);
+    }
+
+    // Validating if the user is trying to change to the username already configured
+    if(updatedElements.username === accountInfo.username) {
+      return setNotification(UpdateAccountNotification.sameUsername);
+    }
+
+    // If it passes all validations, then we make the fetch request to the server
+    fetchRequest('api/user/edit', 'POST', sessionStateDispatch, updateUser)
+      .then((data: User) => {
+        // If evrything is OK, we update the account information and reset this component internal state
+        sessionStateDispatch(setAccountInfo(data));
+        setNewAccountInfo({
           email: '',
           username: '',
           password: '',
         });
         setCurrentPassword('');
         setNotification(UpdateAccountNotification.successful);
-       })
-       .catch(error => {
-         switch(error.status) {
+      })
+      .catch(error => {
+        switch (error.status) {
           case 403:
             setNotification(UpdateAccountNotification.incorrectCurrentPassword);
             break;
 
-          case 409: 
+          case 409:
             setNotification(UpdateAccountNotification.duplicatedKey);
             break;
 
           default:
-           setNotification(UpdateAccountNotification.error);
-         }
-       })
-   }
- }
+            setNotification(UpdateAccountNotification.error);
+        }
+      })
+  }
 
   return(
     <div className="profile">

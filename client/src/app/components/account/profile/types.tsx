@@ -51,7 +51,9 @@ export const UpdateAccountNotification = Object.freeze({
   insertPassword: 'If you want to proceed with the changes, please insert your current password' as 'insertPassword',
   incorrectCurrentPassword: 'The current password you introduced is wrong',
   duplicatedKey: 'The username or email is already in use, please choose another one' as 'duplicatedKey',
-  successful: 'Your account was updated successfully' as 'successful'
+  successful: 'Your account was updated successfully' as 'successful',
+  sameEmail: 'You are trying to update your email to the one that you are currently using',
+  sameUsername: 'You are trying to update your username to the one that you are currently using'
 })
 
 export interface UserView extends Partial<User> {
