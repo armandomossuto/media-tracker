@@ -147,7 +147,8 @@ namespace media_tracker.Controllers
         /// <returns>Updated User information</returns>
         [HttpPost("edit")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status409Conflict)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public ActionResult<UserView> UpdateUser([FromBody] UpdateUser updateUser)
         {
@@ -160,7 +161,7 @@ namespace media_tracker.Controllers
             // We verify that the password is currect
             if (!_userService.CheckPassword(updateUser.Password, userDb))
             {
-                return Unauthorized();
+                return StatusCode(403);
             }
             try
             {
@@ -172,7 +173,7 @@ namespace media_tracker.Controllers
                 // have already been created
                 if (ex.InnerException is Npgsql.PostgresException postgresException)
                 {
-                    return StatusCode(500);
+                    return StatusCode(409);
                 }
             }
 

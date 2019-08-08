@@ -109,7 +109,7 @@ const Profile: React.FunctionComponent = () => {
        })
        .catch(error => {
          switch(error.status) {
-          case 401:
+          case 403:
             setNotification(UpdateAccountNotification.incorrectCurrentPassword);
             break;
 

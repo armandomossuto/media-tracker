@@ -25,10 +25,17 @@ export const fetchRequest = async (path: string, requestType: RequestType, dispa
 
   let response: Response = await fetch(URL, config);
 
+  // If the access cookie expired, the server will return a 401 status error
+  // In this case we need to handle the refresh of the cookies and repeat the fetch request
   if(!response.ok && response.status === 401) {
     const tokens = await handleFetchAuthErrors(accessToken, dispatch);
     config = buildRequestConfig(requestType, tokens.accessToken);
     response = await fetch(URL, config);
+  }
+  
+  // If there is another status error, we throw it for the component to handle it properly
+  if(!response.ok) {
+    throw response;
   }
 
   if(response.ok) {
@@ -36,6 +43,9 @@ export const fetchRequest = async (path: string, requestType: RequestType, dispa
   }
 };
 
+/**
+ * Creates a config object for a fetch request with our default values
+ */
 export const buildRequestConfig = (requestType: RequestType, accessToken: string = '') =>  {
   const config: RequestInit = { 
     method: requestType, 
@@ -46,6 +56,10 @@ export const buildRequestConfig = (requestType: RequestType, accessToken: string
   return config;
 }
 
+/**
+ * For doing a fetch request without Authorization
+ * It will only work with the api endpoints that don't require the jwt token: login, account create, refresh tokens
+ */
 export const simpleFetch = async (path: string, requestType: RequestType, requestBody: object = null) => {
   const URL = `${serverUrl}/${path}`;
 
