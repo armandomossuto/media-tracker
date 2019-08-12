@@ -2,6 +2,7 @@ export type AddValueInputParams = {
     onAddValue: Function,
     showButton?: boolean
     targetName?: string,
+    type?: string
 }
 
 export type ShowButtonParams = {
@@ -13,4 +14,5 @@ export type InputParams = {
     setValue: React.Dispatch<React.SetStateAction<string>>,
     onAddValue: Function
     hideInput: Function
+    type: string
 }

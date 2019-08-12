@@ -1,6 +1,9 @@
 import * as React from 'react';
 import { UpdateBoxProps } from '../types';
 
+/**
+ * Footer of the profile page, with the notifications, current password input and submit button 
+ */
 const UpdateBox = ({ notification, onSubmitUpdateAccount, currentPassword, setCurrentPassword }: UpdateBoxProps) =>
   <div className="profile__update-box">
     <div>In order to process the change, please submit your password:</div>

@@ -12,6 +12,9 @@ export interface UpdateUser {
   newUserInformation: UpdatedElements,
 }
 
+/**
+ * We are using a class for generating an UpdateUser object. This way we have access to some handy validations in the internal methods
+ */
 export class UpdateUser implements UpdateUser {
 
   id: string;
@@ -30,7 +33,7 @@ export class UpdateUser implements UpdateUser {
    * Validates password if it exists in the new User Information
    */
   validateNewPassword() {
-    return this.newUserInformation.password == undefined || this.newUserInformation.password.length > 6;
+    return this.newUserInformation.password == undefined || this.newUserInformation.password.length > 5;
   }
 
   /**
@@ -56,10 +59,14 @@ export const UpdateAccountNotification = Object.freeze({
   sameUsername: 'You are trying to update your username to the one that you are currently using'
 })
 
+/**
+ * UserView is the same as the User type, minus the id, that we don't whow to the user
+ */
 export interface UserView extends Partial<User> {
   id?: never;
 }
 
+// For having a handy constructor for generating a UserView from a User object
 export class UserView implements UserView {
   constructor(user: User) {
     this.email = user.email;
@@ -73,6 +80,9 @@ export type ChangeEnum<UserView> = {
   [Key in keyof UserView]: boolean
 };
 
+/**
+ * Enum to check with properties of UserView we are allowed to change
+ */
 export const changeEnum: ChangeEnum<UserView> = Object.freeze({
   username: true,
   email: true,
@@ -97,6 +107,9 @@ export type ElementsNamesEnum<UserView> = {
   [Key in keyof UserView]: string
 } 
 
+/**
+ * Enum for having a name that we are going to use in the UI for each corresponding UserView property
+ */
 export const ElementsNamesEnum: ElementsNamesEnum<UserView> = Object.freeze({
   username: 'Username',
   email: 'Email Address',

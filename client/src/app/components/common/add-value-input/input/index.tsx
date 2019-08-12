@@ -5,7 +5,7 @@ import { InputParams } from '../types';
 /**
  * @param showInput - Shows the Add-value-input
  */
-const Input = ({ value, setValue, onAddValue, hideInput }: InputParams) =>{
+const Input = ({ value, setValue, onAddValue, hideInput, type }: InputParams) =>{
   
   const onConfirm = (value: string) => {
     hideInput();
@@ -16,7 +16,7 @@ const Input = ({ value, setValue, onAddValue, hideInput }: InputParams) =>{
     <div>
       <input
         className="add-value-input__input"
-        type="text"
+        type={type}
         value={value}
         onChange={e => setValue(e.target.value)}
         list="search-options"

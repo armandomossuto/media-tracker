@@ -33,6 +33,25 @@ const Elements = ({ accountInfoView, updatedElements, onElementsChange }: Profil
         </div>
       )
     }
+    {/* Password changing element */}
+    <div className="profile__element">
+      <div>
+        <div className="profile__element__name">
+          Password
+        </div>
+        {updatedElements["password"]
+          ? <div className="profile__element__value--updated"> You have entered a new password </div>  
+          : null
+        }
+      </div>
+      <div className="profile__element__change-value">
+        <AddValueInput
+          onAddValue={(value: string) => onElementsChange(value, "password")}
+          showButton={true}
+          type="password"
+        />
+      </div>
+    </div>
   </div>
 
 export default Elements;

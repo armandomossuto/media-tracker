@@ -11,7 +11,7 @@ import Input from './input';
  * input buttons
  * @param showButton Optional. Wheter or not to hide the input field behind a show button
  */
-const AddValueInput = ({ onAddValue, showButton = false }: AddValueInputParams) => {
+const AddValueInput = ({ onAddValue, showButton = false, type = "text" }: AddValueInputParams) => {
 
   // Value of the input field
   const [value, setValue] = useState('');
@@ -29,6 +29,7 @@ const AddValueInput = ({ onAddValue, showButton = false }: AddValueInputParams) 
               setValue={setValue}
               onAddValue={onAddValue}
               hideInput={() => hideInput()}
+              type={type}
             />
   } else {
     return <ShowButton showInput={() => showInput()}/>
