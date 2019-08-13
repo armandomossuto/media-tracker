@@ -2,11 +2,14 @@ import * as React from 'react';
 
 // Types
 import { CategoriesStatus, Category } from './types';
+import { ModalParams, ModalType } from 'types';
 
 // Hooks
 import { useEffect } from 'react';
 import { useSessionState } from 'state';
 import { useCategoriesState, CategoriesStateProvider } from './state';
+import { useModal } from 'components/common/modal';
+
 
 // Components
 import Loading from 'components/common/generic-messages/loading';
@@ -29,6 +32,14 @@ const Categories: React.FunctionComponent = () => {
     // Internal categories state for keeping track of internal status and list of the User Categories
     const [categoriesState, updateCategoriesState] = useCategoriesState();
     const { list, status } = categoriesState;
+
+    // Use Modal open method
+    const [, [ openModal, ]] = useModal();
+  
+    const modalParams: ModalParams = {
+      type: ModalType.addValueInput,
+      message: 'Add a new category to your tracker:'
+    }
 
     /**
      * When the component has mounted, we fetch the categories list from the user
@@ -57,7 +68,9 @@ const Categories: React.FunctionComponent = () => {
             <div
               className="categories__configuration-option"
             >
-              <span>Add a new element</span>
+              <span onClick={() => openModal(modalParams)}>
+                Add a new element
+              </span>
             </div>
             <div className="categories__list">
               {list.length > 0

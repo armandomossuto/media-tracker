@@ -19,7 +19,6 @@ const Input = ({ value, setValue, onAddValue, hideInput, type }: InputParams) =>
         type={type}
         value={value}
         onChange={e => setValue(e.target.value)}
-        list="search-options"
       >
       </input>
 

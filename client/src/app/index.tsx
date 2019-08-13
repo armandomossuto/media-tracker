@@ -17,14 +17,16 @@ const Index: React.FunctionComponent = () => {
 const [{ status }, ] = useSessionState();
 return(
   <Router>
-    <Navbar />
-    <Route exact path="/" component={Home} />
-    {status === SessionStatus.ok
-      ? <Route path="/tracker" component={Tracker} />
-      : null
-    }
-    <Route path="/account" component={Account} />
-    <Footer />
+    <div className="app-container">
+      <Navbar />
+      <Route exact path="/" component={Home} />
+      {status === SessionStatus.ok
+        ? <Route path="/tracker" component={Tracker} />
+        : null
+      }
+      <Route path="/account" component={Account} />
+      <Footer />
+    </div>
   </Router>
   )
 }

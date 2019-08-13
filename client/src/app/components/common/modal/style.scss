@@ -1,0 +1,58 @@
+.modal-wrapper {
+    position: relative;
+    height: 100%;
+    width: 100%;
+}
+
+.modal {
+    @include primary-combo;
+    position: fixed; 
+    left: 50%;
+    top: 50%;
+    min-height: 150px;
+    min-width: 400px;
+    border: 2px solid;
+    transform: translateX(-50%) translateY(-50%); //Centers the modal-box in the center of the screen
+    display: column;
+    padding: 40px 10px 20px 10px;
+    text-align: center;
+
+    &__buttons{
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: center;
+
+        &__actions {
+            border: 1px solid;
+            margin-left: 30px;
+            cursor: pointer;
+        }
+    }
+
+    &__input-elements {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        margin: 15px 0 50px 0;
+
+        &__title {
+            width: 100%;
+            padding: 5px;
+            box-sizing: border-box;
+            align-self: center;
+        }
+        &__element {
+            width: 50%;
+            padding: 5px;
+            box-sizing: border-box;
+        }
+    }
+
+    &__single-element {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin: 15px 0 50px 0;
+    }
+}
