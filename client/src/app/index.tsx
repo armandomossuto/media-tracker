@@ -10,14 +10,24 @@ import Footer from 'components/common/footer';
 
 // With Sesion Service, which will handle the user session
 import WithSessionService from 'services/session';
+import { useSessionState } from 'state';
+import { SessionStatus } from "types";
 
-const Index: React.FunctionComponent = () =>
+const Index: React.FunctionComponent = () => {
+// We check the session status, because we only grant access to the tracker route if the user has logged in
+const [{ status }, ] = useSessionState();
+return(
   <Router>
     <Navbar />
     <Route exact path="/" component={Home} />
-    <Route path="/tracker" component={Tracker} />
+    {status === SessionStatus.ok
+      ? <Route path="/tracker" component={Tracker} />
+      : null
+    }
     <Route path="/account" component={Account} />
     <Footer />
   </Router>
+  )
+}
 
 export default WithSessionService(Index);

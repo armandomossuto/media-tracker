@@ -34,7 +34,7 @@ namespace media_tracker.Controllers
             _userCategoryService.GetAllCategories();
 
         /// <summary>
-        /// Returns all available categories
+        /// Returns all categories from a user
         /// </summary>
         [HttpGet("{userId}")]
         public ActionResult<List<Category>> GetUserCategories(int userId) =>
