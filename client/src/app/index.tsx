@@ -9,8 +9,7 @@ import Navbar from 'components/common/navbar';
 import Footer from 'components/common/footer';
 
 // With Sesion Service, which will handle the user session
-import WithSessionService from 'services/session';
-import { useSessionState } from 'state';
+import { useSessionState, GlobalStateProvider } from 'state';
 import { SessionStatus } from "types";
 
 const Index: React.FunctionComponent = () => {
@@ -30,4 +29,4 @@ return(
   )
 }
 
-export default WithSessionService(Index);
+export default GlobalStateProvider(Index);

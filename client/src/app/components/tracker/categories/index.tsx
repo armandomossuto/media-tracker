@@ -75,5 +75,4 @@ const Categories: React.FunctionComponent = () => {
     }
   }
     
-
-export default CategoriesStateProvider(Categories);
+export default Categories;
