@@ -1,6 +1,8 @@
 import { Dispatch } from "react";
-import { SessionAction, UserAccessToken } from "types";
-import { setTokens } from "services/session/actions";
+import { SessionAction, UserAccessToken, SessionStatus } from "types";
+import { setAccountStatus } from "services/session/actions";
+import { serverUrl } from "configuration";
+import { createAuthenticationCookie } from "utils/cookies";
 
 /**
  * Handles Authorization error from server request. It will try to refresh the tokens
@@ -8,13 +10,18 @@ import { setTokens } from "services/session/actions";
 export const handleFetchAuthErrors = async (accessToken: string, dispatch: Dispatch<SessionAction>) => {
   const tokens: UserAccessToken = { accessToken };
 
-  const config: RequestInit = { method: 'Post', mode: 'cors', headers: { 'Content-Type': 'application/json' }, 'body': JSON.stringify(tokens) };
+  const config: RequestInit = { method: 'Post', mode: 'cors', headers: { 'Content-Type': 'application/json' }, credentials: 'include' , body: JSON.stringify(tokens) };
 
-  const response = await fetch(`api/user/refresh`, config);
+  const response = await fetch(`${serverUrl}/api/user/refresh`, config);
+
+  if(!response.ok) {
+    dispatch(setAccountStatus(SessionStatus.notLogged));
+    throw response;
+  }
 
   const newToken: UserAccessToken = await response.json();
 
-  dispatch(setTokens(newToken));
+  createAuthenticationCookie(newToken);
 
   return newToken;
 };

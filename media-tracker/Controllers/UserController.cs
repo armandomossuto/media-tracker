@@ -171,7 +171,7 @@ namespace media_tracker.Controllers
             {
                 // Handling if the username or the email, which have unique constraints in the DB
                 // have already been created
-                if (ex.InnerException is Npgsql.PostgresException postgresException)
+                if (ex.InnerException is Npgsql.PostgresException)
                 {
                     return StatusCode(409);
                 }
@@ -198,7 +198,8 @@ namespace media_tracker.Controllers
                         Path = "/",
                         HttpOnly = true,
                     });
-                return Ok(newTokens.UserTokenView);
+
+                return newTokens.UserTokenView;
             }
             catch (Exception ex)
             {
