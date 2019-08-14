@@ -47,6 +47,7 @@ namespace media_tracker.Controllers
         /// <returns></returns>
         [HttpPost()]
         [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status409Conflict)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public ActionResult AddUserCategory(UserCategory newUserCategory)
         {
@@ -59,8 +60,13 @@ namespace media_tracker.Controllers
             {
                 // Handling if the username or the email, which have unique constraints in the DB
                 // have already been created
-                if (ex.InnerException is Npgsql.PostgresException)
+                if (ex.InnerException is Npgsql.PostgresException postgresException)
                 {
+                    if (postgresException.SqlState == "23505")
+                    {
+                        return StatusCode(409);
+                    }
+
                     return StatusCode(500);
                 }
             }

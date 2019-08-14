@@ -1,8 +1,8 @@
 import * as React from 'react';
-import {createContext, useContext, useState} from 'react';
+import {createContext, useContext, useReducer} from 'react';
 
 // Types
-import { ModalParams, ModalSelectorProps, UseModal, ModalType } from './types';
+import { ModalSelectorProps, UseModal, ModalType, ModalState, ModalAction } from './types';
 
 // Initial State
 import { initialState } from './store'
@@ -10,9 +10,13 @@ import { initialState } from './store'
 // Modal Components
 import AddSingleElement from './add-single-element';
 
+// State
+import reducer from './reducer';
+import { closeModal } from './actions';
+
 // Creating state and dispatch contexts
 const StateContext = createContext(initialState);
-const DispatchContext = createContext(([() => 0]) as Array<Function>);
+const DispatchContext = createContext((() => 0) as React.Dispatch<ModalAction>);
 
 /**
  * HOC for adding a giving access to the modal
@@ -20,27 +24,17 @@ const DispatchContext = createContext(([() => 0]) as Array<Function>);
  */
 export const WithModal = (WrappedComponent: React.FunctionComponent) => ({ ...props }) => {
   // Modal internal state
-  const [modal, setModal] = useState(initialState);
-
-  /**
-   * Updates notification modal states to trigger it top open
-   */
-  const openModal = (params: ModalParams = initialState.params) => setModal({ show: true, params });
-
-  /**
-   * Closes the notification modal and cleans its state
-   */
-  const closeModal = () =>  setModal(initialState)
+  const [modal, dispatch] = useReducer(reducer, initialState);
 
   return(
-    <DispatchContext.Provider value={[openModal, closeModal]}>
+    <DispatchContext.Provider value={dispatch}>
       <StateContext.Provider value={modal}>
         <div className="modal-wrapper">
         {
           modal.show
             ? <ModalSelector
                 params={modal.params}
-                closeModal={closeModal}
+                closeModal={() => dispatch(closeModal())}
             />
             : null
         }
@@ -55,7 +49,7 @@ export const WithModal = (WrappedComponent: React.FunctionComponent) => ({ ...pr
 
 /**
  * Hook for accessing to the global store values and dispatcher
- * Example how to use it: [state, [openModal, closeModal]] =  useModal();
+ * Example how to use it: [state, dispatch] =  useModal();
  */
 export const useModal: UseModal = () => ([useContext(StateContext), useContext(DispatchContext)]);
 
@@ -63,7 +57,7 @@ export const useModal: UseModal = () => ([useContext(StateContext), useContext(D
  * Simple selector for the different types of modals
  */
 const ModalSelector = ({ params, closeModal }: ModalSelectorProps) => {
-  const { type, className, onConfirmAction, onSearchAction, title, message, confirmButton, cancelButton } = params;
+  const { type, className, onConfirmAction, onSearchAction, title, message, confirmButton, cancelButton, notification } = params;
   switch (type) {
     case ModalType.addValueInput:
       return (
@@ -72,6 +66,7 @@ const ModalSelector = ({ params, closeModal }: ModalSelectorProps) => {
           onConfirmAction={onConfirmAction}
           onSearchAction={onSearchAction}
           closeModal={closeModal}
+          notification={notification}
         />)
   }
 }

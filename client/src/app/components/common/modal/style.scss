@@ -49,6 +49,11 @@
         }
     }
 
+    &__notification{
+        margin-top: 10px;
+        color: $font-color-alert;
+    }
+
     &__single-element {
         display: flex;
         flex-direction: column;
