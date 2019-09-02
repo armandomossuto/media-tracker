@@ -38,3 +38,6 @@ type useSessionState = () => ([SessionState, React.Dispatch<SessionAction>]);
  * Example how to use it: [state, dispatcher] =  useGlobalState();
  */
 export const useSessionState: useSessionState = () => ([useContext(StateContext), useContext(DispatchContext)]);
+
+// Exporting for testing purposes
+export const SessionStateContext = StateContext;

@@ -15,7 +15,8 @@ import { getAuthenticationCookie } from 'utils/cookies';
 export const fetchRequest = async (path: string, requestType: RequestType, dispatch: Dispatch<SessionAction>, requestBody: object = null) => {
   const URL = `${serverUrl}/${path}`;
 
-  const accessToken = getAuthenticationCookie().accessToken;
+  const authenticationCookie = getAuthenticationCookie();
+  const accessToken = authenticationCookie ? authenticationCookie.accessToken : null;
   
   let config: RequestInit =  buildRequestConfig(requestType, accessToken);
   
