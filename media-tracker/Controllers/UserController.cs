@@ -11,6 +11,7 @@ using media_tracker.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.Extensions.Logging;
 
 namespace media_tracker.Controllers
 {
@@ -22,11 +23,13 @@ namespace media_tracker.Controllers
         //Injecting Services
         private readonly IUserService _userService;
         private readonly IUserTokenService _userTokenService;
+        private readonly ILogger<UserController> _logger;
 
-        public UserController(IUserService userService, IUserTokenService userTokenService)
+        public UserController(IUserService userService, IUserTokenService userTokenService, ILogger<UserController> logger)
         {
             _userService = userService;
             _userTokenService = userTokenService;
+            _logger = logger;
         }
 
         public string RefreshTokenCookieKey = "media-tracker-refresh";
@@ -80,6 +83,7 @@ namespace media_tracker.Controllers
                     }
                     else
                     {
+                        _logger.LogError("Error when adding new user to the DB", ex);
                         return StatusCode(500);
                     }
                 }
@@ -97,7 +101,8 @@ namespace media_tracker.Controllers
                   Path = "/",
                   HttpOnly = true,
               });
-               
+
+            _logger.LogInformation("Succesfully created user {username}", userView.Username);
             return new UserLoginView(userView, userTokenView);
             }
 
@@ -134,7 +139,7 @@ namespace media_tracker.Controllers
                     });
 
                 UserView userView = new UserView(userDb);
-
+                _logger.LogInformation("Succesfull login from user {username}", userView.Username);
                 return new UserLoginView(userView, userTokenView);
             }
             return Unauthorized();
@@ -175,8 +180,10 @@ namespace media_tracker.Controllers
                 {
                     return StatusCode(409);
                 }
+                _logger.LogError("Error when updating user to the DB", ex);
             }
 
+            _logger.LogInformation("Succesfully updated user {username}", userDb.Username);
             return new UserView(userDb);
         }
 
@@ -198,7 +205,7 @@ namespace media_tracker.Controllers
                         Path = "/",
                         HttpOnly = true,
                     });
-
+                _logger.LogInformation("Succesfully refreshed tokens for user {username}", userTokenView.UserId);
                 return newTokens.UserTokenView;
             }
             catch (Exception ex)
@@ -207,6 +214,7 @@ namespace media_tracker.Controllers
                 {
                     return Unauthorized();
                 }
+                _logger.LogError("Error when refreshing tokens", ex);
                 return StatusCode(500);
             }
         }

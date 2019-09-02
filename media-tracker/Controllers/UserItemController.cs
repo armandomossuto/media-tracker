@@ -10,6 +10,7 @@ using media_tracker.Services;
 using media_tracker.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.Extensions.Logging;
 
 namespace media_tracker.Controllers
 {
@@ -20,10 +21,12 @@ namespace media_tracker.Controllers
     {
         //Injecting Service with controller actions
         private readonly IUserItemService _userItemService;
+        private readonly ILogger<UserItemController> _logger;
 
-        public UserItemController(IUserItemService userItemService)
+        public UserItemController(IUserItemService userItemService, ILogger<UserItemController> logger)
         {
-            this._userItemService = userItemService;
+            _userItemService = userItemService;
+            _logger = logger;
         }
 
         /// <summary>
@@ -69,6 +72,7 @@ namespace media_tracker.Controllers
                 {
                     return StatusCode(500);
                 }
+                _logger.LogError("Error when adding new user item", ex);
             }
             return Ok();
         }
@@ -97,6 +101,7 @@ namespace media_tracker.Controllers
                 {
                     return StatusCode(409);
                 }
+                _logger.LogError("Error when adding new item", ex);
                 return StatusCode(500);
             }
         }
@@ -113,8 +118,9 @@ namespace media_tracker.Controllers
             {
                 _userItemService.DeleteUserItem(userItemToDelete);
             }
-            catch
+            catch(Exception ex)
             {
+                _logger.LogError("Error when deleting a user item", ex);
                 return StatusCode(500);
             }
             return Ok();

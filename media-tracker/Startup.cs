@@ -16,6 +16,8 @@ using media_tracker.Helpers;
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using Serilog;
+using System.IO;
 
 namespace media_tracker
 {
@@ -24,6 +26,12 @@ namespace media_tracker
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
+            var appSettingsSection = Configuration.GetSection("AppSettings");
+            var appSettings = appSettingsSection.Get<AppSettings>();
+            Log.Logger = new LoggerConfiguration()
+                .MinimumLevel.Debug()
+                .WriteTo.RollingFile(Path.Combine(appSettings.LoggingRootPath, "log-{Date}.txt"))
+                .CreateLogger();
         }
 
         public IConfiguration Configuration { get; }
@@ -71,7 +79,7 @@ namespace media_tracker
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
             if (env.IsDevelopment())
             {
@@ -87,6 +95,8 @@ namespace media_tracker
             app.UseHttpsRedirection();
             app.UseMvc();
             app.UseAuthentication();
+
+            loggerFactory.AddSerilog();
         }
 
     }

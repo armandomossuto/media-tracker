@@ -10,6 +10,7 @@ using media_tracker.Services;
 using media_tracker.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.Extensions.Logging;
 
 namespace media_tracker.Controllers
 {
@@ -20,10 +21,12 @@ namespace media_tracker.Controllers
     {
         //Injecting Service with controller actions
         private readonly IUserCategoryService _userCategoryService;
+        private readonly ILogger<UserCategoryController> _logger;
 
-        public UserCategoryController(IUserCategoryService userCategoryService)
+        public UserCategoryController(IUserCategoryService userCategoryService, ILogger<UserCategoryController> logger)
         {
-            this._userCategoryService = userCategoryService;
+            _userCategoryService = userCategoryService;
+            _logger = logger;
         }
 
         /// <summary>
@@ -66,7 +69,7 @@ namespace media_tracker.Controllers
                     {
                         return StatusCode(409);
                     }
-
+                    _logger.LogError("Error in adding user category", ex);
                     return StatusCode(500);
                 }
             }
