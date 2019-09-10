@@ -18,7 +18,7 @@ const Elements = ({ accountInfoView, updatedElements, onElementsChange }: Profil
               {ElementsNamesEnum[element]}
             </div>
             <div className={`${updatedElements[element] ? 'profile__element__value--updated' : 'profile__element__value'}`}>
-              {updatedElements[element] ? updatedElements[element] : accountInfoView[element]}
+              {updatedElements[element] ? updatedElements[element] : accountInfoView[element].toString()}
             </div>
           </div>
           <div className="profile__element__change-value">

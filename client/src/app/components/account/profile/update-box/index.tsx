@@ -9,7 +9,7 @@ const UpdateBox = ({ notification, onSubmitUpdateAccount, currentPassword, setCu
     <div>In order to process the change, please submit your password:</div>
     <input
       type="password"
-      className="log-in__element__profile__update-box__password-input"
+      className="profile__update-box__password-input"
       onChange={(e) => setCurrentPassword(e.target.value)}
       value={currentPassword}
     ></input> 

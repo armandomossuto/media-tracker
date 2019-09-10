@@ -1,5 +1,5 @@
 import * as React from "react";
-import { render, wait, fireEvent, RenderResult, waitForElement } from '@testing-library/react';
+import { render, wait, fireEvent, RenderResult } from '@testing-library/react';
 
 import * as nock  from 'nock';
 import { serverUrl } from 'configuration';
