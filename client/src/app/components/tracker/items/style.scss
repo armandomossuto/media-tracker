@@ -1,0 +1,47 @@
+/* Tracker page */
+
+.items {
+	display: flex;
+	flex-direction: column;
+	width: 80%;
+	margin: auto;
+	margin-top: 30px;
+
+	&__list {
+		display: flex;
+		flex-direction: column;
+
+		&__element {
+			@include secondary-combo;
+			@include generic-button;
+			height: 100px;
+			margin-bottom: 30px;
+			font-size: 30px;
+			text-align: center;
+			display: flex;
+    		align-items: center;
+    		justify-content: center;
+    		border-width: 1px;
+			border-style: solid;
+			cursor: pointer;
+		}
+
+		&__empty {
+			font-weight: bold;
+			@include secondary-combo;
+			@include generic-button;
+			height: 100px;
+			margin-top: 30px;
+			font-size: 30px;
+			text-align: center;
+			display: flex;
+    		align-items: center;
+    		justify-content: center;
+    		border-width: 1px;
+			border-style: solid;
+		}
+	}
+}
+
+
+

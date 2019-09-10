@@ -4,7 +4,7 @@ import * as React from 'react';
 import { CategoriesStatus, Category } from './types';
 
 // Hooks
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useSessionState } from 'state';
 import { useCategoriesState } from './state';
 
@@ -20,6 +20,7 @@ import { fetchRequest } from 'utils/fetch';
 // State
 import { setUserCategories, setCategoriesStatus } from './actions';
 import AddCategory from './add-category';
+import { withRouter, Redirect } from 'react-router';
 
 /**
  * Categories component
@@ -33,6 +34,9 @@ const Categories: React.FunctionComponent = () => {
 
   // Internal categories state for keeping track of internal status and list of the User Categories
   const [{ userCategories, status }, dispatch] = useCategoriesState();
+
+  // If we trigger a transition when selecting one category, we are using this variable
+  const [redirectPath, setRedirectPath] = useState<string>('');
 
   /**
    * When the component has mounted, we fetch the categories list from the user
@@ -49,6 +53,13 @@ const Categories: React.FunctionComponent = () => {
         });
     }
   }, []);
+
+  const onSelectCategory = (categoryName: string) => setRedirectPath(`/tracker/${categoryName}`);
+
+  // If there is a redirect path, we will transition to that path
+  if(redirectPath) {
+    return (<Redirect to={redirectPath} />)
+  }
 
   switch (status) {
     case CategoriesStatus.loading:
@@ -69,7 +80,10 @@ const Categories: React.FunctionComponent = () => {
               ? userCategories.map((category, index) =>
                 <div
                   className="categories__list__element"
-                  key={index}> {category.name}
+                  key={index}
+                  onClick={() => onSelectCategory(category.name)}
+                > 
+                  {category.name}
                 </div>
               )
               : <EmptyList type='categories' className="categories__list__empty" />
@@ -80,4 +94,4 @@ const Categories: React.FunctionComponent = () => {
   }
 }
 
-export default Categories;
+export default withRouter(Categories);
