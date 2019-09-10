@@ -1,90 +1,76 @@
 import * as React from "react";
-import { mount, ReactWrapper } from "enzyme";
+import { render, wait, fireEvent, RenderResult, waitForElement } from '@testing-library/react';
+
 import * as nock  from 'nock';
 import { serverUrl } from 'configuration';
 
 import CreateAccount from "./index";
 import { CreateAccountNotification } from "./types";
-import { simulateInputChange, invalidPassword, genericValidPassword, invalidEmail, noUsername, genericUsername, genericValidEmail } from "../../../../../tests/testUtils";
+import { invalidPassword, genericValidPassword, invalidEmail, noUsername, genericUsername, genericValidEmail } from "../../../../../tests/testUtils";
 
 describe('Create Account component', () => {
 
   // Main container for the CreateAccount Component
-  let container: ReactWrapper;
+  let container: RenderResult;
 
   // Input fields
-  let usernameInput: ReactWrapper;
-  let emailInput: ReactWrapper;
-  let passwordInput: ReactWrapper;
+  let usernameInput: HTMLElement;
+  let emailInput: HTMLElement;
+  let passwordInput: HTMLElement;
 
   // Submit Button
-  let submitButton: ReactWrapper;
+  let submitButton: HTMLElement;
 
-  const createAccountNotificationSelector = '.create-account__notification';
-
-  // Must call this function after testing something that will trigger an async operation
-  const flushPromises = () => new Promise(setImmediate);
+  // React testing queries
+  let getByText: Function; 
+  let getAllByRole: Function;
 
   beforeEach(() => {
-    container = mount(<CreateAccount setAccountIntialiseStatus={() => { }} />);
+    container = render(<CreateAccount setAccountIntialiseStatus={() => { }} />);
+    getByText = container.getByText;
+    getAllByRole = container.getAllByRole;
 
-    const textInputs = container.find('input[type="text"]');
-    expect(textInputs.length).toEqual(2);
+    usernameInput = getAllByRole('textbox')[0];
+    expect(usernameInput).toBeTruthy();
 
-    usernameInput = textInputs.at(0);
-    emailInput = textInputs.at(1);
+    emailInput = getAllByRole('textbox')[1];
+    expect(emailInput).toBeTruthy();
 
-    passwordInput = container.find('input[type="password"]');
-    expect(passwordInput.length).toEqual(1);
+    passwordInput = getAllByRole('textbox')[2];
+    expect(passwordInput).toBeTruthy();
 
-    const initialNotification = container.find(createAccountNotificationSelector);
-    expect(initialNotification.text()).toBe(CreateAccountNotification.initial);
+    submitButton = getByText('Create Account');
+  });
 
-    submitButton = container.find('.create-account__submit');
-
+  afterEach(() => {
+    container.unmount();
   });
 
   it('Shows no username notification correctly', async (done) => {
+    fireEvent.change(usernameInput, { target: { value: noUsername } });
+    fireEvent.click(submitButton);
 
-    simulateInputChange(usernameInput, noUsername);
-
-    await flushPromises();
-    container.update();
-
-    submitButton.simulate('click');
-    const invalidPasswordNotification = container.find(createAccountNotificationSelector);
-    expect(invalidPasswordNotification.text()).toBe(CreateAccountNotification.noUsername);
+    await wait(expect(getByText(CreateAccountNotification.noUsername)).toBeTruthy());
     done();
   });
  
   it('Shows short password notification correctly', async (done) => {
+    fireEvent.change(usernameInput, { target: { value: genericUsername } });
+    fireEvent.change(passwordInput, { target: { value: invalidPassword } });
+    fireEvent.click(submitButton);
 
-    simulateInputChange(usernameInput, genericUsername);
-    simulateInputChange(passwordInput, invalidPassword);
-    simulateInputChange(emailInput, genericValidEmail);
-
-    await flushPromises();
-    container.update();
-
-    submitButton.simulate('click');
-    const invalidPasswordNotification = container.find(createAccountNotificationSelector);
-    expect(invalidPasswordNotification.text()).toBe(CreateAccountNotification.shortPassword);
+    await wait(expect(getByText(CreateAccountNotification.shortPassword)).toBeTruthy());
     done();
   });
 
   it('Shows invalid email notification correctly', async (done) => {
 
-    simulateInputChange(usernameInput, genericUsername);
-    simulateInputChange(passwordInput, genericValidPassword);
-    simulateInputChange(emailInput, invalidEmail);
-
-    submitButton.simulate('click');
+    fireEvent.change(usernameInput, { target: { value: genericUsername } });
+    fireEvent.change(passwordInput, { target: { value: genericValidPassword } });
+    fireEvent.change(emailInput, { target: { value: invalidEmail } });
+    fireEvent.click(submitButton);
     
-    await flushPromises();
-    container.update();
-
-    const errorNotification = container.find(createAccountNotificationSelector);
-    expect(errorNotification.text()).toBe(CreateAccountNotification.invalidEmail);
+    await wait(expect(getByText(CreateAccountNotification.invalidEmail)).toBeTruthy());
     done();
   })
 
@@ -96,18 +82,15 @@ describe('Create Account component', () => {
       userToken: {} 
     });
 
-    simulateInputChange(usernameInput, genericUsername);
-    simulateInputChange(passwordInput, genericValidPassword);
-    simulateInputChange(emailInput, genericValidEmail);
+    fireEvent.change(usernameInput, { target: { value: genericUsername } });
+    fireEvent.change(passwordInput, { target: { value: genericValidPassword } });
+    fireEvent.change(emailInput, { target: { value: genericValidEmail } });
+    fireEvent.click(submitButton);
 
-    submitButton.simulate('click');
-    
-    await flushPromises();
-    container.update();
-
-    const noNotification = container.find(createAccountNotificationSelector);
-    expect(noNotification.text()).toBe(CreateAccountNotification.initial);
-
+    await wait(() => {
+      const errorNotification = container.container.querySelector('.create-account__notification');
+      return expect(errorNotification.textContent).toBe(CreateAccountNotification.initial);
+    })
     done();
   })
 })

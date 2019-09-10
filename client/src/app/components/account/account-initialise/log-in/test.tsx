@@ -36,10 +36,10 @@ describe('Log In Account component', () => {
 
   afterEach(() => {
     container.unmount();
-  })
+  });
  
   it('Shows no username notification correctly', async (done) => {
-    fireEvent.change(passwordInput, { target: { value: noUsername } });
+    fireEvent.change(usernameInput, { target: { value: noUsername } });
     fireEvent.click(submitButton);
 
     await wait(expect(getByText(LogInNotification.noUsername)).toBeTruthy());
