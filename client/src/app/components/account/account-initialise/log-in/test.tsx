@@ -1,85 +1,77 @@
 import * as React from "react";
-import { mount, ReactWrapper } from "enzyme";
+import { render, wait, fireEvent, RenderResult, waitForElement } from '@testing-library/react';
+
 import * as nock  from 'nock';
 import { serverUrl } from 'configuration';
 
 import LogIn from "./index";
 import { LogInNotification } from "./types";
-import { simulateInputChange, genericUsername, genericValidPassword, invalidPassword, noUsername } from "../../../../../tests/testUtils";
+import { genericUsername, genericValidPassword, invalidPassword, noUsername } from "../../../../../tests/testUtils";
 
 describe('Log In Account component', () => {
 
-  let container: ReactWrapper;
-  let usernameInput: ReactWrapper;
-  let passwordInput: ReactWrapper;
-  let submitButton: ReactWrapper;
-
-  // Must call this function after testing something that will trigger an async operation
-  const flushPromises = () => new Promise(setImmediate);
+  // Elements to be reused and query functions
+  let usernameInput: HTMLElement;
+  let passwordInput: HTMLElement;
+  let submitButton: HTMLElement;
+  let container: RenderResult;
+  let getByText: Function; 
+  let getAllByRole: Function;
+  let findByText: Function;
 
   beforeEach(() => {
-    container = mount(<LogIn setAccountIntialiseStatus={() => { }} />);
+    container = render(<LogIn setAccountIntialiseStatus={() => { }} />);
+    getByText = container.getByText;
+    getAllByRole = container.getAllByRole;
+    findByText = container.findByText;
 
-    usernameInput = container.find('input[type="text"]');
-    expect(usernameInput.length).toEqual(1);
+    usernameInput = getAllByRole('textbox')[0];
+    expect(usernameInput).toBeTruthy();
 
-    passwordInput = container.find('input[type="password"]');
-    expect(passwordInput.length).toEqual(1);
+    passwordInput = getAllByRole('textbox')[1];
+    expect(passwordInput).toBeTruthy();
 
-    submitButton = container.find('.log-in__submit');
-
+    submitButton = getByText('Submit');
   });
+
+  afterEach(() => {
+    container.unmount();
+  })
  
   it('Shows no username notification correctly', async (done) => {
+    fireEvent.change(passwordInput, { target: { value: noUsername } });
+    fireEvent.click(submitButton);
 
-    simulateInputChange(usernameInput, noUsername);
-
-    await flushPromises();
-    container.update();
-
-    submitButton.simulate('click');
-    const invalidPasswordNotification = container.find('div[className="log-in__notification"]');
-    expect(invalidPasswordNotification.text()).toBe(LogInNotification.noUsername);
+    await wait(expect(getByText(LogInNotification.noUsername)).toBeTruthy());
     done();
   });
 
   it('Shows short password notification correctly', async (done) => {
+    fireEvent.change(usernameInput, { target: { value: genericUsername } });
+    fireEvent.change(passwordInput, { target: { value: invalidPassword } });
+    fireEvent.click(submitButton);
 
-    const initialNotification = container.find('div[className="log-in__notification"]');
-    expect(initialNotification.text()).toBe(LogInNotification.initial);
-
-    simulateInputChange(usernameInput, genericUsername);
-    simulateInputChange(passwordInput, invalidPassword);
-
-    await flushPromises();
-    container.update();
-
-    submitButton.simulate('click');
-    const invalidPasswordNotification = container.find('div[className="log-in__notification"]');
-    expect(invalidPasswordNotification.text()).toBe(LogInNotification.shortPassword);
+    await wait(expect(getByText(LogInNotification.shortPassword)).toBeTruthy());
     done();
   });
 
-  it('Invalid credentials when trying to logIn', async (done) => {
 
+  it('Invalid credentials when trying to logIn', async (done) => {
+    // Mocking fetch request to fail with code 401
     nock(serverUrl)
       .post('/api/user/login')
       .reply(401);
   
-    simulateInputChange(usernameInput, genericUsername);
-    simulateInputChange(passwordInput, genericValidPassword);
+    fireEvent.change(usernameInput, { target: { value: genericUsername } });
+    fireEvent.change(passwordInput, { target: { value: genericValidPassword } });
+    fireEvent.click(submitButton);
 
-    submitButton.simulate('click');
-    
-    await flushPromises();
-    container.update();
-
-    const errorNotification = container.find('div[className="log-in__notification"]');
-    expect(errorNotification.text()).toBe(LogInNotification.invalid);
+    await waitForElement(() => findByText(LogInNotification.invalid));
     done();
   })
 
   it('Account logIn succesfully', async (done) => {
+    // Mocking fetch request to be successfull
     nock(serverUrl)
     .post('/api/user/login')
     .reply(200, {
@@ -87,17 +79,15 @@ describe('Log In Account component', () => {
       userToken: {} 
     });
 
-    simulateInputChange(usernameInput, genericUsername);
-    simulateInputChange(passwordInput, genericValidPassword);
+    fireEvent.change(usernameInput, { target: { value: genericUsername } });
+    fireEvent.change(passwordInput, { target: { value: genericValidPassword } });
+    fireEvent.click(submitButton);
 
-    submitButton.simulate('click');
-    
-    await flushPromises();
-    container.update();
-
-    const errorNotification = container.find('div[className="log-in__notification"]');
-    expect(errorNotification.text()).toBe(LogInNotification.initial);
+    await wait(() => {
+      const errorNotification = container.container.querySelector('.log-in__notification');
+      return expect(errorNotification.textContent).toBe(LogInNotification.initial);
+    })
 
     done();
   })
-})
+});
