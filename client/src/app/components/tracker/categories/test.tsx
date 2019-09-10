@@ -1,5 +1,6 @@
 import * as React from "react";
-import { mount, ReactWrapper } from "enzyme";
+import { render, wait } from '@testing-library/react'
+
 import * as nock from 'nock';
 import { serverUrl } from 'configuration';
 
@@ -8,44 +9,36 @@ import { Category } from "./types";
 import { SessionStateContext } from "services/session/state";
 import { CategoriesStateProvider } from "./state";
 import { genericSessionState } from "../../../../tests/testUtils";
+import { BrowserRouter as Router } from 'react-router-dom';
 
 describe("Categories Component", () => {
-  let container: ReactWrapper;
-
-  // Must call this function after testing something that will trigger an async operation
-  const flushPromises = () => new Promise(setImmediate);
-
   const mockedUserCategories: Array<Category> = [{ id: "1", name: "Category1", description: "" }, { id: "2", name: "Category2", description: "" }]
+  const allCategories: Array<Category> = [{ id: "1", name: "Category1", description: "" }, { id: "2", name: "Category2", description: "" }, { id: "3", name: "Category3", description: "" }];
 
-  beforeEach( async () => {
+  it('Shows correctly the user categories', async (done) => {
+
+    // Mocking fetch requests
     nock(serverUrl)
     .get(`/api/categories/${genericSessionState.accountInfo.id}`)
     .reply(200, mockedUserCategories);
 
+    nock(serverUrl)
+    .get('/api/categories')
+    .reply(200, allCategories);
 
     const CategoriesComponent = CategoriesStateProvider(Categories);
 
-    container = mount(
+    const { getByText } = render(
+      <Router>
         <SessionStateContext.Provider value={genericSessionState}>
           <CategoriesComponent />)
         </SessionStateContext.Provider>
-      , )
-      await flushPromises();
-      container.update();
+      </Router>)
 
-      const categories = container.find(Categories);
-      expect(categories.exists()).toEqual(true);
-
-      // Need to wait for 2 cycles to have the component fully updated after the async operations
-      await flushPromises();
-      container.update();
-      await flushPromises();
-      container.update();
-  })
-
-  it('Shows correctly the user categories', async (done) => {
-    expect(container.find(".categories__list__element")).toHaveLength(2);
-    done();
+      // Wait for async code and DOM to get updated
+      await wait(() => expect(getByText('Category1')).toBeTruthy());
+      expect(getByText('Category2')).toBeTruthy();
+      done();
   });
 
 })

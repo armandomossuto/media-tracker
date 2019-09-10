@@ -1,5 +1,5 @@
 import * as React from "react";
-import { render, fireEvent, wait, waitForDomChange } from '@testing-library/react'
+import { render, wait } from '@testing-library/react'
 
 import * as nock from 'nock';
 import { serverUrl } from 'configuration';
@@ -45,7 +45,7 @@ describe("Items Component", () => {
 
 
     // Test first render and effect
-    const { container, getByText } = render(
+    const { getByText } = render(
       <SessionStateContext.Provider value={genericSessionState}>
         <Items match={ItemsProps.match} />)
         </SessionStateContext.Provider>,
