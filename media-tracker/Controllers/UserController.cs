@@ -42,9 +42,9 @@ namespace media_tracker.Controllers
         [HttpGet("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public ActionResult<UserView> Get(int id)
+        public async Task<ActionResult<UserView>> GetUserInformation(int id)
         {
-            var user = _userService.GetUserById(id);
+            var user = await _userService.GetUserById(id);
             if (user == null)
             {
                 return NotFound();
@@ -63,13 +63,13 @@ namespace media_tracker.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status409Conflict)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public ActionResult<UserLoginView> CreateUser([FromBody] User userInformation)
+        public async Task<ActionResult<UserLoginView>> CreateUser([FromBody] User userInformation)
         {
             User preparedUser = _userService.PreparesNewUser(userInformation);
 
             try
             {
-                _userService.AddUser(preparedUser);
+                await _userService.AddUser(preparedUser);
             }
             catch (DbUpdateException ex)
             {
@@ -92,7 +92,7 @@ namespace media_tracker.Controllers
             string accessToken = _userTokenService.GenerateUserAccessToken(userView.Id);
             UserTokenView userTokenView = new UserTokenView(userView.Id, accessToken);
 
-            string refreshToken = _userTokenService.GenerateUserRefreshToken(userView.Id);
+            string refreshToken = await _userTokenService.GenerateUserRefreshToken(userView.Id);
             Response.Cookies.Append(
               RefreshTokenCookieKey,
               refreshToken,
@@ -115,10 +115,10 @@ namespace media_tracker.Controllers
         [HttpPost("login")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        public ActionResult<UserLoginView> CheckLogin([FromBody] User userInformation)
+        public async Task<ActionResult<UserLoginView>> CheckLogin([FromBody] User userInformation)
         {
             // First we verify if the user exists and if not we return error code 401
-            var userDb = _userService.GetUserByUsername(userInformation.Username);
+            var userDb = await _userService.GetUserByUsername(userInformation.Username);
             if (userDb == null)
             {
                 return Unauthorized();
@@ -128,7 +128,7 @@ namespace media_tracker.Controllers
                 string accessToken = _userTokenService.GenerateUserAccessToken(userDb.Id);
                 UserTokenView userTokenView = new UserTokenView(userDb.Id, accessToken);
        
-                string refreshToken = _userTokenService.GenerateUserRefreshToken(userDb.Id);
+                string refreshToken = await _userTokenService.GenerateUserRefreshToken(userDb.Id);
                 Response.Cookies.Append(
                     RefreshTokenCookieKey,
                     refreshToken,
@@ -155,10 +155,10 @@ namespace media_tracker.Controllers
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status409Conflict)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public ActionResult<UserView> UpdateUser([FromBody] UpdateUser updateUser)
+        public async Task<ActionResult<UserView>> UpdateUser([FromBody] UpdateUser updateUser)
         {
             // First we check if the user exists
-            var userDb = _userService.GetUserById(updateUser.Id);
+            var userDb = await _userService.GetUserById(updateUser.Id);
             if (userDb == null)
             {
                 return StatusCode(500);
@@ -170,7 +170,7 @@ namespace media_tracker.Controllers
             }
             try
             {
-                _userService.UpdateUser(updateUser.Id, updateUser.NewUserInformation);
+                await _userService.UpdateUser(updateUser.Id, updateUser.NewUserInformation);
             }
             catch (DbUpdateException ex)
             {
@@ -191,12 +191,12 @@ namespace media_tracker.Controllers
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [HttpPost("refresh")]
-        public ActionResult<UserTokenView> RefreshTokens([FromBody] UserTokenView userTokenView)
+        public async Task<ActionResult<UserTokenView>> RefreshTokens([FromBody] UserTokenView userTokenView)
         {
             try
             {
                 string refreshToken = Request.Cookies[RefreshTokenCookieKey];
-                Tokens newTokens = _userTokenService.RefreshTokens(refreshToken, userTokenView.AccessToken);
+                Tokens newTokens = await _userTokenService.RefreshTokens(refreshToken, userTokenView.AccessToken);
                 Response.Cookies.Append(
                     RefreshTokenCookieKey,
                     refreshToken,
@@ -214,7 +214,7 @@ namespace media_tracker.Controllers
                 {
                     return Unauthorized();
                 }
-                _logger.LogError("Error when refreshing tokens", ex);
+                _logger.LogError("Error when refreshing tokens", ex.InnerException);
                 return StatusCode(500);
             }
         }

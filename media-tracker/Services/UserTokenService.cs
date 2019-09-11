@@ -3,6 +3,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
+using System.Threading.Tasks;
 using media_tracker.Helpers;
 using media_tracker.Models;
 using Microsoft.EntityFrameworkCore;
@@ -20,8 +21,8 @@ namespace media_tracker.Services
     public interface IUserTokenService
     {
         string GenerateUserAccessToken(int userId);
-        string GenerateUserRefreshToken(int userId);
-        Tokens RefreshTokens(string refreshToken, string accessToken);
+        Task<string> GenerateUserRefreshToken(int userId);
+        Task<Tokens> RefreshTokens(string refreshToken, string accessToken);
     }
 
     public class UserTokenService : IUserTokenService
@@ -65,14 +66,14 @@ namespace media_tracker.Services
         /// </summary>
         /// <param name="userId"></param>
         /// <returns>RefreshToken</returns>
-        public string GenerateUserRefreshToken(int userId)
+        public async Task<string> GenerateUserRefreshToken(int userId)
         {
             // Using a random number to generate the token
             var randomNumber = new byte[32];
             RandomNumberGenerator.Create().GetBytes(randomNumber);
             string token = Convert.ToBase64String(randomNumber);
 
-            UserToken dbUserToken = _context.UsersTokens.Find(userId);
+            UserToken dbUserToken = await _context.UsersTokens.FindAsync(userId);
 
             // Depending if we already have an entry or not in the DB we will update or add it
             if (dbUserToken != null)
@@ -81,10 +82,10 @@ namespace media_tracker.Services
             }
             else
             {
-                _context.UsersTokens.Add(new UserToken { UserId = userId, RefreshToken = token });
+                await _context.UsersTokens.AddAsync(new UserToken { UserId = userId, RefreshToken = token });
             }
 
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
 
             // Returns the token, because we will send it back to the client side
             return token;
@@ -95,9 +96,10 @@ namespace media_tracker.Services
         /// </summary>
         /// <param name="userId"></param>
         /// <returns></returns>
-        private string GetRefreshTokenFromDb(int userId)
+        private async Task<string> GetRefreshTokenFromDb(int userId)
         {
-            return _context.UsersTokens.Find(userId).RefreshToken;
+            var userToken = await _context.UsersTokens.FindAsync(userId);
+            return  userToken.RefreshToken;
         }
 
         /// <summary>
@@ -129,16 +131,16 @@ namespace media_tracker.Services
         /// </summary>
         /// <param name="refreshToken"></param>
         /// <param name="accessToken"></param>
-        public Tokens RefreshTokens(string refreshToken, string accessToken)
+        public async Task<Tokens> RefreshTokens(string refreshToken, string accessToken)
         {
             ClaimsPrincipal principal = GetPrincipalFromExpiredToken(accessToken);
             int userId = Convert.ToInt32(principal.Identity.Name);
-            string savedRefreshToken = GetRefreshTokenFromDb(userId);
+            string savedRefreshToken = await GetRefreshTokenFromDb(userId);
             if (savedRefreshToken != refreshToken)
                 throw new SecurityTokenException("Invalid Refresh Token");
 
             string newAccessToken = GenerateUserAccessToken(userId);
-            string newRefreshToken = GenerateUserRefreshToken(userId);
+            string newRefreshToken = await GenerateUserRefreshToken(userId);
             return new Tokens(userId, newRefreshToken, newAccessToken);
 
         }

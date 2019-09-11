@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Security.Cryptography;
+using System.Threading.Tasks;
 using media_tracker.Models;
 using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 
@@ -11,11 +12,11 @@ namespace media_tracker.Services
     /// </summary>
     public interface IUserService
     {
-        User GetUserById(int id);
-        User GetUserByUsername(string username);
+        Task<User> GetUserById(int id);
+        Task<User> GetUserByUsername(string username);
         User PreparesNewUser(User userInformation);
-        void AddUser(User userInformation);
-        void UpdateUser(int id, User userInfomation);
+        Task AddUser(User userInformation);
+        Task UpdateUser(int id, User userInfomation);
         Boolean CheckPassword(string password, User UserDb);
     }
 
@@ -35,16 +36,16 @@ namespace media_tracker.Services
         /// </summary>
         /// <param name="id">Id of the user</param>
         /// <returns> User information </returns>
-        public User GetUserById(int id) =>
-            _context.Users.Find(id);
+        public async Task<User> GetUserById(int id) =>
+            await _context.Users.FindAsync(id);
 
         /// <summary>
         /// Returns a user information from the DB from a given Username
         /// </summary>
         /// <param name="username"></param>
         /// <returns> User information </returns>
-        public User GetUserByUsername(string username) =>
-            _context.Users.SingleOrDefault(c => c.Username == username);
+        public async Task<User> GetUserByUsername(string username) =>
+            await _context.Users.ToAsyncEnumerable().SingleOrDefault(c => c.Username == username);
 
         /// <summary>
         /// Hash user password with generated salt
@@ -71,11 +72,11 @@ namespace media_tracker.Services
         /// Adds a new user to the DB
         /// </summary>
         /// <param name="userInformation">User Information</param>
-        public void AddUser(User userInformation)
+        public async Task AddUser(User userInformation)
         {
             // Adding the new user to the DB
-            _context.Users.Add(userInformation);
-            _context.SaveChanges();
+            await _context.Users.AddAsync(userInformation);
+            await _context.SaveChangesAsync();
         }
 
         /// <summary>
@@ -83,9 +84,9 @@ namespace media_tracker.Services
         /// </summary>
         /// <param name="id"></param>
         /// <param name="newUserInformation"></param>
-        public void UpdateUser(int id, User newUserInformation)
+        public async Task UpdateUser(int id, User newUserInformation)
         {
-            User user = _context.Users.Find(id);
+            User user = await _context.Users.FindAsync(id);
             if(newUserInformation.Password != null)
             {
                 newUserInformation.Salt = GeneratesSalt();
@@ -93,7 +94,7 @@ namespace media_tracker.Services
             }
             newUserInformation.ModificationDate = DateTime.Now;
             user.UpdateExistingUser(newUserInformation);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
         }
 
         /// <summary>

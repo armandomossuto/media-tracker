@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 using media_tracker.Models;
 using media_tracker.Services;
 using media_tracker.Tests.MockedData;
 using Moq;
+using Newtonsoft.Json;
 using Xunit;
 
 namespace media_tracker.Tests.UnitTests
@@ -21,7 +24,7 @@ namespace media_tracker.Tests.UnitTests
         }
 
         [Fact]
-        public void GetUserById()
+        public async Task GetUserById()
         {
             // Creating context, data and a new instance of the service that we want to test
             var mockedData = new MockedDbData();
@@ -29,14 +32,14 @@ namespace media_tracker.Tests.UnitTests
             UserService userService = GetMockedService(mockedContext.Context);
 
             int userId = 3;
-            User user = userService.GetUserById(userId);
+            User user = await userService.GetUserById(userId);
 
             // Verify result
             Assert.Equal(mockedData.Users.Find(u => u.Id == userId), user);
         }
 
         [Fact]
-        public void GetUserByUsername()
+        public async Task GetUserByUsername()
         {
             // Creating context, data and a new instance of the service that we want to test
             var mockedData = new MockedDbData();
@@ -44,7 +47,7 @@ namespace media_tracker.Tests.UnitTests
             UserService userService = GetMockedService(mockedContext.Context);
 
             string username = "user4";
-            User user = userService.GetUserByUsername(username);
+            User user = await userService.GetUserByUsername(username);
 
             // Verify result
             Assert.Equal(mockedData.Users.Find(u => u.Username == username), user);
@@ -78,8 +81,9 @@ namespace media_tracker.Tests.UnitTests
         }
 
         [Fact]
-        public void AddUserSuccess()
+        public async Task AddUserSuccess()
         {
+            var cancellationToken = new CancellationToken();
             // Creating context, data and a new instance of the service that we want to test
             var mockedData = new MockedDbData();
             MockedContext mockedContext = new MockedContext(mockedData);
@@ -92,16 +96,18 @@ namespace media_tracker.Tests.UnitTests
                 Email = "email@test.com"
             };
 
-            userService.AddUser(newUser);
+            await userService.AddUser(newUser);
 
             // Verify the new User has been added
-            mockedContext.UsersSet.Data.Verify(m => m.Add(It.IsAny<User>()), Times.Once());
-            mockedContext.Context.Verify(m => m.SaveChanges(), Times.Once());
+            mockedContext.UsersSet.Data.Verify(m => m.AddAsync(It.IsAny<User>(), cancellationToken), Times.Once());
+            mockedContext.Context.Verify(m => m.SaveChangesAsync(cancellationToken), Times.Once());
+            Assert.NotEmpty(mockedData.Users.FindAll(u => u.Username == newUser.Username));
         }
 
         [Fact]
-        public void UpdateUser()
+        public async Task UpdateUser()
         {
+            var cancellationToken = new CancellationToken();
             // Creating context, data and a new instance of the service that we want to test
             var mockedData = new MockedDbData();
             MockedContext mockedContext = new MockedContext(mockedData);
@@ -113,13 +119,13 @@ namespace media_tracker.Tests.UnitTests
                 Username = "newUsername",
             };
 
-            userService.UpdateUser(userId, newUserInformation);
+            await userService.UpdateUser(userId, newUserInformation);
 
-            User user = userService.GetUserById(userId);
+            User user = await userService.GetUserById(userId);
 
             // Verify results
             Assert.Equal(user.Username, newUserInformation.Username);
-            mockedContext.Context.Verify(m => m.SaveChanges(), Times.Once());
+            mockedContext.Context.Verify(m => m.SaveChangesAsync(cancellationToken), Times.Once());
         }
     }
 }
