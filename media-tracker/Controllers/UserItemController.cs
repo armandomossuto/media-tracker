@@ -33,8 +33,8 @@ namespace media_tracker.Controllers
         /// Returns all available categories
         /// </summary>
         [HttpGet("{categoryId}")]
-        public ActionResult<List<Item>> GetAllItemsFromCategory(int categoryId) =>
-            _userItemService.GetAllItemsFromCategory(categoryId);
+        public async Task<ActionResult<List<Item>>> GetAllItemsFromCategory(int categoryId) =>
+            await _userItemService.GetAllItemsFromCategory(categoryId);
 
         /// <summary>
         /// Returns all items registered by an user in a category
@@ -43,8 +43,8 @@ namespace media_tracker.Controllers
         /// <param name="userId"></param>
         /// <returns></returns>
         [HttpGet("{categoryId}/{userId}")]
-        public ActionResult<List<UserItemView>> GetAllItemsFromUserCategory(int categoryId, int userId) =>
-            _userItemService.GetAllItemsFromUserCategory(new UserCategory
+        public async Task<ActionResult<List<UserItemView>>> GetAllItemsFromUserCategory(int categoryId, int userId) =>
+            await _userItemService.GetAllItemsFromUserCategory(new UserCategory
             {
                 CategoryId = categoryId,
                 UserId = userId
@@ -58,11 +58,11 @@ namespace media_tracker.Controllers
         [HttpPost("add")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public ActionResult AddUserItem([FromBody] UserItem newUserItem)
+        public async Task<ActionResult> AddUserItem([FromBody] UserItem newUserItem)
         {
             try
             {
-                _userItemService.AddUserItem(newUserItem);
+                await _userItemService.AddUserItem(newUserItem);
             }
             catch (DbUpdateException ex)
             {
@@ -87,11 +87,11 @@ namespace media_tracker.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status409Conflict)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public ActionResult<Item> AddUserItem([FromBody] Item newItem, [FromQuery] int userId)
+        public async Task<ActionResult<Item>> AddUserItem([FromBody] Item newItem, [FromQuery] int userId)
         {
             try
             {
-                return _userItemService.AddNewItem(newItem, userId);
+                return await _userItemService.AddNewItem(newItem, userId);
             }
             catch (DbUpdateException ex)
             {
@@ -112,11 +112,11 @@ namespace media_tracker.Controllers
         /// <param name="userItemToDelete"></param>
         /// <returns></returns>
         [HttpDelete()]
-        public ActionResult DeleteItemFromUser([FromBody] UserItem userItemToDelete)
+        public async Task<ActionResult> DeleteItemFromUser([FromBody] UserItem userItemToDelete)
         {
             try
             {
-                _userItemService.DeleteUserItem(userItemToDelete);
+                await _userItemService.DeleteUserItem(userItemToDelete);
             }
             catch(Exception ex)
             {

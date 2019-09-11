@@ -1,10 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 using media_tracker.Models;
 using media_tracker.Services;
 using media_tracker.Tests.MockedData;
 using Moq;
-using Newtonsoft.Json;
 using Xunit;
 
 namespace media_tracker.Tests.UnitTests
@@ -22,7 +22,7 @@ namespace media_tracker.Tests.UnitTests
 
 
         [Fact]
-        public void GetUserById()
+        public async Task GetUserById()
         {
             // Creating context, data and a new instance of the service that we want to test
             var mockedData = new MockedDbData();
@@ -31,14 +31,14 @@ namespace media_tracker.Tests.UnitTests
 
             int categoryId = 1;
 
-            List<Item> itemsInCategory = userItemService.GetAllItemsFromCategory(categoryId);
+            List<Item> itemsInCategory = await userItemService.GetAllItemsFromCategory(categoryId);
 
             // Checking that we got all the list of categories
             Assert.Equal(mockedData.Items.FindAll(i => i.CategoryId == categoryId), itemsInCategory);
         }
 
         [Fact]
-        public void GetAllItemsFromUserCategory()
+        public async Task GetAllItemsFromUserCategory()
         {
             // Creating context, data and a new instance of the service that we want to test
             var mockedData = new MockedDbData();
@@ -50,15 +50,16 @@ namespace media_tracker.Tests.UnitTests
                 UserId = 1
             };
 
-            List<UserItemView> itemsInCategory = userItemService.GetAllItemsFromUserCategory(userCategory);
+            List<UserItemView> itemsInCategory = await userItemService.GetAllItemsFromUserCategory(userCategory);
 
             // Checking that we got all the list of categories
             Assert.Equal(2, itemsInCategory.Count);
         }
 
         [Fact]
-        public void AddNewItem()
+        public async Task AddNewItem()
         {
+            var cancellationToken = new CancellationToken();
             // Creating context, data and a new instance of the service that we want to test
             var mockedData = new MockedDbData();
             MockedContext mockedContext = new MockedContext(mockedData);
@@ -73,11 +74,11 @@ namespace media_tracker.Tests.UnitTests
 
             int userId = 1;
 
-            userItemService.AddNewItem(newItem, userId);
+            await userItemService.AddNewItem(newItem, userId);
 
             // Checking that the new Item was added correctly
-            mockedContext.UsersItemsSet.Data.Verify(m => m.Add(It.IsAny<UserItem>()), Times.Once());
-            mockedContext.Context.Verify(m => m.SaveChanges(), Times.Exactly(2));
+            mockedContext.UsersItemsSet.Data.Verify(m => m.AddAsync(It.IsAny<UserItem>(), cancellationToken), Times.Once());
+            mockedContext.Context.Verify(m => m.SaveChangesAsync(cancellationToken), Times.Exactly(2));
 
 
             // Getting the list of user items and checking that the new user item is there
@@ -86,12 +87,12 @@ namespace media_tracker.Tests.UnitTests
                 CategoryId = 2,
                 UserId = userId
             };
-            var itemsInUser = userItemService.GetAllItemsFromUserCategory(expectedUserCategory);
+            var itemsInUser = await userItemService.GetAllItemsFromUserCategory(expectedUserCategory);
             Assert.Equal(newItem.Name, itemsInUser.Find(i => i.Name == newItem.Name).Name);
         }
 
         [Fact]
-        public void DeleteUserItem()
+        public async Task DeleteUserItem()
         {
             // Creating context, data and a new instance of the service that we want to test
             var mockedData = new MockedDbData();
@@ -111,15 +112,15 @@ namespace media_tracker.Tests.UnitTests
                 UserId = 1
             };
 
-            var itemsInCategory = userItemService.GetAllItemsFromUserCategory(userCategory);
+            var itemsInCategory = await userItemService.GetAllItemsFromUserCategory(userCategory);
 
             // Checking that the items are initially there
             Assert.Equal(2, itemsInCategory.Count);
 
-            userItemService.DeleteUserItem(userItemToDelete);
+            await userItemService.DeleteUserItem(userItemToDelete);
 
             // Checking that the item was deleted
-            var updatedItemsInCategory = userItemService.GetAllItemsFromUserCategory(userCategory);
+            var updatedItemsInCategory = await userItemService.GetAllItemsFromUserCategory(userCategory);
             Assert.Single(updatedItemsInCategory);
 
         }

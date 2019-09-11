@@ -1,9 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Security.Cryptography;
+using System.Threading.Tasks;
 using media_tracker.Models;
-using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 using Microsoft.EntityFrameworkCore;
 
 namespace media_tracker.Services
@@ -13,11 +11,11 @@ namespace media_tracker.Services
     /// </summary>
     public interface IUserItemService
     {
-        List<Item> GetAllItemsFromCategory(int categoryId);
-        List<UserItemView> GetAllItemsFromUserCategory(UserCategory userCategory);
-        void AddUserItem(UserItem userItem);
-        Item AddNewItem(Item newItem, int userId);
-        void DeleteUserItem(UserItem userItemToDelete);
+        Task<List<Item>> GetAllItemsFromCategory(int categoryId);
+        Task<List<UserItemView>> GetAllItemsFromUserCategory(UserCategory userCategory);
+        Task AddUserItem(UserItem userItem);
+        Task<Item> AddNewItem(Item newItem, int userId);
+        Task DeleteUserItem(UserItem userItemToDelete);
     }
 
     public class UserItemService : IUserItemService
@@ -33,30 +31,30 @@ namespace media_tracker.Services
         /// Retrieves a list with all available categories
         /// </summary>
         /// <returns>List of categories</returns>
-        public List<Item> GetAllItemsFromCategory(int categoryId) =>
-            _context.Items.Where(item => item.CategoryId == categoryId).ToList();
+        public async Task<List<Item>> GetAllItemsFromCategory(int categoryId) =>
+            await _context.Items.Where(item => item.CategoryId == categoryId).ToListAsync();
 
         /// <summary>
         /// Retrieves list of items from a user and a specific category
         /// </summary>
         /// <param name="userCategory"></param>
         /// <returns></returns>
-        public List<UserItemView> GetAllItemsFromUserCategory(UserCategory userCategory)
+        public async Task<List<UserItemView>> GetAllItemsFromUserCategory(UserCategory userCategory)
         {
-            return (from userItem in _context.UsersItems
+            return await (from userItem in _context.UsersItems
                     join item in _context.Items on userItem.ItemId equals item.Id
                     where item.CategoryId == userCategory.CategoryId & userItem.UserId == userCategory.UserId 
-                    select new UserItemView(userItem, item)).ToList();
+                    select new UserItemView(userItem, item)).ToListAsync();
         }
 
         /// <summary>
         /// Adds a new UserItem to the DB
         /// </summary>
         /// <param name="newUserItem"></param>
-        public void AddUserItem(UserItem newUserItem)
+        public async Task AddUserItem(UserItem newUserItem)
         {
-            _context.UsersItems.Add(newUserItem);
-            _context.SaveChanges();
+            await _context.UsersItems.AddAsync(newUserItem);
+            await _context.SaveChangesAsync();
         }
 
         /// <summary>
@@ -65,12 +63,12 @@ namespace media_tracker.Services
         /// <param name="newItem"></param>
         /// <param name="userId"></param>
         /// <returns>The new Item</returns>
-        public Item AddNewItem(Item newItem, int userId)
+        public async Task<Item> AddNewItem(Item newItem, int userId)
         {
-            CreateItem(newItem);
+            await CreateItem(newItem);
             UserItem newUserItem = new UserItem { UserId = userId, ItemId = newItem.Id };
-            _context.UsersItems.Add(newUserItem);
-            _context.SaveChanges();
+            await _context.UsersItems.AddAsync(newUserItem);
+            await _context.SaveChangesAsync();
             return newItem;
         }
 
@@ -78,17 +76,17 @@ namespace media_tracker.Services
         /// Adds a new Item to the Items table
         /// </summary>
         /// <param name="newItem"></param>
-        private void CreateItem(Item newItem)
+        private async Task CreateItem(Item newItem)
         {
-            _context.Items.Add(newItem);
-            _context.SaveChanges();
+            await _context.Items.AddAsync(newItem);
+            await _context.SaveChangesAsync();
         }
 
-        public void DeleteUserItem(UserItem userItemToDelete)
+        public async Task DeleteUserItem(UserItem userItemToDelete)
         {
             UserItem userItemDb = _context.UsersItems.SingleOrDefault(userItem => userItem.UserId == userItemToDelete.UserId & userItem.ItemId == userItemToDelete.ItemId);
             _context.UsersItems.Remove(userItemDb);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
         }
 
     }

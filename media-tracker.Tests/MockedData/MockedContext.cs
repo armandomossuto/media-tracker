@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using media_tracker.Models;
-using Microsoft.EntityFrameworkCore;
+﻿using media_tracker.Models;
 using Moq;
 
 namespace media_tracker.Tests.MockedData

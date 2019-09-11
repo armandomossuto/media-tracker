@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
 using media_tracker.Models;
 using media_tracker.Services;
 using media_tracker.Tests.MockedData;
 using Moq;
-using Newtonsoft.Json;
 using Xunit;
 
 namespace media_tracker.Tests.UnitTests

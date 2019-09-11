@@ -1,5 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 using media_tracker.Models;
 using media_tracker.Services;
 using media_tracker.Tests.MockedData;
@@ -22,21 +23,21 @@ namespace media_tracker.Tests.UnitTests
         }
 
         [Fact]
-        public void GetAllCategories()
+        public async Task GetAllCategories()
         {
             // Creating context, data and a new instance of the service that we want to test
             var mockedData = new MockedDbData();
             MockedContext mockedContext = new MockedContext(mockedData);
             UserCategoryService userCategoryService = GetMockedService(mockedContext.Context);
 
-            List<Category> categoriesInContext = userCategoryService.GetAllCategories();
+            List<Category> categoriesInContext = await userCategoryService.GetAllCategories();
 
             // Checking that we got all the list of categories
             Assert.Equal(mockedData.Categories, categoriesInContext);
         }
 
         [Fact]
-        public void GetUserCategories()
+        public async Task GetUserCategories()
         {
             // Creating context, data and a new instance of the service that we want to test
             var mockedData = new MockedDbData();
@@ -44,7 +45,7 @@ namespace media_tracker.Tests.UnitTests
             UserCategoryService userCategoryService = GetMockedService(mockedContext.Context);
 
             int userId = 1;
-            List<Category> categoriesInUser = userCategoryService.GetUserCategories(userId);
+            List<Category> categoriesInUser = await userCategoryService.GetUserCategories(userId);
 
             var expectedCategory = new Category
             {
@@ -59,8 +60,9 @@ namespace media_tracker.Tests.UnitTests
         }
 
         [Fact]
-        public void AddUserCategory()
+        public async Task AddUserCategory()
         {
+            var cancellationToken = new CancellationToken();
             // Creating context, data and a new instance of the service that we want to test
             var mockedData = new MockedDbData();
             MockedContext mockedContext = new MockedContext(mockedData);
@@ -74,14 +76,14 @@ namespace media_tracker.Tests.UnitTests
                 UserId = userId
             };
 
-            userCategoryService.AddUserCategory(newUserCategory);
+            await userCategoryService.AddUserCategory(newUserCategory);
 
             // Checking that the new user category was added correctly
-            mockedContext.UsersCategoriesSet.Data.Verify(m => m.Add(It.IsAny<UserCategory>()), Times.Once());
-            mockedContext.Context.Verify(m => m.SaveChanges(), Times.Once());
+            mockedContext.UsersCategoriesSet.Data.Verify(m => m.AddAsync(It.IsAny<UserCategory>(), cancellationToken), Times.Once());
+            mockedContext.Context.Verify(m => m.SaveChangesAsync(cancellationToken), Times.Once());
 
             // Getting the list of user categories and checking that the new user category is there
-            List<Category> categoriesInUser = userCategoryService.GetUserCategories(userId);
+            List<Category> categoriesInUser = await userCategoryService.GetUserCategories(userId);
             Assert.Equal(2, categoriesInUser.Count);
             Assert.Contains(mockedData.Categories.Find(u => u.Id == categoryId), categoriesInUser);
 

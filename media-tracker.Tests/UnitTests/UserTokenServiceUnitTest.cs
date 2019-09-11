@@ -9,8 +9,6 @@ using System.Linq;
 using media_tracker.Helpers;
 using Microsoft.Extensions.Options;
 using System.Collections.Generic;
-using System.Security.Claims;
-using System.Linq.Expressions;
 using System.Threading.Tasks;
 using System.Threading;
 using media_tracker.Tests.MockedData;

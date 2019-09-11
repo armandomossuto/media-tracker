@@ -1,16 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
-using System.Security.Cryptography;
-using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 using media_tracker.Services;
 using media_tracker.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Logging;
+using System.Threading.Tasks;
 
 namespace media_tracker.Controllers
 {
@@ -33,15 +29,15 @@ namespace media_tracker.Controllers
         /// Returns all available categories
         /// </summary>
         [HttpGet()]
-        public ActionResult<List<Category>> GetAllCategories() =>
-            _userCategoryService.GetAllCategories();
+        public async Task<ActionResult<List<Category>>> GetAllCategories() =>
+            await _userCategoryService.GetAllCategories();
 
         /// <summary>
         /// Returns all categories from a user
         /// </summary>
         [HttpGet("{userId}")]
-        public ActionResult<List<Category>> GetUserCategories(int userId) =>
-            _userCategoryService.GetUserCategories(userId);
+        public async Task<ActionResult<List<Category>>> GetUserCategories(int userId) =>
+            await _userCategoryService.GetUserCategories(userId);
 
         /// <summary>
         /// Adds a new Category to an User
@@ -52,11 +48,11 @@ namespace media_tracker.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status409Conflict)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public ActionResult AddUserCategory(UserCategory newUserCategory)
+        public async Task<ActionResult> AddUserCategory(UserCategory newUserCategory)
         {
             try
             {
-                _userCategoryService.AddUserCategory(newUserCategory);
+                await _userCategoryService.AddUserCategory(newUserCategory);
 
             }
             catch (DbUpdateException ex)

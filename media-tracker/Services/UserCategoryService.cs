@@ -1,9 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Security.Cryptography;
+using System.Threading.Tasks;
 using media_tracker.Models;
-using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 using Microsoft.EntityFrameworkCore;
 
 namespace media_tracker.Services
@@ -13,9 +11,9 @@ namespace media_tracker.Services
     /// </summary>
     public interface IUserCategoryService
     {
-        List<Category> GetAllCategories();
-        List<Category> GetUserCategories(int userId);
-        void AddUserCategory(UserCategory newUserCategory);
+        Task<List<Category>> GetAllCategories();
+        Task<List<Category>> GetUserCategories(int userId);
+        Task AddUserCategory(UserCategory newUserCategory);
     }
 
     public class UserCategoryService : IUserCategoryService
@@ -31,29 +29,29 @@ namespace media_tracker.Services
         /// Retrieves a list with all available categories
         /// </summary>
         /// <returns>List of categories</returns>
-        public List<Category> GetAllCategories() =>
-            _context.Categories.ToList();
+        public async Task<List<Category>> GetAllCategories() =>
+            await _context.Categories.ToListAsync();
 
         /// <summary>
         /// Retrieves a list with all categories from an user
         /// </summary>
         /// <returns>List of categories</returns>
-        public List<Category> GetUserCategories(int userId)
+        public async Task<List<Category>> GetUserCategories(int userId)
         {
-            return (from userCategory in _context.UsersCategories
+            return await (from userCategory in _context.UsersCategories
                     join category in _context.Categories on userCategory.CategoryId equals category.Id
                     where userCategory.UserId == userId
-                    select category).ToList();
+                    select category).ToListAsync();
         }
 
         /// <summary>
         /// Adds a new UserCategory to the DB, which manages a relationship between an user and a category
         /// </summary>
         /// <param name="newUserCategory"></param>
-        public void AddUserCategory(UserCategory newUserCategory)
+        public async Task AddUserCategory(UserCategory newUserCategory)
         {
-            _context.UsersCategories.Add(newUserCategory);
-            _context.SaveChanges();
+            await _context.UsersCategories.AddAsync(newUserCategory);
+            await _context.SaveChangesAsync();
         }
 
     }
