@@ -85,3 +85,7 @@ export const ItemsActionType = Object.freeze({
 export type ItemsAction = { type: ItemsActionType, payload: any };
 
 export type ItemsActionCreator = (message: any) => (ItemsAction)
+
+export type SearchItemType = Exclude<keyof Item,  "id" | "categoryId">;
+
+export const searchItemTypes: Array<SearchItemType> = ["name", "description"];

@@ -1,11 +1,11 @@
 import * as React from "react";
-import { render, wait } from '@testing-library/react'
+import { render, RenderResult, fireEvent, waitForElement } from '@testing-library/react'
 
 import * as nock from 'nock';
 import { serverUrl } from 'configuration';
 
 import Items from './index';
-import { UserItemView, ItemsStatus, ItemState, ItemsProps } from "./types";
+import { UserItemView, ItemState, ItemsProps } from "./types";
 import { Category } from "../categories/types";
 import { SessionStateContext } from "services/session/state";
 import { genericSessionState } from "../../../../tests/testUtils";
@@ -13,13 +13,11 @@ import { genericSessionState } from "../../../../tests/testUtils";
 
 describe("Items Component", () => {
 
-  const flushPromises = () => new Promise(setImmediate);
-
   // Mocked data
   const categoryId = '1';
   const userId = genericSessionState.accountInfo.id;
   const allCategories: Array<Category> = [{ id: "1", name: "Category1", description: "" }, { id: "2", name: "Category2", description: "" }, { id: "3", name: "Category3", description: "" }];
-  const userItems: Array<UserItemView> = [{ id: "1", categoryId, rating: "5", state: ItemState.inProgress, name: "Item1", description: "" }, { id: "2", categoryId, rating: "3", state: ItemState.notSet, name: "Item2", description: "" }];
+  const userItems: Array<UserItemView> = [{ id: "1", categoryId, rating: "5", state: ItemState.inProgress, name: "Item1", description: "" }, { id: "2", categoryId, rating: "3", state: ItemState.notSet, name: "Item2", description: "description2" }];
   // Mocking the props for the component
   const ItemsProps: ItemsProps = {
     match: {
@@ -32,8 +30,9 @@ describe("Items Component", () => {
     }
   }
 
-  it('Can render Items properly', async (done) => {
+   let container: RenderResult;
 
+  beforeEach(async (done) => {
     // Mocking fetch requests
     nock(serverUrl)
       .get('/api/categories')
@@ -43,18 +42,51 @@ describe("Items Component", () => {
       .get(`/api/entries/${categoryId}/${userId}`)
       .reply(200, userItems);
 
-
     // Test first render and effect
-    const { getByText } = render(
+    container = render(
       <SessionStateContext.Provider value={genericSessionState}>
         <Items match={ItemsProps.match} />)
-        </SessionStateContext.Provider>,
+          </SessionStateContext.Provider>,
     );
 
     // Wait for async code and DOM to get updated
-    await wait(() => expect(getByText('Item1')).toBeTruthy());
-    expect(getByText('Item2')).toBeTruthy();
+    await waitForElement(() => container.getByText('Item1'));
+
     done();
   });
 
+  afterEach(() => container.unmount());
+
+  it('Can render Items properly',  () => expect(container.queryByText('Item2')).toBeTruthy());
+
+  it("Renders correctly the options matching the search term", async (done) => {
+    const searchInput = container.getByRole("textbox");
+    fireEvent.change(searchInput, { target: { value: 'Item' } });
+    // Expects both items
+    expect(container.queryByText('Item1')).toBeTruthy();
+    expect(container.queryByText('Item2')).toBeTruthy();
+    done();
+  })
+
+  it("Renders correctly the option matching the search term", async (done) => {
+    const searchInput = container.getByRole("textbox");
+    fireEvent.change(searchInput, { target: { value: 'em1' } });
+    expect(container.queryByText('Item1')).toBeTruthy();
+    expect(container.queryByText('Item2')).toBeFalsy();
+    done();
+  })
+
+  it("Works when changing search type dropdown", async (done) => {
+    // Click on dropdown button to open options
+    fireEvent.click(container.getByText("Search by name"));
+    fireEvent.click(container.getByText("description"));
+    expect(container.queryByText('Item1')).toBeTruthy();
+    expect(container.queryByText('Item2')).toBeTruthy();
+
+    const searchInput = container.getByRole("textbox");
+    fireEvent.change(searchInput, { target: { value: 'description2' } });
+    expect(container.queryByText('Item1')).toBeFalsy();
+    expect(container.queryByText('Item2')).toBeTruthy();
+    done();
+  })
 });

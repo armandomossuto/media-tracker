@@ -1,19 +1,30 @@
 import * as React from 'react';
-import { useReducer, useEffect } from 'react';
+import { useReducer, useEffect, useState } from 'react';
+
+// Types
 import { ItemsProps, ItemsStatus, UserItemView } from './types';
+import { Category } from '../categories/types';
+import { searchItemTypes, SearchItemType } from './types';
+
+// Custom hooks
+import { useCategoriesState } from '../categories/state';
+import { setCategories } from '../categories/actions';
+import { useSessionState } from 'state';
+
+// useReducer elements
 import reducer from './reducer';
 import { initialState } from './store'
-import { useCategoriesState } from '../categories/state';
-import { fetchRequest } from 'utils/fetch';
-import { useSessionState } from 'state';
-import { Category } from '../categories/types';
-import { setCategories } from '../categories/actions';
+import { setItemsStatus , setCategoryId, setItems } from './actions';
 
-import { setItemsStatus , setCategoryId, setItems, addItem, removeItem } from './actions';
+// Utils
+import { fetchRequest } from 'utils/fetch';
+
+// Components
 import Loading from 'components/common/generic-messages/loading';
 import Error from 'components/common/generic-messages/error';
 import EmptyList from 'components/common/generic-messages/empty-list';
 import CustomMessage from 'components/common/generic-messages/custom-message';
+import Dropdown from 'components/common/dropdown';
 
 const Items = ({ match }: ItemsProps) => {
 
@@ -68,6 +79,37 @@ const Items = ({ match }: ItemsProps) => {
     }
     fetchData();
   }, []);
+
+  // Term from the user input for searching items
+  const [searchedTerm, setSearchedTerm] = useState('');
+  const [searchType, setSearchType] = useState<SearchItemType>('name');
+
+
+  /**
+   * Handler for changing searchedTerm when the input search changes
+   * @param value introduces by the user in the input field
+   */ 
+  const onSearchItem = (value: string) => setSearchedTerm(value);
+
+  /**
+   * Filters the items list depending on the value of the search input and other filters
+   * @param items - list of items to filter
+   * @param searchedTerm - Term from the search performed by the user
+   * @param searchType - Property of Items to compare with the searched term
+   */
+  const filterItems = (items: Array<UserItemView>, searchedTerm: string, searchType: SearchItemType) => {
+    if(searchedTerm) {
+      return items.filter(item => item[searchType] ?
+        item[searchType].toLocaleLowerCase().includes(searchedTerm.toLocaleLowerCase())
+        : false
+        );
+    }
+
+    return items;
+  }
+  // Items filtered after a search or change of the filter options
+  const filteredItems = filterItems(items, searchedTerm, searchType);
+  
   switch (status) {
     case ItemsStatus.loading:
       return (<Loading />);
@@ -79,10 +121,23 @@ const Items = ({ match }: ItemsProps) => {
       return (
         <div className="items">
           <h2> {categoryName} </h2>
+          <div className="items__search">
+            <input
+              type="text"
+              value={searchedTerm}
+              onChange={e => onSearchItem(e.target.value)}
+              className="items__search__input"
+            ></input>
+            <Dropdown 
+              options={searchItemTypes} 
+              buttonText={`Search by ${searchType}`} 
+              onSelect={setSearchType}
+              />
+            </div>
           <div className="items__list"> 
             {items.length > 0
-              ? items.map((item, index) => 
-                  <div key={item.name}>{item.name}</div>)
+              ? filteredItems.map((item, index) => 
+                  <div className="items__list__element" key={item.name}>{item.name}</div>)
               : <EmptyList type={categoryName} className="item__list__empty" />
             }
           </div>
