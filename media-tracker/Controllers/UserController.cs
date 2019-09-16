@@ -214,7 +214,7 @@ namespace media_tracker.Controllers
                 {
                     return Unauthorized();
                 }
-                _logger.LogError("Error when refreshing tokens", ex.InnerException);
+                _logger.LogError("Error when refreshing tokens", ex);
                 return StatusCode(500);
             }
         }

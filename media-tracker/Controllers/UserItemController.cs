@@ -125,6 +125,21 @@ namespace media_tracker.Controllers
             }
             return Ok();
         }
+
+        [HttpPost("update")]
+        public async Task<ActionResult> UpdateUserItem([FromBody] UpdateUserItem updateUserItem)
+        {
+            try
+            {
+                await _userItemService.UpdateUserItem(updateUserItem);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("Error when updating a user item", ex);
+                return StatusCode(500);
+            }
+            return Ok();
+        }
     }
 
 }

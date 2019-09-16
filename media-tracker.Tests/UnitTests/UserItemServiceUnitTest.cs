@@ -122,8 +122,56 @@ namespace media_tracker.Tests.UnitTests
             // Checking that the item was deleted
             var updatedItemsInCategory = await userItemService.GetAllItemsFromUserCategory(userCategory);
             Assert.Single(updatedItemsInCategory);
-
         }
 
+        [Fact]
+        public async Task UpdateUserItemRating()
+        {
+            // Creating context, data and a new instance of the service that we want to test
+            var mockedData = new MockedDbData();
+            MockedContext mockedContext = new MockedContext(mockedData);
+            UserItemService userItemService = GetMockedService(mockedContext.Context);
+
+            UpdateUserItem updateUserItem = new UpdateUserItem
+            {
+                UserId = 1,
+                ItemId = 1,
+                NewUserItemInformation = new UserItem
+                {
+                    Rating = 4
+                }
+            };
+
+            await userItemService.UpdateUserItem(updateUserItem);
+
+            // Checking that the item rating was correctly updated and the other properties remain without any change
+            Assert.Equal(updateUserItem.NewUserItemInformation.Rating, mockedData.UsersItems.Find(u => u.UserId == 1 && u.ItemId == 1).Rating);
+            Assert.Equal(ItemState.NotSet, mockedData.UsersItems.Find(u => u.UserId == 1 && u.ItemId == 1).State);
+        }
+
+        [Fact]
+        public async Task UpdateUserItemState()
+        {
+            // Creating context, data and a new instance of the service that we want to test
+            var mockedData = new MockedDbData();
+            MockedContext mockedContext = new MockedContext(mockedData);
+            UserItemService userItemService = GetMockedService(mockedContext.Context);
+
+            UpdateUserItem updateUserItem = new UpdateUserItem
+            {
+                UserId = 1,
+                ItemId = 1,
+                NewUserItemInformation = new UserItem
+                {
+                    State = ItemState.Completed
+                }
+            };
+
+            await userItemService.UpdateUserItem(updateUserItem);
+
+            // Checking that the item rating was correctly updated and the other properties remain without any change
+            Assert.Equal(0, mockedData.UsersItems.Find(u => u.UserId == 1 && u.ItemId == 1).Rating);
+            Assert.Equal(ItemState.Completed, mockedData.UsersItems.Find(u => u.UserId == 1 && u.ItemId == 1).State);
+        }
     }
 }

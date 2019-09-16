@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Reflection;
+
 namespace media_tracker.Models
 {
     public class UserItem
@@ -18,6 +20,25 @@ namespace media_tracker.Models
         public void SetState(ItemState state)
         {
             this.State = state;
+        }
+
+        /// <summary>
+        /// Updates Rating or State on a userItem
+        /// </summary>
+        /// <param name="newUserItemInformation"></param>
+        public void UpdateExistingUserItem(UserItem newUserItemInformation)
+        {
+            Type type = typeof(UserItem);
+            PropertyInfo[] properties = type.GetProperties();
+            foreach (PropertyInfo property in properties)
+            {
+                var newValue = property.GetValue(newUserItemInformation);
+                // We only allow user to modify state or rating properties, and if they are not null
+                if (newValue != null && (property.Name == "Rating" || property.Name == "State"))
+                {
+                    property.SetValue(this, newValue);
+                }
+            }
         }
 
     }

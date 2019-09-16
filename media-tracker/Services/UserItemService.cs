@@ -16,6 +16,7 @@ namespace media_tracker.Services
         Task AddUserItem(UserItem userItem);
         Task<Item> AddNewItem(Item newItem, int userId);
         Task DeleteUserItem(UserItem userItemToDelete);
+        Task UpdateUserItem(UpdateUserItem updateUserItem);
     }
 
     public class UserItemService : IUserItemService
@@ -82,10 +83,27 @@ namespace media_tracker.Services
             await _context.SaveChangesAsync();
         }
 
+        /// <summary>
+        /// Deletes a user item
+        /// </summary>
+        /// <param name="userItemToDelete"></param>
+        /// <returns></returns>
         public async Task DeleteUserItem(UserItem userItemToDelete)
         {
             UserItem userItemDb = _context.UsersItems.SingleOrDefault(userItem => userItem.UserId == userItemToDelete.UserId & userItem.ItemId == userItemToDelete.ItemId);
             _context.UsersItems.Remove(userItemDb);
+            await _context.SaveChangesAsync();
+        }
+
+        /// <summary>
+        /// Updates rating and/or state in a user item
+        /// </summary>
+        /// <param name="updateUserItem"></param>
+        /// <returns></returns>
+        public async Task UpdateUserItem(UpdateUserItem updateUserItem)
+        {
+            UserItem userItem = await _context.UsersItems.SingleOrDefaultAsync(u => u.UserId == updateUserItem.UserId & u.ItemId == updateUserItem.ItemId);
+            userItem.UpdateExistingUserItem(updateUserItem.NewUserItemInformation);
             await _context.SaveChangesAsync();
         }
 
