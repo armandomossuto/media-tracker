@@ -1,3 +1,5 @@
+@import './item/style';
+
 .items {
 	display: flex;
 	flex-direction: column;
@@ -8,21 +10,6 @@
 	&__list {
 		display: flex;
 		flex-direction: column;
-
-		&__element {
-			@include secondary-combo;
-			@include generic-button;
-			height: 30px;
-			margin-bottom: 10px;
-			font-size: 20px;
-			text-align: center;
-			display: flex;
-    		align-items: center;
-    		justify-content: center;
-    		border-width: 1px;
-			border-style: solid;
-			cursor: pointer;
-		}
 
 		&__empty {
 			font-weight: bold;

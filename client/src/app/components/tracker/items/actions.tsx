@@ -1,4 +1,4 @@
-import { ItemsActionCreator, Item, ItemsActionType, ItemsStatus } from './types';
+import { ItemsActionCreator, Item, ItemsActionType, ItemsStatus, ItemRating } from './types';
 
 export const setCategoryId: ItemsActionCreator = (categoryId: string) => ({
   type: ItemsActionType.SET_CATEGORY_ID,
@@ -25,3 +25,7 @@ export const setItems: ItemsActionCreator = (items: Array<Item>) => ({
     payload: itemId,
   });
   
+  export const updateItemRating: ItemsActionCreator = ({ itemId, rating }) => ({
+    type: ItemsActionType.UPDATE_ITEM_RATING,
+    payload: { itemId, rating }
+  });

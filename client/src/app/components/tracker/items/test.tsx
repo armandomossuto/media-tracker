@@ -1,5 +1,5 @@
 import * as React from "react";
-import { render, RenderResult, fireEvent, waitForElement } from '@testing-library/react'
+import { render, RenderResult, fireEvent, waitForElement, wait } from '@testing-library/react'
 
 import * as nock from 'nock';
 import { serverUrl } from 'configuration';
@@ -87,6 +87,21 @@ describe("Items Component", () => {
     fireEvent.change(searchInput, { target: { value: 'description2' } });
     expect(container.queryByText('Item1')).toBeFalsy();
     expect(container.queryByText('Item2')).toBeTruthy();
+    done();
+  })
+
+  it("Renders rating and updates it", async (done) => {
+    nock(serverUrl)
+      .post('/api/entries/update')
+      .reply(200);
+
+    // Calculate the total number of full starts that should be in the screen according to the items' rating
+    const totalStars: number = userItems.map(item => item.rating).reduce((a,b) => Number(a) + Number(b), 0);
+    expect(container.queryAllByText('★')).toHaveLength(totalStars);
+
+    // We are clicking the 3rd star of the first item, changing its rating from 5 to 3. So we should have now totalStarts - 2 in total in the screen
+    fireEvent.click(container.getAllByText('★')[2])
+    await wait(() =>  expect(container.queryAllByText('★')).toHaveLength(totalStars - 2));
     done();
   })
 });

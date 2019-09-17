@@ -25,6 +25,14 @@ const reducer: React.Reducer<ItemsState, ItemsAction> = (state = initialState, a
         return { ...state, items }
       }
 
+    case ItemsActionType.UPDATE_ITEM_RATING: {
+      const { itemId, rating } = action.payload;
+      const items = [...state.items];
+      const item = items.find(item => item.id == itemId);
+      item.rating = rating;
+      return { ...state, items }
+    }
+
     default: return state;
   }
 };

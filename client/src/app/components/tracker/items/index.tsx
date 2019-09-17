@@ -25,6 +25,7 @@ import Error from 'components/common/generic-messages/error';
 import EmptyList from 'components/common/generic-messages/empty-list';
 import CustomMessage from 'components/common/generic-messages/custom-message';
 import Dropdown from 'components/common/dropdown';
+import Item from './item';
 
 const Items = ({ match }: ItemsProps) => {
 
@@ -136,8 +137,7 @@ const Items = ({ match }: ItemsProps) => {
             </div>
           <div className="items__list"> 
             {items.length > 0
-              ? filteredItems.map((item, index) => 
-                  <div className="items__list__element" key={item.name}>{item.name}</div>)
+              ? filteredItems.map((item, index) => <Item item={item} key={item.name} itemsDispatch={dispatch} />)
               : <EmptyList type={categoryName} className="item__list__empty" />
             }
           </div>

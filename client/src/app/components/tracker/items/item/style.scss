@@ -1,0 +1,30 @@
+@import './rating/style';
+
+.items-element {
+  @include secondary-combo;
+  @include generic-button;
+  min-height: 30px;
+  margin-bottom: 10px;
+  font-size: 20px;
+  text-align: center;
+  border-width: 1px;
+  border-style: solid;
+  cursor: pointer;
+  position: relative;
+  
+  &__name {
+    margin: 20px auto;
+  }
+
+  &__rating-and-state {
+    position: absolute;
+    right: 50px;
+    top: 10px;
+  }
+
+  &__notification {
+    font-weight: bold;
+    margin-top: 10px;
+    min-height: $font-normal;
+  }
+}

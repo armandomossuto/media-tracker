@@ -39,8 +39,15 @@ export const fetchRequest = async (path: string, requestType: RequestType, dispa
     throw response;
   }
 
+
   if(response.ok) {
-    return response.json();
+    // We have responses from server with 200 status and empty body
+    // That is why we have a try/catch block here due to response.json() throwing an error in that case
+    try{
+      return await response.json();
+    } catch(error) {
+      return null;
+    }
   }
 };
 
