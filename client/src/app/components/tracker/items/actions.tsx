@@ -29,3 +29,8 @@ export const setItems: ItemsActionCreator = (items: Array<Item>) => ({
     type: ItemsActionType.UPDATE_ITEM_RATING,
     payload: { itemId, rating }
   });
+
+  export const updateItemState: ItemsActionCreator = ({ itemId, state }) => ({
+    type: ItemsActionType.UPDATE_ITEM_STATE,
+    payload: { itemId, state }
+  });

@@ -1,13 +1,23 @@
 import * as React from 'react';
 import { useState } from 'react';
 
+// Types
 import { ItemDescriptionProps, UpdateUserItem, UpdateItemNotification } from './types';
-import Rating from './rating';
-import { ItemRating } from '../types';
+import { ItemRating, ItemState } from '../types';
+
+// Custom hooks, utils and action creators
 import { useSessionState } from 'state';
 import { fetchRequest } from 'utils/fetch';
-import { updateItemRating } from '../actions';
+import { updateItemRating, updateItemState } from '../actions';
 
+// Components
+import Rating from './rating';
+import State from './state';
+
+/**
+ * Component belonging to one item inside the items page of the tracker
+ * @param param0 
+ */
 const Item = ({ item, itemsDispatch }: ItemDescriptionProps) => {
 
   // For showing or hiding all the details of the item
@@ -43,14 +53,35 @@ const Item = ({ item, itemsDispatch }: ItemDescriptionProps) => {
       .catch(() => setNotification(UpdateItemNotification.ratingError));
   };
 
+  /**
+   * Updates item state
+   * @param event
+   * @param newState 
+   */
+  const updateState = (newState: ItemState) => {
+    // Creating the object necessary for the update user item request
+    const updateUser: UpdateUserItem = {
+      userId: accountInfo.id,
+      itemId: item.id,
+      newUserItemInformation: {
+        state: newState
+      }
+    }
+
+    fetchRequest('api/entries/update', 'POST', sessionStateDispatch, updateUser)
+      .then(() => {
+        itemsDispatch(updateItemState({ itemId: item.id, state: newState }))
+        setNotification(UpdateItemNotification.initial)      
+      })
+      .catch(() => setNotification(UpdateItemNotification.stateError));
+  };
+
   return(
     <div className="items-element" onClick={() => setShowMoreInfo(!showMoreInfo)} >
       <h3 className="items-element__name">{item.name}</h3>
       <div className="items-element__rating-and-state">
               <Rating rating={item.rating} updateRating={updateRating} />
-              <div className="items-elements__state">
-                {item.state}
-              </div>
+              <State state={item.state} updateState={updateState} />
       </div>
       {showMoreInfo
         ? 

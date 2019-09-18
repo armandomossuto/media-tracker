@@ -1,0 +1,25 @@
+.item-state {
+  position: relative;
+
+  &__options {
+    position: absolute;
+    top: -45px;
+    background-color: $third-color;
+    border: solid 2px;
+    z-index: 2;
+    padding: 10px;
+    white-space: nowrap;
+
+    &:hover {
+      font-weight: normal;
+    }
+
+    &__option {
+      margin: 10px 0;
+
+      &:hover {
+        font-weight: bold;
+      }
+    }
+  }
+}

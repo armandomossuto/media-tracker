@@ -16,6 +16,12 @@ export const ItemState = Object.freeze({
   completed: 'Completed' as '2'
 });
 
+export const ItemStateEnum = Object.freeze({
+  0: 'Not set',
+  1: 'In progress',
+  2: 'Completed'
+});
+
 export type ItemRating = EnumLiteralsOf<typeof ItemRating>
 
 export const ItemRating = Object.freeze({
@@ -79,7 +85,8 @@ export const ItemsActionType = Object.freeze({
   SET_STATUS: 'SET_STATUS' as 'SET_STATUS',
   ADD_ITEM: 'ADD_ITEM' as 'ADD_ITEM',
   REMOVE_ITEM: 'REMOVE_ITEM' as 'REMOVE_ITEM',
-  UPDATE_ITEM_RATING: 'UPDATE_ITEM_RATING' as 'UPDATE_ITEM_RATING'
+  UPDATE_ITEM_RATING: 'UPDATE_ITEM_RATING' as 'UPDATE_ITEM_RATING',
+  UPDATE_ITEM_STATE: 'UPDATE_ITEM_STATE' as 'UPDATE_ITEM_STATE'
 })
 
 

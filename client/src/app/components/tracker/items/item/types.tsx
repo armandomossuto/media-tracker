@@ -12,6 +12,11 @@ export type ItemRatingProps = {
     updateRating: Function
 }
 
+export type ItemStateProps = {
+    state: ItemState
+    updateState: Function
+}
+
 export type UpdateUserItem = {
     itemId: string
     userId: string
@@ -26,4 +31,5 @@ export type UpdateItemNotification = EnumLiteralsOf<typeof UpdateItemNotificatio
 export const UpdateItemNotification = Object.freeze({
     initial: '' as 'initial',
     ratingError: 'There was an error when we tried to update the rating. Please try again' as 'ratingError',
+    stateError: 'There was an error when we tried to update the state. Please try again' as 'stateError'
 })

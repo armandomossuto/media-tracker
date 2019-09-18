@@ -33,6 +33,14 @@ const reducer: React.Reducer<ItemsState, ItemsAction> = (state = initialState, a
       return { ...state, items }
     }
 
+    case ItemsActionType.UPDATE_ITEM_STATE: {
+      const { itemId, state: itemState  } = action.payload;
+      const items = [...state.items];
+      const item = items.find(item => item.id == itemId);
+      item.state = itemState;
+      return { ...state, items }
+    }
+
     default: return state;
   }
 };

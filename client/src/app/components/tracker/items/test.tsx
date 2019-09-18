@@ -5,7 +5,7 @@ import * as nock from 'nock';
 import { serverUrl } from 'configuration';
 
 import Items from './index';
-import { UserItemView, ItemState, ItemsProps } from "./types";
+import { UserItemView, ItemsProps } from "./types";
 import { Category } from "../categories/types";
 import { SessionStateContext } from "services/session/state";
 import { genericSessionState } from "../../../../tests/testUtils";
@@ -17,7 +17,7 @@ describe("Items Component", () => {
   const categoryId = '1';
   const userId = genericSessionState.accountInfo.id;
   const allCategories: Array<Category> = [{ id: "1", name: "Category1", description: "" }, { id: "2", name: "Category2", description: "" }, { id: "3", name: "Category3", description: "" }];
-  const userItems: Array<UserItemView> = [{ id: "1", categoryId, rating: "5", state: ItemState.inProgress, name: "Item1", description: "" }, { id: "2", categoryId, rating: "3", state: ItemState.notSet, name: "Item2", description: "description2" }];
+  const userItems: Array<UserItemView> = [{ id: "1", categoryId, rating: "5", state: "1", name: "Item1", description: "" }, { id: "2", categoryId, rating: "3", state: "0", name: "Item2", description: "description2" }];
   // Mocking the props for the component
   const ItemsProps: ItemsProps = {
     match: {
@@ -90,7 +90,7 @@ describe("Items Component", () => {
     done();
   })
 
-  it("Renders rating and updates it", async (done) => {
+  it("Renders item rating and updates it", async (done) => {
     nock(serverUrl)
       .post('/api/entries/update')
       .reply(200);
@@ -102,6 +102,31 @@ describe("Items Component", () => {
     // We are clicking the 3rd star of the first item, changing its rating from 5 to 3. So we should have now totalStarts - 2 in total in the screen
     fireEvent.click(container.getAllByText('★')[2])
     await wait(() =>  expect(container.queryAllByText('★')).toHaveLength(totalStars - 2));
+    done();
+  })
+
+
+  it("Renders item state and updates it", async (done) => {
+    nock(serverUrl)
+      .post('/api/entries/update')
+      .reply(200);
+
+    // Items number 2 has not set state at the beggining
+    expect(container.queryByText('Not set')).toBeTruthy();
+
+    // Let's open the options menu by clicking on the item state
+    fireEvent.click(container.getByText('Not set'));
+
+    // Dropdown menu with options is open
+    expect(container.container.querySelector('.item-state__options')).toBeTruthy();
+
+    // Click on Completed option to trigger a change of state to it
+    fireEvent.click(container.getByText('Completed'));
+
+    // Dropdown menu with options should be closed now
+    expect(container.container.querySelector('.item-state__options')).toBeFalsy();
+
+    await wait(() =>  expect(container.findAllByText('Completed')).toBeTruthy());
     done();
   })
 });

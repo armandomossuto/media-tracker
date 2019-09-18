@@ -1,7 +1,9 @@
 import * as React from 'react';
 import { ItemRatingProps } from '../types';
 
-
+/**
+ * Renders and allows to change an Item rating
+ */
 const Rating = ({ rating, updateRating }: ItemRatingProps) =>
   <div className="item-rating">
     { //We will generate 5 stars, and we will apply full star class for representing the rating
