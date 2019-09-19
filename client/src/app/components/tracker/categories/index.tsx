@@ -54,10 +54,10 @@ const Categories: React.FunctionComponent = () => {
     }
   }, []);
 
-  const onSelectCategory = (categoryName: string) => setRedirectPath(`/tracker/${categoryName}`);
+  const onSelectCategory = (categoryName: string): void => setRedirectPath(`/tracker/${categoryName}`);
 
   // If there is a redirect path, we will transition to that path
-  if(redirectPath) {
+  if (redirectPath) {
     return (<Redirect to={redirectPath} />)
   }
 
@@ -73,7 +73,7 @@ const Categories: React.FunctionComponent = () => {
           <div
             className="categories__configuration-option"
           >
-          <AddCategory />
+            <AddCategory />
           </div>
           <div className="categories__list">
             {userCategories.length > 0
@@ -81,8 +81,8 @@ const Categories: React.FunctionComponent = () => {
                 <div
                   className="categories__list__element"
                   key={index}
-                  onClick={() => onSelectCategory(category.name)}
-                > 
+                  onClick={(): void => onSelectCategory(category.name)}
+                >
                   {category.name}
                 </div>
               )

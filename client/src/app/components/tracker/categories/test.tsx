@@ -1,5 +1,5 @@
 import * as React from "react";
-import { render, wait, RenderResult, waitForElement, fireEvent, waitForElementToBeRemoved, waitForDomChange } from '@testing-library/react'
+import { render, RenderResult, waitForElement, fireEvent, waitForDomChange } from '@testing-library/react';
 
 import * as nock from 'nock';
 import { serverUrl } from 'configuration';
@@ -14,8 +14,15 @@ import { WithModal } from "components/common/modal";
 import { AddCategoryNotification } from "./add-category/types";
 
 describe("Categories Component", () => {
-  const mockedUserCategories: Array<Category> = [{ id: "1", name: "Category1", description: "" }, { id: "2", name: "Category2", description: "" }]
-  const allCategories: Array<Category> = [{ id: "1", name: "Category1", description: "" }, { id: "2", name: "Category2", description: "" }, { id: "3", name: "Category3", description: "" }];
+  const mockedUserCategories: Array<Category> = [
+    { id: "1", name: "Category1", description: "" },
+    { id: "2", name: "Category2", description: "" }
+  ];
+  const allCategories: Array<Category> = [
+    { id: "1", name: "Category1", description: "" },
+    { id: "2", name: "Category2", description: "" },
+    { id: "3", name: "Category3", description: "" }
+  ];
 
   const CategoriesComponent = WithModal(CategoriesStateProvider(Categories));
   const TestComponent = (

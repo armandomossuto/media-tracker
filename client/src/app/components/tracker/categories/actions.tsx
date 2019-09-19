@@ -1,9 +1,9 @@
 import { CategoriesActionCreator, Category, CategoriesActionType, CategoriesStatus } from './types';
 
 export const setCategories: CategoriesActionCreator = (categories: Array<Category>) => ({
-    type: CategoriesActionType.SET_CATEGORIES,
-    payload: categories,
-  });
+  type: CategoriesActionType.SET_CATEGORIES,
+  payload: categories,
+});
   
 export const setUserCategories: CategoriesActionCreator = (userCategories: Array<Category>) => ({
   type: CategoriesActionType.SET_USER_CATEGORIES,

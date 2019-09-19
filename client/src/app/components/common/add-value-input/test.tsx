@@ -13,12 +13,12 @@ describe('Common Add Value Input component', () => {
   let cancelButton: ReactWrapper;
 
   // Must call this function after testing something that will trigger an async operation
-  const flushPromises = () => new Promise(setImmediate);
+  const flushPromises = (): Promise<void> => new Promise(setImmediate);
 
-  let mockedValue: string = '';
-  const mockedOnAddValue = (value: string) =>  mockedValue = value;
+  let mockedValue = '';
+  const mockedOnAddValue = (value: string): string =>  mockedValue = value;
 
-  const updateWrappers = () => {
+  const updateWrappers = (): void => {
     input = container.find('input[type="text"]');
     showButton = container.find('.add-value-input__show-button');
     addButton = container.find('.add-value-input__button').at(0);

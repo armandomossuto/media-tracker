@@ -1,7 +1,7 @@
 import * as React from "react";
 import { render, wait, fireEvent, RenderResult } from '@testing-library/react';
 
-import * as nock  from 'nock';
+import * as nock from 'nock';
 import { serverUrl } from 'configuration';
 
 import CreateAccount from "./index";
@@ -22,11 +22,11 @@ describe('Create Account component', () => {
   let submitButton: HTMLElement;
 
   // React testing queries
-  let getByText: Function; 
+  let getByText: Function;
   let getAllByRole: Function;
 
   beforeEach(() => {
-    container = render(<CreateAccount setAccountIntialiseStatus={() => { }} />);
+    container = render(<CreateAccount setAccountIntialiseStatus={(): void => { }} />);
     getByText = container.getByText;
     getAllByRole = container.getAllByRole;
 
@@ -53,7 +53,7 @@ describe('Create Account component', () => {
     await wait(expect(getByText(CreateAccountNotification.noUsername)).toBeTruthy());
     done();
   });
- 
+
   it('Shows short password notification correctly', async (done) => {
     fireEvent.change(usernameInput, { target: { value: genericUsername } });
     fireEvent.change(passwordInput, { target: { value: invalidPassword } });
@@ -69,18 +69,18 @@ describe('Create Account component', () => {
     fireEvent.change(passwordInput, { target: { value: genericValidPassword } });
     fireEvent.change(emailInput, { target: { value: invalidEmail } });
     fireEvent.click(submitButton);
-    
+
     await wait(expect(getByText(CreateAccountNotification.invalidEmail)).toBeTruthy());
     done();
   })
 
   it('Account Creation succesfully', async (done) => {
     nock(serverUrl)
-    .post('/api/user')
-    .reply(200, {
-      userInformation: {},
-      userToken: {} 
-    });
+      .post('/api/user')
+      .reply(200, {
+        userInformation: {},
+        userToken: {}
+      });
 
     fireEvent.change(usernameInput, { target: { value: genericUsername } });
     fireEvent.change(passwordInput, { target: { value: genericValidPassword } });

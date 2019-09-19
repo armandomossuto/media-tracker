@@ -16,8 +16,15 @@ describe("Items Component", () => {
   // Mocked data
   const categoryId = '1';
   const userId = genericSessionState.accountInfo.id;
-  const allCategories: Array<Category> = [{ id: "1", name: "Category1", description: "" }, { id: "2", name: "Category2", description: "" }, { id: "3", name: "Category3", description: "" }];
-  const userItems: Array<UserItemView> = [{ id: "1", categoryId, rating: "5", state: "1", name: "Item1", description: "" }, { id: "2", categoryId, rating: "3", state: "0", name: "Item2", description: "description2" }];
+  const allCategories: Array<Category> = [
+    { id: "1", name: "Category1", description: "" },
+    { id: "2", name: "Category2", description: "" },
+    { id: "3", name: "Category3", description: "" }
+  ];
+  const userItems: Array<UserItemView> = [
+    { id: "1", categoryId, rating: "5", state: "1", name: "Item1", description: "" },
+    { id: "2", categoryId, rating: "3", state: "0", name: "Item2", description: "description2" }
+  ];
   // Mocking the props for the component
   const ItemsProps: ItemsProps = {
     match: {
@@ -30,7 +37,7 @@ describe("Items Component", () => {
     }
   }
 
-   let container: RenderResult;
+  let container: RenderResult;
 
   beforeEach(async (done) => {
     // Mocking fetch requests
@@ -46,7 +53,7 @@ describe("Items Component", () => {
     container = render(
       <SessionStateContext.Provider value={genericSessionState}>
         <Items match={ItemsProps.match} />)
-          </SessionStateContext.Provider>,
+      </SessionStateContext.Provider>,
     );
 
     // Wait for async code and DOM to get updated
@@ -57,7 +64,7 @@ describe("Items Component", () => {
 
   afterEach(() => container.unmount());
 
-  it('Can render Items properly',  () => expect(container.queryByText('Item2')).toBeTruthy());
+  it('Can render Items properly', () => expect(container.queryByText('Item2')).toBeTruthy());
 
   it("Renders correctly the options matching the search term", async (done) => {
     const searchInput = container.getByRole("textbox");
@@ -96,12 +103,12 @@ describe("Items Component", () => {
       .reply(200);
 
     // Calculate the total number of full starts that should be in the screen according to the items' rating
-    const totalStars: number = userItems.map(item => item.rating).reduce((a,b) => Number(a) + Number(b), 0);
+    const totalStars: number = userItems.map(item => item.rating).reduce((a, b) => Number(a) + Number(b), 0);
     expect(container.queryAllByText('★')).toHaveLength(totalStars);
 
     // We are clicking the 3rd star of the first item, changing its rating from 5 to 3. So we should have now totalStarts - 2 in total in the screen
     fireEvent.click(container.getAllByText('★')[2])
-    await wait(() =>  expect(container.queryAllByText('★')).toHaveLength(totalStars - 2));
+    await wait(() => expect(container.queryAllByText('★')).toHaveLength(totalStars - 2));
     done();
   })
 
@@ -126,7 +133,7 @@ describe("Items Component", () => {
     // Dropdown menu with options should be closed now
     expect(container.container.querySelector('.item-state__options')).toBeFalsy();
 
-    await wait(() =>  expect(container.findAllByText('Completed')).toBeTruthy());
+    await wait(() => expect(container.findAllByText('Completed')).toBeTruthy());
     done();
   })
 });

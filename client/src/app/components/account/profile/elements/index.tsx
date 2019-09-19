@@ -5,7 +5,7 @@ import AddValueInput from 'components/common/add-value-input';
 /**
  * List of all account information elements, with current value and options to change if applicable
  */
-const Elements = ({ accountInfoView, updatedElements, onElementsChange }: ProfileElementsProps) =>
+const Elements: React.FunctionComponent<ProfileElementsProps> = ({ accountInfoView, updatedElements, onElementsChange }: ProfileElementsProps) =>
   <div>
     {
       Object.keys(accountInfoView).map(element =>
@@ -24,7 +24,7 @@ const Elements = ({ accountInfoView, updatedElements, onElementsChange }: Profil
           <div className="profile__element__change-value">
             {changeEnum[element]
               ? <AddValueInput
-                onAddValue={(value: string) => onElementsChange(value, element)}
+                onAddValue={(value: string): void => onElementsChange(value, element)}
                 showButton={true}
               />
               : null
@@ -46,7 +46,7 @@ const Elements = ({ accountInfoView, updatedElements, onElementsChange }: Profil
       </div>
       <div className="profile__element__change-value">
         <AddValueInput
-          onAddValue={(value: string) => onElementsChange(value, "password")}
+          onAddValue={(value: string): void => onElementsChange(value, "password")}
           showButton={true}
           type="password"
         />

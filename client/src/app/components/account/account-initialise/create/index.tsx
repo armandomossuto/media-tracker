@@ -13,7 +13,7 @@ import { validateEmail } from 'utils/validations';
 import { simpleFetch } from 'utils/fetch';
 import { createAuthenticationCookie } from 'utils/cookies';
 
-const Create = ({ setAccountIntialiseStatus }: AccountInitialiseProps) => {
+const Create: React.FunctionComponent<AccountInitialiseProps> = ({ setAccountIntialiseStatus }: AccountInitialiseProps) => {
 
   // Session State dispatcher
   const [, sessionStateDispatch ] = useSessionState();
@@ -35,7 +35,7 @@ const Create = ({ setAccountIntialiseStatus }: AccountInitialiseProps) => {
   /**
   * Handles Input Changes to update the values
   */
-  const onInputChange = (e: React.ChangeEvent<HTMLInputElement>, elementName: string) => {
+  const onInputChange = (e: React.ChangeEvent<HTMLInputElement>, elementName: string): void => {
     const updatedAccountInfo = { ...newAccountInfo };
     updatedAccountInfo[elementName] = e.target.value;
     setNewAccountInfo(updatedAccountInfo);
@@ -45,9 +45,9 @@ const Create = ({ setAccountIntialiseStatus }: AccountInitialiseProps) => {
   /**
    * Sends Account Information to the server
    */
-  const onSubmitAccount = () => {
-     // Validating that the user introduced an username
-     if (newAccountInfo.username.length < 1) {
+  const onSubmitAccount = (): void => {
+    // Validating that the user introduced an username
+    if (newAccountInfo.username.length < 1) {
       setNotification(CreateAccountNotification.noUsername);
     } else if (newAccountInfo.password.length < 6) {
       // Password submitted is incorrect. We display notification message
@@ -87,7 +87,7 @@ const Create = ({ setAccountIntialiseStatus }: AccountInitialiseProps) => {
         <input
           type="text"
           className="create-account__element__input"
-          onChange={e => onInputChange(e, 'username')}
+          onChange={(e): void => onInputChange(e, 'username')}
           value={username}
         ></input>
       </div>
@@ -96,7 +96,7 @@ const Create = ({ setAccountIntialiseStatus }: AccountInitialiseProps) => {
         <input
           type="text"
           className="create-account__element__input"
-          onChange={e => onInputChange(e, 'email')}
+          onChange={(e): void => onInputChange(e, 'email')}
           value={email}
         ></input>
       </div>
@@ -105,7 +105,7 @@ const Create = ({ setAccountIntialiseStatus }: AccountInitialiseProps) => {
         <input
           type="password"
           className="create-account__element__input"
-          onChange={e => onInputChange(e, 'password')}
+          onChange={(e): void => onInputChange(e, 'password')}
           value={password}
         ></input>
       </div>

@@ -2,13 +2,11 @@ import { EnumLiteralsOf, User } from "types";
 import { match } from "react-router";
 
 export interface Item {
-  id: string,
-  categoryId: string,
-  name: string,
-  description: string,
+  id: string;
+  categoryId: string;
+  name: string;
+  description: string;
 }
-
-export type ItemState = EnumLiteralsOf<typeof ItemState>
 
 export const ItemState = Object.freeze({
   notSet: 'Not set' as '0',
@@ -16,13 +14,13 @@ export const ItemState = Object.freeze({
   completed: 'Completed' as '2'
 });
 
+export type ItemState = EnumLiteralsOf<typeof ItemState>;
+
 export const ItemStateEnum = Object.freeze({
   0: 'Not set',
   1: 'In progress',
   2: 'Completed'
 });
-
-export type ItemRating = EnumLiteralsOf<typeof ItemRating>
 
 export const ItemRating = Object.freeze({
   notSet: 'Not set' as '0',
@@ -33,12 +31,14 @@ export const ItemRating = Object.freeze({
   5: '5' as '5',
 });
 
+export type ItemRating = EnumLiteralsOf<typeof ItemRating>;
+
 export interface UserItem {
-  id: string,
-  itemId: string,
-  userId: string,
-  rating: ItemRating,
-  state: ItemState
+  id: string;
+  itemId: string;
+  userId: string;
+  rating: ItemRating;
+  state: ItemState;
 }
 
 export class UserItem implements UserItem {
@@ -51,11 +51,9 @@ export class UserItem implements UserItem {
 }
 
 export interface UserItemView extends Item {
-  rating: ItemRating,
-  state: ItemState
+  rating: ItemRating;
+  state: ItemState;
 }
-
-export type ItemsStatus = EnumLiteralsOf<typeof ItemsStatus>
 
 export const ItemsStatus = Object.freeze({
   loading: 'loading' as 'loading',
@@ -64,20 +62,20 @@ export const ItemsStatus = Object.freeze({
   wrongCategory: 'wrongCategory' as 'wrongCategory'
 })
 
+export type ItemsStatus = EnumLiteralsOf<typeof ItemsStatus>;
+
 export type ItemsState = {
-  categoryId: string,
-  items: Array<UserItemView>,
-  status: ItemsStatus
+  categoryId: string;
+  items: Array<UserItemView>;
+  status: ItemsStatus;
 }
 
 export type matchParams = {
-  categoryName: string
+  categoryName: string;
 }
 export type ItemsProps = {
-  match: match<matchParams>
+  match: match<matchParams>;
 }
-
-export type ItemsActionType = EnumLiteralsOf<typeof ItemsActionType>
 
 export const ItemsActionType = Object.freeze({
   SET_CATEGORY_ID: 'SET_CATEGORY_ID' as 'SET_CATEGORY_ID',
@@ -89,10 +87,14 @@ export const ItemsActionType = Object.freeze({
   UPDATE_ITEM_STATE: 'UPDATE_ITEM_STATE' as 'UPDATE_ITEM_STATE'
 })
 
+export type ItemsActionType = EnumLiteralsOf<typeof ItemsActionType>;
 
-export type ItemsAction = { type: ItemsActionType, payload: any };
+export type ItemsAction = { 
+  type: ItemsActionType;
+  payload: any;
+};
 
-export type ItemsActionCreator = (message: any) => (ItemsAction)
+export type ItemsActionCreator = (message: any) => (ItemsAction);
 
 export type SearchItemType = Exclude<keyof Item,  "id" | "categoryId">;
 

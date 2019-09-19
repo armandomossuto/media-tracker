@@ -5,9 +5,9 @@ import { InputParams } from '../types';
 /**
  * @param showInput - Shows the Add-value-input
  */
-const Input = ({ value, setValue, onAddValue, hideInput, type }: InputParams) =>{
+const Input: React.FunctionComponent<InputParams> = ({ value, setValue, onAddValue, hideInput, type }: InputParams) =>{
   
-  const onConfirm = (value: string) => {
+  const onConfirm = (value: string): void => {
     hideInput();
     onAddValue(value);
   }
@@ -18,19 +18,19 @@ const Input = ({ value, setValue, onAddValue, hideInput, type }: InputParams) =>
         className="add-value-input__input"
         type={type}
         value={value}
-        onChange={e => setValue(e.target.value)}
+        onChange={(e): void => setValue(e.target.value)}
       >
       </input>
 
       <button
         className="add-value-input__button"
-        onClick={() => onConfirm(value)}>
+        onClick={(): void => onConfirm(value)}>
         Add
       </button>
 
       <button
         className="add-value-input__button"
-        onClick={() => hideInput()}>
+        onClick={(): void => hideInput()}>
         Cancel
       </button>
     </div> 

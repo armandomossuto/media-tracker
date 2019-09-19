@@ -1,6 +1,6 @@
 import * as React from "react";
 
-import * as nock  from 'nock';
+import * as nock from 'nock';
 import { serverUrl } from 'configuration';
 
 import Profile from "./index";
@@ -41,7 +41,7 @@ describe('Create Account component', () => {
     getAllByRole = container.getAllByRole;
     getByText = container.getByText;
     getByRole = container.getByRole;
-    
+
     changeUsernameButton = getAllByRole('button')[1];
     expect(changeUsernameButton).toBeTruthy();
 
@@ -56,7 +56,7 @@ describe('Create Account component', () => {
   afterEach(() => {
     container.unmount();
   });
- 
+
   it('Shows short password notification for new password correctly', async (done) => {
     fireEvent.click(changePasswordButton);
     newPasswordInput = getByRole("textbox");
@@ -72,7 +72,7 @@ describe('Create Account component', () => {
 
     submitButton = getByText('Submit');
     fireEvent.click(submitButton);
-  
+
     await waitForElement(() => container.findByText(UpdateAccountNotification.shortPassword));
     done();
   });
@@ -92,10 +92,10 @@ describe('Create Account component', () => {
 
     submitButton = getByText('Submit');
     fireEvent.click(submitButton);
-  
+
     await waitForElement(() => container.findByText(UpdateAccountNotification.incorrectCurrentPassword));
     done();
-  
+
   });
 
   it('Shows invalid email notification correctly', async (done) => {
@@ -113,15 +113,15 @@ describe('Create Account component', () => {
 
     submitButton = getByText('Submit');
     fireEvent.click(submitButton);
-  
+
     await waitForElement(() => container.findByText(UpdateAccountNotification.invalidEmail));
     done();
   });
 
   it('Wrong current password', async (done) => {
     nock(serverUrl)
-    .post('/api/user/edit')
-    .reply(403);
+      .post('/api/user/edit')
+      .reply(403);
 
     fireEvent.click(changePasswordButton);
     newPasswordInput = getByRole("textbox");
@@ -137,7 +137,7 @@ describe('Create Account component', () => {
 
     submitButton = getByText('Submit');
     fireEvent.click(submitButton);
-  
+
     await waitForElement(() => container.findByText(UpdateAccountNotification.incorrectCurrentPassword));
     done();
   });
@@ -156,7 +156,7 @@ describe('Create Account component', () => {
 
     submitButton = getByText('Submit');
     fireEvent.click(submitButton);
-  
+
     await waitForElement(() => container.findByText(UpdateAccountNotification.sameEmail));
     done();
   });
@@ -175,15 +175,15 @@ describe('Create Account component', () => {
 
     submitButton = getByText('Submit');
     fireEvent.click(submitButton);
-  
+
     await waitForElement(() => container.findByText(UpdateAccountNotification.sameUsername));
     done();
   });
 
   it('Duplicate email or username', async (done) => {
     nock(serverUrl)
-    .post('/api/user/edit')
-    .reply(409);
+      .post('/api/user/edit')
+      .reply(409);
 
     fireEvent.click(changeEmailButton);
     newEmailInput = getByRole("textbox");
@@ -198,7 +198,7 @@ describe('Create Account component', () => {
 
     submitButton = getByText('Submit');
     fireEvent.click(submitButton);
-  
+
     await waitForElement(() => container.findByText(UpdateAccountNotification.duplicatedKey));
     done();
   });
@@ -206,8 +206,8 @@ describe('Create Account component', () => {
 
   it('Email update successfull', async (done) => {
     nock(serverUrl)
-    .post('/api/user/edit')
-    .reply(200);
+      .post('/api/user/edit')
+      .reply(200);
 
     fireEvent.click(changeEmailButton);
     newEmailInput = getByRole("textbox");
@@ -221,7 +221,7 @@ describe('Create Account component', () => {
     expect(passwordInput).toBeTruthy();
 
     submitButton = getByText('Submit');
-    
+
     // We need to simulate the rerender of the whole component now
     container.rerender(
       <SessionStateContext.Provider value={genericSessionState}>

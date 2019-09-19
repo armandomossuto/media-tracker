@@ -15,6 +15,5 @@ const AccountInitialise: React.FunctionComponent = () => {
       return <Create setAccountIntialiseStatus={setAccountIntialiseStatus}/>
   }
 }
-  <div>Profile</div>
 
 export default AccountInitialise;

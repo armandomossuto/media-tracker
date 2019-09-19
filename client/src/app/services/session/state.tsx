@@ -1,6 +1,6 @@
 // React and used hooks to create the session store hook
 import * as React from 'react';
-import {createContext, useContext, useReducer} from 'react';
+import { createContext, useContext, useReducer } from 'react';
 
 // Reducer
 import reducer from './reducer';
@@ -21,12 +21,12 @@ type SessionStateProps = {
  * Provider for giving access to the global store values and dispatcher
  * to the components wrapped and all the three of children
  */
-export const SessionStateProvider: React.FunctionComponent<SessionStateProps> = ({ children }) => {
+export const SessionStateProvider: React.FunctionComponent<SessionStateProps> = ({ children }: SessionStateProps)  => {
   const [state, dispatch] = useReducer(reducer, initialState);
-  return(
+  return (
     <DispatchContext.Provider value={dispatch}>
       <StateContext.Provider value={state}>
-      {children}
+        {children}
       </StateContext.Provider>
     </DispatchContext.Provider>
   );

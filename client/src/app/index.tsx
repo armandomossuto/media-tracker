@@ -13,21 +13,21 @@ import { useSessionState, GlobalStateProvider } from 'state';
 import { SessionStatus } from "types";
 
 const Index: React.FunctionComponent = () => {
-// We check the session status, because we only grant access to the tracker route if the user has logged in
-const [{ status }, ] = useSessionState();
-return(
-  <Router>
-    <div className="app-container">
-      <Navbar />
-      <Route exact path="/" component={Home} />
-      {status === SessionStatus.ok
-        ? <Route path="/tracker" component={Tracker} />
-        : null
-      }
-      <Route path="/account" component={Account} />
-      <Footer />
-    </div>
-  </Router>
+  // We check the session status, because we only grant access to the tracker route if the user has logged in
+  const [{ status },] = useSessionState();
+  return (
+    <Router>
+      <div className="app-container">
+        <Navbar />
+        <Route exact path="/" component={Home} />
+        {status === SessionStatus.ok
+          ? <Route path="/tracker" component={Tracker} />
+          : null
+        }
+        <Route path="/account" component={Account} />
+        <Footer />
+      </div>
+    </Router>
   )
 }
 

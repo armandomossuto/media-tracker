@@ -4,10 +4,10 @@ import { ShowButtonParams } from '../types';
 /**
  * @param showInput - Shows the Add-value-input
  */
-const ShowButton = ({ showInput }: ShowButtonParams) =>
+const ShowButton: React.FunctionComponent<ShowButtonParams> = ({ showInput }: ShowButtonParams) =>
   <button 
     className="add-value-input__show-button"
-    onClick={() => showInput()}
+    onClick={(): void => showInput()}
   >
     Change
   </button>

@@ -16,9 +16,8 @@ import State from './state';
 
 /**
  * Component belonging to one item inside the items page of the tracker
- * @param param0 
  */
-const Item = ({ item, itemsDispatch }: ItemDescriptionProps) => {
+const Item: React.FunctionComponent<ItemDescriptionProps> = ({ item, itemsDispatch }: ItemDescriptionProps) => {
 
   // For showing or hiding all the details of the item
   const [showMoreInfo, setShowMoreInfo] = useState(false);
@@ -34,7 +33,7 @@ const Item = ({ item, itemsDispatch }: ItemDescriptionProps) => {
    * @param event
    * @param newRating 
    */
-  const updateRating = (event: React.MouseEvent, newRating: ItemRating) => {
+  const updateRating = (event: React.MouseEvent, newRating: ItemRating): void => {
     event.stopPropagation();
     // Creating the object necessary for the update user item request
     const updateUser: UpdateUserItem = {
@@ -48,7 +47,7 @@ const Item = ({ item, itemsDispatch }: ItemDescriptionProps) => {
     fetchRequest('api/entries/update', 'POST', sessionStateDispatch, updateUser)
       .then(() => {
         itemsDispatch(updateItemRating({ itemId: item.id, rating: newRating }))
-        setNotification(UpdateItemNotification.initial)      
+        setNotification(UpdateItemNotification.initial)
       })
       .catch(() => setNotification(UpdateItemNotification.ratingError));
   };
@@ -58,7 +57,7 @@ const Item = ({ item, itemsDispatch }: ItemDescriptionProps) => {
    * @param event
    * @param newState 
    */
-  const updateState = (newState: ItemState) => {
+  const updateState = (newState: ItemState): void => {
     // Creating the object necessary for the update user item request
     const updateUser: UpdateUserItem = {
       userId: accountInfo.id,
@@ -71,23 +70,23 @@ const Item = ({ item, itemsDispatch }: ItemDescriptionProps) => {
     fetchRequest('api/entries/update', 'POST', sessionStateDispatch, updateUser)
       .then(() => {
         itemsDispatch(updateItemState({ itemId: item.id, state: newState }))
-        setNotification(UpdateItemNotification.initial)      
+        setNotification(UpdateItemNotification.initial)
       })
       .catch(() => setNotification(UpdateItemNotification.stateError));
   };
 
-  return(
-    <div className="items-element" onClick={() => setShowMoreInfo(!showMoreInfo)} >
+  return (
+    <div className="items-element" onClick={(): void => setShowMoreInfo(!showMoreInfo)} >
       <h3 className="items-element__name">{item.name}</h3>
       <div className="items-element__rating-and-state">
-              <Rating rating={item.rating} updateRating={updateRating} />
-              <State state={item.state} updateState={updateState} />
+        <Rating rating={item.rating} updateRating={updateRating} />
+        <State state={item.state} updateState={updateState} />
       </div>
       {showMoreInfo
-        ? 
-          <div className="items-elements__description">
-            {item.description}
-          </div>
+        ?
+        <div className="items-elements__description">
+          {item.description}
+        </div>
         : null
       }
       <div className="items-elements__notification">

@@ -8,35 +8,35 @@ import { DropdownProps } from './types';
  * @param options - Array with dropdown options
  * @param onSelect - Action that will be excuted when the user selects an option
  */
-const Dropdown = ({ buttonText, options, onSelect }: DropdownProps) => {
+const Dropdown: React.FunctionComponent<DropdownProps> = ({ buttonText, options, onSelect }: DropdownProps) => {
   // For managing the dropdown menu state
   const [isDropdownOpen, setDropdownState] = useState(false);
 
   // Executes onSelect and closes the dropdown menu
-  const selectOption = (option: string) => {
+  const selectOption = (option: string): void => {
     onSelect(option);
     setDropdownState(false);
   }
 
-  return(
+  return (
     <div className="dropdown">
-      <button 
+      <button
         className="dropdown__button"
-        onClick={() => setDropdownState(!isDropdownOpen)}
+        onClick={(): void => setDropdownState(!isDropdownOpen)}
       >
         {buttonText}
         <i className="dropdown__arrow-down"></i>
       </button>
       {isDropdownOpen
         ? <div className="dropdown__content">
-            {options.map(option => 
-              <span className="dropdown__content__option"
-                key={`dropdown${option}`}
-                onClick={() => selectOption(option)}
-              >
-                {option}
-              </span>) 
-            }
+          {options.map(option =>
+            <span className="dropdown__content__option"
+              key={`dropdown${option}`}
+              onClick={(): void => selectOption(option)}
+            >
+              {option}
+            </span>)
+          }
         </div>
         : null
       }

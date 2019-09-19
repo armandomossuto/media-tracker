@@ -11,7 +11,7 @@ import Input from './input';
  * input buttons
  * @param showButton Optional. Wheter or not to hide the input field behind a show button
  */
-const AddValueInput = ({ onAddValue, showButton = false, type = "text" }: AddValueInputParams) => {
+const AddValueInput: React.FunctionComponent<AddValueInputParams> = ({ onAddValue, showButton = false, type = "text" }: AddValueInputParams) => {
 
   // Value of the input field
   const [value, setValue] = useState('');
@@ -19,20 +19,20 @@ const AddValueInput = ({ onAddValue, showButton = false, type = "text" }: AddVal
   // Whether or not to show the input field. If not, we use a show button
   const [show, setShow] = useState(!showButton);
 
-  const hideInput = () => setShow(false);
+  const hideInput = (): void => setShow(false);
 
-  const showInput = () => setShow(true);
+  const showInput = (): void => setShow(true);
 
-  if(show) { 
-    return <Input 
-              value={value}
-              setValue={setValue}
-              onAddValue={onAddValue}
-              hideInput={() => hideInput()}
-              type={type}
-            />
+  if (show) {
+    return <Input
+      value={value}
+      setValue={setValue}
+      onAddValue={onAddValue}
+      hideInput={(): void => hideInput()}
+      type={type}
+    />
   } else {
-    return <ShowButton showInput={() => showInput()}/>
+    return <ShowButton showInput={(): void => showInput()} />
   }
 }
 

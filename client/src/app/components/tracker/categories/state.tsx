@@ -1,3 +1,4 @@
+/* eslint-disable react/display-name */
 // React and used hooks to create the session store hook
 import * as React from 'react';
 import {createContext, useContext, useReducer} from 'react';
@@ -38,4 +39,5 @@ type UseCategoriesState = () => ([CategoriesState, React.Dispatch<CategoriesActi
  */
 export const useCategoriesState: UseCategoriesState = () => ([useContext(StateContext), useContext(DispatchContext)]);
 
-type WrappedComponent = React.FunctionComponent | React.ComponentClass<Pick<RouteComponentProps<any, StaticContext, any>, never>, any> & WithRouterStatics<React.FunctionComponent<{}>>;
+type WrappedComponent = 
+React.FunctionComponent | React.ComponentClass<Pick<RouteComponentProps<any, StaticContext, any>, never>, any> & WithRouterStatics<React.FunctionComponent<{}>>;

@@ -15,13 +15,13 @@ import Elements from './elements';
 import UpdateBox from './update-box';
 
 const Profile: React.FunctionComponent = () => {
-  
+
   // We use the Session State hook for having access to the current Account Information and using the dispatcher after an update was successful
   const [{ accountInfo }, sessionStateDispatch] = useSessionState();
 
   // Acount Information to be showed in this screen
   const accountInfoView = new UserView(accountInfo);
-  
+
 
   // Keeps track of the information of the new Account Info typed by the user in the inputs
   const [newAccountInfo, setNewAccountInfo] = useState<UserCreate>({
@@ -40,7 +40,7 @@ const Profile: React.FunctionComponent = () => {
    * Handles Input Changes to update the values of the new account info
    * @param elementName - Name of the element that we will update the value
    */
-  const onNewValuesInputChange = (value: string, elementName: string) => {
+  const onNewValuesInputChange = (value: string, elementName: string): void => {
     const updatedAccountInfo = { ...newAccountInfo };
     updatedAccountInfo[elementName] = value;
     setNewAccountInfo(updatedAccountInfo);
@@ -50,13 +50,12 @@ const Profile: React.FunctionComponent = () => {
   /**
    * @returns An object with only those elements that are not empty
    */
-  const determineUpdatedElements = (newInfo: UserCreate) => {
+  const determineUpdatedElements = (newInfo: UserCreate): UpdatedElements => {
     const updatedElements: UpdatedElements = {};
 
     // We will only add those values that are not empty
-    Object.entries(newInfo).forEach(entry => { 
-      if(entry[1])
-      {
+    Object.entries(newInfo).forEach(entry => {
+      if (entry[1]) {
         updatedElements[entry[0]] = entry[1];
       }
     });
@@ -66,7 +65,7 @@ const Profile: React.FunctionComponent = () => {
 
   // Object with all elements that we are going to update
   const updatedElements: UpdatedElements = determineUpdatedElements(newAccountInfo);
-  
+
   // Whether or not we have a new value to update
   const doWeHaveANewValue: boolean = Object.entries(updatedElements).length !== 0;
 
@@ -77,18 +76,18 @@ const Profile: React.FunctionComponent = () => {
     // Validating that there is a change to update and if not, do nothing
     // Submit button is only available if there is a change, but adding this step just in case
     if (!doWeHaveANewValue) {
-     return;
+      return;
     }
 
     // If the current password is invalid, we show incorrent password notification without the need to make a request to the server
-    if(currentPassword.length < 6) {
+    if (currentPassword.length < 6) {
       return setNotification(UpdateAccountNotification.incorrectCurrentPassword);
     }
-    
+
     // Using UpdateUser class for creating the Object that we are going to send to the server
     const updateUser = new UpdateUser(accountInfo.id, currentPassword, updatedElements);
 
-   // If new password is incorrect, we display notification message
+    // If new password is incorrect, we display notification message
     if (!updateUser.validateNewPassword()) {
       return setNotification(UpdateAccountNotification.shortPassword);
     }
@@ -99,12 +98,12 @@ const Profile: React.FunctionComponent = () => {
     }
 
     // Validating if the user is trying to change to the email already configured
-    if(updatedElements.email === accountInfo.email) {
+    if (updatedElements.email === accountInfo.email) {
       return setNotification(UpdateAccountNotification.sameEmail);
     }
 
     // Validating if the user is trying to change to the username already configured
-    if(updatedElements.username === accountInfo.username) {
+    if (updatedElements.username === accountInfo.username) {
       return setNotification(UpdateAccountNotification.sameUsername);
     }
 
@@ -137,29 +136,29 @@ const Profile: React.FunctionComponent = () => {
       })
   }
 
-  return(
+  return (
     <div className="profile">
       <h2 className="profile__title">User Settings</h2>
-      <Elements 
+      <Elements
         accountInfoView={accountInfoView}
         updatedElements={updatedElements}
-        onElementsChange={onNewValuesInputChange} 
+        onElementsChange={onNewValuesInputChange}
       />
-      {doWeHaveANewValue 
-        ? <UpdateBox 
-            notification={notification}
-            currentPassword={currentPassword}
-            setCurrentPassword={setCurrentPassword}
-            onSubmitUpdateAccount={onSubmitUpdateAccount} 
-          />
+      {doWeHaveANewValue
+        ? <UpdateBox
+          notification={notification}
+          currentPassword={currentPassword}
+          setCurrentPassword={setCurrentPassword}
+          onSubmitUpdateAccount={onSubmitUpdateAccount}
+        />
         : null
       }
-      {notification === UpdateAccountNotification.successful 
+      {notification === UpdateAccountNotification.successful
         ? <div className="profile__success-notification"> {notification} </div>
         : null
       }
     </div>
   )
 }
-  
+
 export default Profile;

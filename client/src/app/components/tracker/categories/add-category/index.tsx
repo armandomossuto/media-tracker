@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 
 import { useSessionState, closeModal, setModalNotification, openModal } from 'state';
 import { useCategoriesState } from '../state';
@@ -13,7 +13,7 @@ import { AddCategoryNotification } from './types';
 /**
  * Manages the Add-button and the process of adding a new Category to the User
  */
-const AddCategory = () => {
+const AddCategory: React.FunctionComponent = () => {
   const [{ userCategories, categories }, dispatch] = useCategoriesState();
   const [{ accountInfo }, sessionStateDispatch] = useSessionState();
 
@@ -31,7 +31,7 @@ const AddCategory = () => {
    * @param value - current value of the input field
    * @returns a list of options for the modal input
    */
-  const onSearchAction = (value: string) => {
+  const onSearchAction = (value: string): Array<string> => {
     try {
       return categories.filter(category => category.name.toLocaleLowerCase().includes(value.toLocaleLowerCase())).map(category => category.name);
     } catch (err) {
@@ -47,7 +47,7 @@ const AddCategory = () => {
    * Action for when the user decides to add a new Categoru
    * @param categoryName 
    */
-  const onConfirmAction = (categoryName: string) => {
+  const onConfirmAction = (categoryName: string): void => {
     const category = categories.find(category => category.name == categoryName);
 
     // If the category doesn't exist, we display an error message
@@ -90,7 +90,7 @@ const AddCategory = () => {
   }
   
   return(
-    <span onClick={() => modalDispatch(openModal(modalParams))}>
+    <span onClick={(): void => modalDispatch(openModal(modalParams))}>
       Add a new element
     </span>
   )

@@ -7,9 +7,9 @@ const cookies = new Cookies();
 
 const accessTokenCookieName = 'media-tracker-access';
 
-export const createAuthenticationCookie = (userAccessToken: UserAccessToken) => {
+export const createAuthenticationCookie = (userAccessToken: UserAccessToken): void => {
   // For the expiration date, we will add one year to the current date
-  var expirationDate = new Date();
+  const expirationDate = new Date();
   expirationDate.setFullYear(expirationDate.getFullYear() + 1);
 
   const cookieOptions = {
@@ -20,8 +20,5 @@ export const createAuthenticationCookie = (userAccessToken: UserAccessToken) => 
   cookies.set(accessTokenCookieName, userAccessToken, cookieOptions);
 }
 
-export const getAuthenticationCookie = () => {
-  const userAccesstoken: UserAccessToken = cookies.get(accessTokenCookieName);
-  return  userAccesstoken;
-}
+export const getAuthenticationCookie = (): UserAccessToken => cookies.get(accessTokenCookieName);
   

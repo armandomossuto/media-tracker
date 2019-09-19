@@ -1,8 +1,9 @@
+/* eslint-disable react/display-name */
 import * as React from 'react';
-import {createContext, useContext, useReducer} from 'react';
+import { createContext, useContext, useReducer } from 'react';
 
 // Types
-import { ModalSelectorProps, UseModal, ModalType, ModalState, ModalAction } from './types';
+import { ModalSelectorProps, UseModal, ModalType, ModalAction } from './types';
 
 // Initial State
 import { initialState } from './store'
@@ -22,26 +23,26 @@ const DispatchContext = createContext((() => 0) as React.Dispatch<ModalAction>);
  * HOC for adding a giving access to the modal
  * @param {component} WrappedComponent
  */
-export const WithModal = (WrappedComponent: React.FunctionComponent) => ({ ...props }) => {
+export const WithModal = (WrappedComponent: React.FunctionComponent) => ({ ...props }): JSX.Element => {
   // Modal internal state
   const [modal, dispatch] = useReducer(reducer, initialState);
 
-  return(
+  return (
     <DispatchContext.Provider value={dispatch}>
       <StateContext.Provider value={modal}>
         <div className="modal-wrapper">
-        {
-          modal.show
-            ? <ModalSelector
+          {
+            modal.show
+              ? <ModalSelector
                 params={modal.params}
-                closeModal={() => dispatch(closeModal())}
-            />
-            : null
-        }
-        <WrappedComponent>
-          {props}
-        </WrappedComponent>
-      </div>
+                closeModal={(): void => dispatch(closeModal())}
+              />
+              : null
+          }
+          <WrappedComponent>
+            {props}
+          </WrappedComponent>
+        </div>
       </StateContext.Provider>
     </DispatchContext.Provider>
   );
@@ -56,8 +57,18 @@ export const useModal: UseModal = () => ([useContext(StateContext), useContext(D
 /**
  * Simple selector for the different types of modals
  */
-const ModalSelector = ({ params, closeModal }: ModalSelectorProps) => {
-  const { type, className, onConfirmAction, onSearchAction, title, message, confirmButton, cancelButton, notification } = params;
+const ModalSelector: React.FunctionComponent<ModalSelectorProps> = ({ params, closeModal }: ModalSelectorProps) => {
+  const { 
+    type,
+    // className, 
+    onConfirmAction,
+    onSearchAction,
+    // title, 
+    message, 
+    // confirmButton, 
+    // cancelButton, 
+    notification 
+  } = params;
   switch (type) {
     case ModalType.addValueInput:
       return (

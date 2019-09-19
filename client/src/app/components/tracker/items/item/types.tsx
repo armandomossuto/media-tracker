@@ -3,33 +3,33 @@ import { Dispatch } from "react";
 import { EnumLiteralsOf } from "types";
 
 export type ItemDescriptionProps = {
- item: UserItemView,
- itemsDispatch: Dispatch<ItemsAction>
+  item: UserItemView;
+  itemsDispatch: Dispatch<ItemsAction>;
 }
 
 export type ItemRatingProps = {
-    rating: ItemRating
-    updateRating: Function
+  rating: ItemRating;
+  updateRating: Function;
 }
 
 export type ItemStateProps = {
-    state: ItemState
-    updateState: Function
+  state: ItemState;
+  updateState: Function;
 }
 
 export type UpdateUserItem = {
-    itemId: string
-    userId: string
-    newUserItemInformation: {
-        rating?: ItemRating
-        state?: ItemState
-    }
+  itemId: string;
+  userId: string;
+  newUserItemInformation: {
+    rating?: ItemRating;
+    state?: ItemState;
+  };
 }
 
-export type UpdateItemNotification = EnumLiteralsOf<typeof UpdateItemNotification>
-
 export const UpdateItemNotification = Object.freeze({
-    initial: '' as 'initial',
-    ratingError: 'There was an error when we tried to update the rating. Please try again' as 'ratingError',
-    stateError: 'There was an error when we tried to update the state. Please try again' as 'stateError'
+  initial: '' as 'initial',
+  ratingError: 'There was an error when we tried to update the rating. Please try again' as 'ratingError',
+  stateError: 'There was an error when we tried to update the state. Please try again' as 'stateError'
 })
+
+export type UpdateItemNotification = EnumLiteralsOf<typeof UpdateItemNotification>

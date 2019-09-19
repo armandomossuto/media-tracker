@@ -4,13 +4,13 @@ import { UpdateBoxProps } from '../types';
 /**
  * Footer of the profile page, with the notifications, current password input and submit button 
  */
-const UpdateBox = ({ notification, onSubmitUpdateAccount, currentPassword, setCurrentPassword }: UpdateBoxProps) =>
+const UpdateBox: React.FunctionComponent<UpdateBoxProps> = ({ notification, onSubmitUpdateAccount, currentPassword, setCurrentPassword }: UpdateBoxProps) =>
   <div className="profile__update-box">
     <div>In order to process the change, please submit your password:</div>
     <input
       type="password"
       className="profile__update-box__password-input"
-      onChange={(e) => setCurrentPassword(e.target.value)}
+      onChange={(e): void => setCurrentPassword(e.target.value)}
       value={currentPassword}
     ></input> 
     <div className="profile__update-box__bottom-container">
@@ -19,7 +19,7 @@ const UpdateBox = ({ notification, onSubmitUpdateAccount, currentPassword, setCu
       </div>
       <button
         className="profile__update-box__submit"
-        onClick={() => onSubmitUpdateAccount()}
+        onClick={(): void => onSubmitUpdateAccount()}
       >
         Submit
       </button>

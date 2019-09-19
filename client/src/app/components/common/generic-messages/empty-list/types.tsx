@@ -1,4 +1,4 @@
 export type EmptyListProps = {
-    type: string,
-    className: string
+    type: string;
+    className: string;
 }

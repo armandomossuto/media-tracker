@@ -18,30 +18,30 @@ describe("Dropdown Component", () => {
   beforeEach(() => {
     // Test first render and effect
     container = render(
-      <Dropdown  options={options} buttonText={buttonText} onSelect={onSelect}/>,
+      <Dropdown options={options} buttonText={buttonText} onSelect={onSelect} />,
     );
   });
 
   afterEach(() => {
-      container.unmount()
-      selectedOption = '';
-      onSelect.mockClear();
-    });
-
-  it('Can select an option',  () => {
-      // Open the dropdown
-      fireEvent.click(container.getByText(buttonText));
-
-      fireEvent.click(container.getByText("option1"));
-
-      expect(onSelect.mock.calls.length).toBe(1);
-      expect(selectedOption).toBe("option1");
-
-      // The dropdown should be closed now
-      expect(container.container.querySelector("dropdown__content__option")).toBeFalsy();
+    container.unmount()
+    selectedOption = '';
+    onSelect.mockClear();
   });
 
-  it('Can change an option after one has been selected',  () => {
+  it('Can select an option', () => {
+    // Open the dropdown
+    fireEvent.click(container.getByText(buttonText));
+
+    fireEvent.click(container.getByText("option1"));
+
+    expect(onSelect.mock.calls.length).toBe(1);
+    expect(selectedOption).toBe("option1");
+
+    // The dropdown should be closed now
+    expect(container.container.querySelector("dropdown__content__option")).toBeFalsy();
+  });
+
+  it('Can change an option after one has been selected', () => {
     // Open the dropdown
     fireEvent.click(container.getByText(buttonText));
     fireEvent.click(container.getByText("option1"));
@@ -62,8 +62,8 @@ describe("Dropdown Component", () => {
 
     // The dropdown should be closed now
     expect(container.container.querySelector(".dropdown__content__option")).toBeFalsy();
-});
+  });
 
-  
+
 });
 

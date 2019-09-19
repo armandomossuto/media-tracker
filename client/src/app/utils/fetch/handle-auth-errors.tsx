@@ -7,10 +7,16 @@ import { createAuthenticationCookie } from "utils/cookies";
 /**
  * Handles Authorization error from server request. It will try to refresh the tokens
  */
-export const handleFetchAuthErrors = async (accessToken: string, dispatch: Dispatch<SessionAction>) => {
+export const handleFetchAuthErrors = async (accessToken: string, dispatch: Dispatch<SessionAction>): Promise<UserAccessToken> => {
   const tokens: UserAccessToken = { accessToken };
 
-  const config: RequestInit = { method: 'Post', mode: 'cors', headers: { 'Content-Type': 'application/json' }, credentials: 'include' , body: JSON.stringify(tokens) };
+  const config: RequestInit = {
+    method: 'Post',
+    mode: 'cors',
+    headers: { 'Content-Type': 'application/json' },
+    credentials: 'include' ,
+    body: JSON.stringify(tokens)
+  };
 
   const response = await fetch(`${serverUrl}/api/user/refresh`, config);
 

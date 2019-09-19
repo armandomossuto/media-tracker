@@ -2,14 +2,13 @@ import { User, EnumLiteralsOf } from "types";
 import { UserCreate } from "../account-initialise/create/types";
 import { validateEmail } from "utils/validations";
 
-
-export interface UpdatedElements extends Partial<UserCreate> {
-};
+/* eslint-disable @typescript-eslint/no-empty-interface */
+export interface UpdatedElements extends Partial<UserCreate> {}
 
 export interface UpdateUser {
-  id: string,
-  password: string,
-  newUserInformation: UpdatedElements,
+  id: string;
+  password: string;
+  newUserInformation: UpdatedElements;
 }
 
 /**
@@ -32,19 +31,17 @@ export class UpdateUser implements UpdateUser {
   /**
    * Validates password if it exists in the new User Information
    */
-  validateNewPassword() {
+  validateNewPassword(): boolean {
     return this.newUserInformation.password == undefined || this.newUserInformation.password.length > 5;
   }
 
   /**
    * Validates email if it exists in the new User Information
    */
-  validateNewEmail() {
+  validateNewEmail(): boolean {
     return this.newUserInformation.email == undefined || validateEmail(this.newUserInformation.email);
   }
 }
-
-export type UpdateAccountNotification = EnumLiteralsOf<typeof UpdateAccountNotification>
 
 export const UpdateAccountNotification = Object.freeze({
   initial: '' as 'initial',
@@ -58,6 +55,8 @@ export const UpdateAccountNotification = Object.freeze({
   sameEmail: 'You are trying to update your email to the one that you are currently using',
   sameUsername: 'You are trying to update your username to the one that you are currently using'
 })
+
+export type UpdateAccountNotification = EnumLiteralsOf<typeof UpdateAccountNotification>
 
 /**
  * UserView is the same as the User type, minus the id, that we don't whow to the user
@@ -77,7 +76,7 @@ export class UserView implements UserView {
 }
 
 export type ChangeEnum<UserView> = {
-  [Key in keyof UserView]: boolean
+  [Key in keyof UserView]: boolean;
 };
 
 /**
@@ -90,17 +89,17 @@ export const changeEnum: ChangeEnum<UserView> = Object.freeze({
   modificationDate: false
 })
 
-export type ElementChangeStatus = EnumLiteralsOf<typeof ElementChangeStatus>
-
 export const ElementChangeStatus = Object.freeze({
   change: 'change',
   confirm: 'confirm'
 })
 
+export type ElementChangeStatus = EnumLiteralsOf<typeof ElementChangeStatus>
+
 export type ProfileElementsProps = {
-  accountInfoView: UserView,
-  updatedElements: UpdatedElements,
-  onElementsChange: Function
+  accountInfoView: UserView;
+  updatedElements: UpdatedElements;
+  onElementsChange: Function;
 }
 
 export type ElementsNamesEnum<UserView> = {
@@ -118,8 +117,8 @@ export const ElementsNamesEnum: ElementsNamesEnum<UserView> = Object.freeze({
 })
 
 export type UpdateBoxProps = {
-  notification: UpdateAccountNotification,
-  onSubmitUpdateAccount: Function
-  currentPassword: string,
-  setCurrentPassword: React.Dispatch<React.SetStateAction<string>>
+  notification: UpdateAccountNotification;
+  onSubmitUpdateAccount: Function;
+  currentPassword: string;
+  setCurrentPassword: React.Dispatch<React.SetStateAction<string>>;
 }

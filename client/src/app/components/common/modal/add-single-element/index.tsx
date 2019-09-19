@@ -10,7 +10,13 @@ import { AddSingleElementProps } from './types';
  * @param onSearchAction - Function that will be triggered when User writes on the input and returns a list of options
  * @param closeModal - Closes the modal
  */
-const AddSingleElement = ({ message, onConfirmAction, onSearchAction, closeModal, notification }: AddSingleElementProps) => {
+const AddSingleElement: React.FunctionComponent<AddSingleElementProps> = ({ 
+  message,
+  onConfirmAction,
+  onSearchAction,
+  closeModal,
+  notification 
+}: AddSingleElementProps) => {
 
   // Value of the input
   const [value, setValue] = useState('');
@@ -18,7 +24,7 @@ const AddSingleElement = ({ message, onConfirmAction, onSearchAction, closeModal
   // List of options, provided by onSearchAction
   const [options, setOptions] = useState([]);
 
-  const onHandleChange = async (value: string) => {
+  const onHandleChange = async (value: string): Promise<void> => {
     setValue(value);
     const options = await onSearchAction(value);
     setOptions(options);
@@ -31,27 +37,27 @@ const AddSingleElement = ({ message, onConfirmAction, onSearchAction, closeModal
         <input
           type="text"
           value={value}
-          onChange={e => onHandleChange(e.target.value)}
+          onChange={(e): Promise<void> => onHandleChange(e.target.value)}
           list="options"
         ></input>
         <datalist id="options">
           {/* For displaying a list of options in the input */
             options.map(option =>
               <option value={option} key={`option${option}`}></option>
-          )}
+            )}
         </datalist>
       </div>
       <div className="modal__buttons">
         <div
           className="modal__buttons__actions"
-          onClick={() => closeModal()}
+          onClick={(): void => closeModal()}
         >
           Cancel
         </div>
 
         <div
           className="modal__buttons__actions"
-          onClick={() => onConfirmAction(value)}
+          onClick={(): void => onConfirmAction(value)}
         >
           Confirm
         </div>

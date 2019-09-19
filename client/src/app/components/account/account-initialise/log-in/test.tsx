@@ -1,7 +1,7 @@
 import * as React from "react";
 import { render, wait, fireEvent, RenderResult, waitForElement } from '@testing-library/react';
 
-import * as nock  from 'nock';
+import * as nock from 'nock';
 import { serverUrl } from 'configuration';
 
 import LogIn from "./index";
@@ -15,12 +15,12 @@ describe('Log In Account component', () => {
   let passwordInput: HTMLElement;
   let submitButton: HTMLElement;
   let container: RenderResult;
-  let getByText: Function; 
+  let getByText: Function;
   let getAllByRole: Function;
   let findByText: Function;
 
   beforeEach(() => {
-    container = render(<LogIn setAccountIntialiseStatus={() => { }} />);
+    container = render(<LogIn setAccountIntialiseStatus={(): void => { }} />);
     getByText = container.getByText;
     getAllByRole = container.getAllByRole;
     findByText = container.findByText;
@@ -37,7 +37,7 @@ describe('Log In Account component', () => {
   afterEach(() => {
     container.unmount();
   });
- 
+
   it('Shows no username notification correctly', async (done) => {
     fireEvent.change(usernameInput, { target: { value: noUsername } });
     fireEvent.click(submitButton);
@@ -61,7 +61,7 @@ describe('Log In Account component', () => {
     nock(serverUrl)
       .post('/api/user/login')
       .reply(401);
-  
+
     fireEvent.change(usernameInput, { target: { value: genericUsername } });
     fireEvent.change(passwordInput, { target: { value: genericValidPassword } });
     fireEvent.click(submitButton);
@@ -73,11 +73,11 @@ describe('Log In Account component', () => {
   it('Account logIn succesfully', async (done) => {
     // Mocking fetch request to be successfull
     nock(serverUrl)
-    .post('/api/user/login')
-    .reply(200, {
-      userInformation: {},
-      userToken: {} 
-    });
+      .post('/api/user/login')
+      .reply(200, {
+        userInformation: {},
+        userToken: {}
+      });
 
     fireEvent.change(usernameInput, { target: { value: genericUsername } });
     fireEvent.change(passwordInput, { target: { value: genericValidPassword } });

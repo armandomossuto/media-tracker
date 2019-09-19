@@ -14,9 +14,9 @@ import { createAuthenticationCookie } from 'utils/cookies';
 /**
  * Account Log In Page component
  */
-const LogIn = ({ setAccountIntialiseStatus }: AccountInitialiseProps) => {
+const LogIn: React.FunctionComponent<AccountInitialiseProps> = ({ setAccountIntialiseStatus }: AccountInitialiseProps) => {
 
-  const [sessionState, sessionStateDispatch] = useSessionState();
+  const [, sessionStateDispatch] = useSessionState();
 
   const initialLogInInfo: UserLogIn = {
     username: '',
@@ -32,12 +32,12 @@ const LogIn = ({ setAccountIntialiseStatus }: AccountInitialiseProps) => {
   /**
    * Changes to the accout creation component
    */
-  const changeToCreateAccount = () => setAccountIntialiseStatus(AccountInitialiseStatus.create);
+  const changeToCreateAccount = (): void => setAccountIntialiseStatus(AccountInitialiseStatus.create);
 
   /**
    * Handles Input Changes to update the values
    */
-  const onInputChange = (e: React.ChangeEvent<HTMLInputElement>, elementName: string) => {
+  const onInputChange = (e: React.ChangeEvent<HTMLInputElement>, elementName: string): void => {
     const updatedLogInInfo = { ...logInInfo  };
     updatedLogInInfo[elementName] = e.target.value;
     setLogInInfo(updatedLogInInfo);
@@ -47,7 +47,7 @@ const LogIn = ({ setAccountIntialiseStatus }: AccountInitialiseProps) => {
   /**
    * Sends Account Information to the server
    */
-  const onSubmitAccount = () => {
+  const onSubmitAccount = (): void => {
     // Validating that the user introduced an username
     if (logInInfo.username.length < 1) {
       setNotification(LogInNotification.noUsername);
@@ -81,7 +81,7 @@ const LogIn = ({ setAccountIntialiseStatus }: AccountInitialiseProps) => {
         <input
           type="text"
           className="log-in__element__input"
-          onChange={e => onInputChange(e, 'username')}
+          onChange={(e): void => onInputChange(e, 'username')}
           value={username}
         ></input>
       </div>
@@ -90,7 +90,7 @@ const LogIn = ({ setAccountIntialiseStatus }: AccountInitialiseProps) => {
         <input
           type="password"
           className="log-in__element__input"
-          onChange={e => onInputChange(e, 'password')}
+          onChange={(e): void => onInputChange(e, 'password')}
           value={password}
         ></input>
       </div>

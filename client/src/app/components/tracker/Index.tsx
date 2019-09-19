@@ -8,7 +8,7 @@ import Items from './items';
 // Types
 import { TrackerProps } from "./types";
 
-const Tracker = ({ match }: TrackerProps) => 
+const Tracker: React.FunctionComponent<TrackerProps> = ({ match }: TrackerProps) => 
   <div>
     <Route exact path={`${match.url}`} component={Categories} />
     <Route path={`${match.url}/:categoryName`} component={Items} />
