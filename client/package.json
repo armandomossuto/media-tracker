@@ -6,10 +6,11 @@
   "scripts": {
     "start": "webpack-dev-server --open --mode development",
     "build": "webpack --mode production",
-    "lint": "eslint --ignore-path ../.gitignore . --ext .tsx",
+    "eslint": "eslint --ignore-path ../.gitignore . --ext .tsx",
+    "sass-lint": "sass-lint -vq src/**/*.scss",
+    "lint": "npm run eslint && npm run sass-lint",
     "test": "jest",
-    "test:watch": "jest --watch",
-    "sass-lint": "sass-lint -vq src/**/*.scss"
+    "test:watch": "jest --watch"
   },
   "author": "",
   "license": "ISC",
