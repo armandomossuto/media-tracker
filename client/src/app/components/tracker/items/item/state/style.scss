@@ -2,13 +2,13 @@
   position: relative;
 
   &__options {
-    position: absolute;
-    top: -45px;
     background-color: $third-color;
     border: solid 2px;
-    z-index: 2;
     padding: 10px;
+    position: absolute;
+    top: -45px;
     white-space: nowrap;
+    z-index: 2;
 
     &:hover {
       font-weight: normal;

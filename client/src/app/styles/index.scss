@@ -4,28 +4,28 @@
 @import '../components/tracker/style';
 
 html {
-	position: relative;
-	width: 100%;
-	height: 100%;
+  height: 100%;
+  position: relative;
+  width: 100%;
 }
 
 body {
-	@include primary-combo;
-	display: flex;
-	align-items: stretch;
-	flex-direction: column;	
-	width: 100%;
-	height: 100%;
-	margin: 0;
+  @include primaryCombo;
+  align-items: stretch;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  margin: 0;
+  width: 100%;
 }
 
 .main-content {
-	flex: 1;
-	min-height: 90vh;
+  flex: 1;
+  min-height: 90vh;
 }
 
 .app-container {
-	display: flex;
-    flex-direction: column;
-    min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
 }

@@ -1,45 +1,45 @@
-/* Here we are creating some common mixins for the styles of the 
-Log In and the Create Account components.*/
-@mixin account__input-form {
+// Here we are creating some common mixins for the styles of the 
+// Log In and the Create Account components.
+@mixin accountInputForm {
+  display: flex;
+  flex-direction: column;
+  margin: auto;
+  margin-top: 100px;
+  text-align: center;
+  width: 80%;
+
+  &__element {
+    align-items: center;
     display: flex;
-	flex-direction: column;
-	width: 80%;
-	margin: auto;
-    margin-top: 100px;
-    text-align: center;
-    
-    &__element {
-        display: flex;
-        flex-direction: row;
-        align-items: center;
-        justify-content: center;
-        
-        &__input {
-            margin-left: 10px;
-            max-width: 100px;
-            height: 15px;
-        }
+    flex-direction: row;
+    justify-content: center;
+
+    &__input {
+      height: 15px;
+      margin-left: 10px;
+      max-width: 100px;
     }
+  }
 }
 
-@mixin account__submit-button {
-    margin: 25px;
-    @include styled-button;
-    align-self: center;
+@mixin accountSubmitButton {
+  @include styledButton;
+  align-self: center;
+  font-size: $font-big;
+  margin: 25px;
+}
+
+@mixin accountRedirectMessage {
+  &__trigger {
+    @include genericButton;
     font-size: $font-big;
+  }
 }
 
-@mixin account__redirect-message {
-    &__trigger {
-        @include generic-button;
-        font-size: $font-big;
-    }
-}
-
-@mixin account__notification {
-    font-weight: bold;
-    margin-top: 10px;
-    min-height: $font-normal;
+@mixin accountNotification {
+  font-weight: bold;
+  margin-top: 10px;
+  min-height: $font-normal;
 }
 
 // Importing components style files

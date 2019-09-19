@@ -1,11 +1,13 @@
-/* Variables and Mixins for the project */
+// Variables and Mixins for the project
 
-$primary-color: #66B9BF;
-$secondary-color: #07889B;
+$primary-color: #66b9bf;
+$secondary-color: #07889b;
 $third-color: #207582;
+$white: #fff;
+$black: #000;
 
-$font-color: hsla(200,0%,0%,.7);
-$font-color-light: hsla(200,0%,0%,.4);
+$font-color: hsla(200, 0%, 0%, .7);
+$font-color-light: hsla(200, 0%, 0%, .4);
 $font-color-alert: rgba(243, 20, 49, .8);
 $font-color-success: #155724;
 
@@ -15,31 +17,31 @@ $font-small: 15px;
 $font-normal: 16px;
 $font-big: 20px;
 
-@mixin primary-combo {
-	background-color: $primary-color;
-	color: $font-color;
+@mixin primaryCombo {
+  background-color: $primary-color;
+  color: $font-color;
 }
 
-@mixin secondary-combo {
-	background-color: $secondary-color;
-	color: $font-color;
-	border-color: $font-color;
+@mixin secondaryCombo {
+  background-color: $secondary-color;
+  border-color: $font-color;
+  color: $font-color;
 }
 
-@mixin third-combo {
-	background-color: white;
-	color: $secondary-color;
+@mixin thirdCombo {
+  background-color: $white;
+  color: $secondary-color;
 }
 
-@mixin generic-button {
-        cursor: pointer;
+@mixin genericButton {
+  cursor: pointer;
 
-        &:hover {
-            font-weight: bold;
-        }
+  &:hover {
+    font-weight: bold;
+  }
 }
 
-@mixin styled-button {
-	@include generic-button;
-	@include secondary-combo;
+@mixin styledButton {
+  @include genericButton;
+  @include secondaryCombo;
 }

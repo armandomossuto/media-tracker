@@ -1,8 +1,13 @@
 .item-rating {
   unicode-bidi: bidi-override;
 
-  &__star:hover:before, &__star:hover ~ &__star:before  {
-    content: "\2605";
-    position: absolute;
+  &__star {
+    &:hover {
+      &::before,
+      & ~ &::before {
+        content: '\2605';
+        position: absolute;
+      }
+    }
   }
 }

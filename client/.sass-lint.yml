@@ -15,7 +15,7 @@ rules:
   class-name-format:
     - 2
     - allow-leading-underscore: false
-      convention: camelcase
+      convention: hyphenatedbem
   nesting-depth:
     - 2
     - max-depth: 3

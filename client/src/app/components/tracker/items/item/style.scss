@@ -2,17 +2,17 @@
 @import './state/style';
 
 .items-element {
-  @include secondary-combo;
-  @include generic-button;
-  min-height: 30px;
-  margin-bottom: 10px;
-  font-size: 20px;
-  text-align: center;
-  border-width: 1px;
+  @include secondaryCombo;
+  @include genericButton;
   border-style: solid;
+  border-width: 1px;
   cursor: pointer;
+  font-size: 20px;
+  margin-bottom: 10px;
+  min-height: 30px;
   position: relative;
-  
+  text-align: center;
+
   &__name {
     margin: 20px auto;
   }

@@ -1,48 +1,44 @@
 @import './item/style';
 
 .items {
-	display: flex;
-	flex-direction: column;
-	width: 80%;
-	margin: auto;
-	margin-top: 30px;
+  display: flex;
+  flex-direction: column;
+  margin: auto;
+  margin-top: 30px;
+  width: 80%;
 
-	&__list {
-		display: flex;
-		flex-direction: column;
+  &__list {
+    display: flex;
+    flex-direction: column;
 
-		&__empty {
-			font-weight: bold;
-			@include secondary-combo;
-			@include generic-button;
-			height: 100px;
-			margin-top: 30px;
-			font-size: 30px;
-			text-align: center;
-			display: flex;
-    		align-items: center;
-    		justify-content: center;
-    		border-width: 1px;
-			border-style: solid;
+    &__empty {
+      @include secondaryCombo;
+      @include genericButton;
+      align-items: center;
+      border-style: solid;
+      border-width: 1px;
+      display: flex;
+      font-size: 30px;
+      font-weight: bold;
+      height: 100px;
+      justify-content: center;
+      margin-top: 30px;
+      text-align: center;
 		}
 	}
-	
-	&__search {
-		margin-bottom: 20px;
+
+  &__search {
     align-items: center;
     display: flex;
     flex-direction: row;
     margin: auto;
     margin-bottom: 30px;
-	
-		&__input {
-      margin-right: 10px;
-     	width: 400px;
+
+    &__input {
       flex-grow: 0;
-      max-height: 12px; 
+      margin-right: 10px;
+      max-height: 12px;
+      width: 400px;
 		}
 	}
 }
-
-
-

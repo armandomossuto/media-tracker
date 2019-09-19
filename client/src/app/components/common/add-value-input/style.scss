@@ -1,17 +1,17 @@
 .add-value-input {
-    display: flex;
-    flex-direction: row;
+  display: flex;
+  flex-direction: row;
 
-    &__input {
-        max-width: 100px;
-    }
-    
-    &__button {
-        margin: 0px 5px 0px 5px;
-         @include generic-button;
-    }
+  &__input {
+    max-width: 100px;
+  }
 
-    &__show-button {
-        @include styled-button;
-      }
+  &__button {
+    @include genericButton;
+    margin: 0 5px;
+  }
+
+  &__show-button {
+    @include styledButton;
+  }
 }

@@ -1,21 +1,24 @@
+$box-shadow-color: rgba(0, 0, 0, 0.2);
+
 .dropdown {
   display: flex;
   flex-direction: column;
   position: relative;
 
   &__button {
-    @include secondary-combo;
-    @include generic-button;
+    @include secondaryCombo;
+    @include genericButton;
   }
 
   &__content {
-    position: absolute;
-    top: 16px;
-    background-color: #f9f9f9;
+
+    @include thirdCombo;
+    box-shadow: 0 8px 16px 0 $box-shadow-color;
     display: flex;
     flex-direction: column;
     min-width: 160px;
-    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    position: absolute;
+    top: 16px;
     z-index: 1;
 
     &__option {
@@ -24,19 +27,18 @@
 
       &:hover {
         background: $primary-color;
-        font-weight: bold;
         cursor: pointer;
+        font-weight: bold;
       }
     }
   }
 
   &__arrow-down {
-    margin-left: 4px;
-    border: solid black;
+    border: solid $black;
     border-width: 0 1px 1px 0;
     display: inline-block;
+    margin-left: 4px;
     padding: 3px;
     transform: rotate(45deg);
-    -webkit-transform: rotate(45deg);
   }
 }

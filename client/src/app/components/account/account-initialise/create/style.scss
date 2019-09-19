@@ -1,17 +1,17 @@
 .create-account {
 
-    @include account__input-form;
+  @include accountInputForm ;
 
-    &__submit {
-        @include account__submit-button;
-        width: 170px;
-    }
+  &__submit {
+    @include accountSubmitButton;
+    width: 170px;
+  }
 
-    &__redirect-message {
-        @include account__redirect-message;
-    }
+  &__redirect-message {
+    @include accountRedirectMessage;
+  }
 
-    &__notification {
-        @include account__notification;
-    }
+  &__notification {
+    @include accountNotification;
+  }
 }

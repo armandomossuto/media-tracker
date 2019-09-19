@@ -1,78 +1,74 @@
-/* Tracker page */
+.categories {
 
-.categories{
-	
-	display: flex;
-	flex-direction: column;
-	width: 80%;
-	margin: auto;
-	margin-top: 30px;
+  display: flex;
+  flex-direction: column;
+  margin: auto;
+  margin-top: 30px;
+  width: 80%;
 
-	&__configuration-option {
-		display: flex;
-        flex-direction: row-reverse;
-        margin-bottom: 5px;
-        @include generic-button;
+  &__configuration-option {
+    @include genericButton;
+    display: flex;
+    flex-direction: row-reverse;
+    margin-bottom: 5px;
 
-        span {
-            flex-grow: 0;
-            cursor: pointer;    
-            white-space: nowrap;
-        }
+    span {
+      cursor: pointer;
+      flex-grow: 0;
+      white-space: nowrap;
+    }
 	}
 
-	&__list {
-		display: flex;
-		flex-direction: column;
+  &__list {
+    display: flex;
+    flex-direction: column;
 
-		&__element {
-			@include secondary-combo;
-			@include generic-button;
-			height: 100px;
-			margin-bottom: 30px;
-			font-size: 30px;
-			text-align: center;
-			display: flex;
-    		align-items: center;
-    		justify-content: center;
-    		border-width: 1px;
-			border-style: solid;
-			cursor: pointer;
+    &__element {
+      @include secondaryCombo;
+      @include genericButton;
+      align-items: center;
+      border-style: solid;
+      border-width: 1px;
+      cursor: pointer;
+      display: flex;
+      font-size: 30px;
+      height: 100px;
+      justify-content: center;
+      margin-bottom: 30px;
+      text-align: center;
 		}
 
-		&__empty {
-			font-weight: bold;
-			@include secondary-combo;
-			@include generic-button;
-			height: 100px;
-			margin-top: 30px;
-			font-size: 30px;
-			text-align: center;
-			display: flex;
-    		align-items: center;
-    		justify-content: center;
-    		border-width: 1px;
-			border-style: solid;
+    &__empty {
+      @include secondaryCombo;
+      @include genericButton;
+      align-items: center;
+      border-style: solid;
+      border-width: 1px;
+      display: flex;
+      font-size: 30px;
+      font-weight: bold;
+      height: 100px;
+      justify-content: center;
+      margin-top: 30px;
+      text-align: center;
+
 		}
 	}
 
-	/* Groups display */
-	.sortby-menu {
-		text-align: right;
+  // Groups display
+  .sortby-menu {
+    text-align: right;
 	}
 
-	.group-list {
+  .group-list {
 
-		p {
-			font-weight: bold;
+    p {
+      font-weight: bold;
 		}
 
-		.item-info {
-			border: solid;
+    .item-info {
+      border: solid;
 		}
 	}
 
 }
-
-
-
