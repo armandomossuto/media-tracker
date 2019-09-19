@@ -136,7 +136,7 @@ namespace media_tracker.Tests.UnitTests
             {
                 UserId = 1,
                 ItemId = 1,
-                NewUserItemInformation = new UserItem
+                NewUserItemInformation = new NewUserItemProperties
                 {
                     Rating = 4
                 }
@@ -161,7 +161,7 @@ namespace media_tracker.Tests.UnitTests
             {
                 UserId = 1,
                 ItemId = 1,
-                NewUserItemInformation = new UserItem
+                NewUserItemInformation = new NewUserItemProperties
                 {
                     State = ItemState.Completed
                 }

@@ -5,6 +5,12 @@ namespace media_tracker.Models
     {
         public int UserId { get; set; }
         public int ItemId { get; set; }
-        public UserItem NewUserItemInformation { get; set; }
+        public NewUserItemProperties NewUserItemInformation { get; set; }
+    }
+
+    public class NewUserItemProperties
+    {
+        public int? Rating { get; set; }
+        public ItemState? State { get; set; }
     }
 }

@@ -26,20 +26,16 @@ namespace media_tracker.Models
         /// Updates Rating or State on a userItem
         /// </summary>
         /// <param name="newUserItemInformation"></param>
-        public void UpdateExistingUserItem(UserItem newUserItemInformation)
+        public void UpdateExistingUserItem(NewUserItemProperties newUserItemInformation)
         {
-            Type type = typeof(UserItem);
-            PropertyInfo[] properties = type.GetProperties();
-            foreach (PropertyInfo property in properties)
+            if (newUserItemInformation.Rating != null)
             {
-                var newValue = property.GetValue(newUserItemInformation);
-                // We only allow user to modify state or rating properties, and if they are not null
-                if (newValue != null && (property.Name == "Rating" || property.Name == "State"))
-                {
-                    property.SetValue(this, newValue);
-                }
+                Rating = newUserItemInformation.Rating.GetValueOrDefault();
+            }
+            if (newUserItemInformation.State != null)
+            {
+                State = newUserItemInformation.State.GetValueOrDefault();
             }
         }
-
     }
 }
