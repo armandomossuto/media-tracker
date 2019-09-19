@@ -2,7 +2,7 @@ import * as React from 'react';
 import { useReducer, useEffect, useState } from 'react';
 
 // Types
-import { ItemsProps, ItemsStatus, UserItemView } from './types';
+import { ItemsProps, ItemsStatus, UserItemView, SortItemOrder, SortItemOptions } from './types';
 import { Category } from '../categories/types';
 import { searchItemTypes, SearchItemType } from './types';
 
@@ -86,12 +86,15 @@ const Items: React.FunctionComponent<ItemsProps> = ({ match }: ItemsProps) => {
   const [searchedTerm, setSearchedTerm] = useState('');
   const [searchType, setSearchType] = useState<SearchItemType>('name');
 
-
   /**
    * Handler for changing searchedTerm when the input search changes
    * @param value introduces by the user in the input field
    */
   const onSearchItem = (value: string): void => setSearchedTerm(value);
+
+  // Variables for handling the sorting of items
+  const [sortOption, setSortOption] = useState<SortItemOptions>(SortItemOptions.name);
+  const [sortOrder, setSortOrder] = useState<SortItemOrder>(SortItemOrder.increase);
 
   /**
    * Filters the items list depending on the value of the search input and other filters
@@ -100,14 +103,25 @@ const Items: React.FunctionComponent<ItemsProps> = ({ match }: ItemsProps) => {
    * @param searchType - Property of Items to compare with the searched term
    */
   const filterItems = (items: Array<UserItemView>, searchedTerm: string, searchType: SearchItemType): Array<UserItemView> => {
+    let result = [...items];
+
+    // We only perform the search if there is a searched term
     if (searchedTerm) {
-      return items.filter(item => item[searchType] ?
+      result = items.filter(item => item[searchType] ?
         item[searchType].toLocaleLowerCase().includes(searchedTerm.toLocaleLowerCase())
         : false
       );
     }
 
-    return items;
+    // Now we are going to sort the items according to the sort option and order selected by the user
+    result.sort((a, b) => {
+      if(a[sortOption] > b[sortOption]) {
+        return sortOrder === SortItemOrder.increase ? 1 : -1;
+      }
+      return sortOrder === SortItemOrder.increase ? -1 : 1;
+    });
+    
+    return result;
   }
   // Items filtered after a search or change of the filter options
   const filteredItems = filterItems(items, searchedTerm, searchType);
@@ -136,9 +150,25 @@ const Items: React.FunctionComponent<ItemsProps> = ({ match }: ItemsProps) => {
               onSelect={setSearchType}
             />
           </div>
+          <div className="items__sort">
+            <Dropdown
+              options={Object.values(SortItemOptions)}
+              buttonText={`Sort by ${sortOption}`}
+              onSelect={setSortOption}
+            />
+            <div 
+              className="items__sort__direction"
+              onClick={(): void => setSortOrder(sortOrder === SortItemOrder.increase ? SortItemOrder.decrease : SortItemOrder.increase)}
+            >
+              {sortOrder === SortItemOrder.increase
+                ? <span>↓</span>
+                : <span>↑</span>
+              }
+            </div>
+          </div>
           <div className="items__list">
             {items.length > 0
-              ? filteredItems.map(item=> <ItemComponent item={item} key={item.name} itemsDispatch={dispatch} />)
+              ? filteredItems.map(item => <ItemComponent item={item} key={item.name} itemsDispatch={dispatch} />)
               : <EmptyList type={categoryName} className="item__list__empty" />
             }
           </div>

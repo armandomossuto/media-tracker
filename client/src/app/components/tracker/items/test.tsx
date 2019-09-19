@@ -136,4 +136,27 @@ describe("Items Component", () => {
     await wait(() => expect(container.findAllByText('Completed')).toBeTruthy());
     done();
   })
+
+  it("Sort items properly", () => {
+
+    expect(container.getByText('Sort by name'));
+    // By default items are sorted by name and in increasing order
+    expect(container.container.querySelector('.items-element__name').textContent).toBe('Item1');
+
+    // Click on the sort dropdown meny and change to rating option
+    fireEvent.click(container.getByText('Sort by name'));
+    fireEvent.click(container.getByText('rating'));
+
+    // Tect of the button changed to current option
+    expect(container.getByText('Sort by rating'));
+
+    // Now Item2 is the first one becuase it has the lowest rating
+    expect(container.container.querySelector('.items-element__name').textContent).toBe('Item2');
+
+    // Change sorting order
+    fireEvent.click(container.getByText('↓'));
+    expect(container.container.querySelector('.items-element__name').textContent).toBe('Item1');
+    expect(container.queryByText('↑')).toBeTruthy();
+    expect(container.queryByText('↓')).toBeFalsy();
+  })
 });

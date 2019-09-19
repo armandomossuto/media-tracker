@@ -99,3 +99,18 @@ export type ItemsActionCreator = (message: any) => (ItemsAction);
 export type SearchItemType = Exclude<keyof Item,  "id" | "categoryId">;
 
 export const searchItemTypes: Array<SearchItemType> = ["name", "description"];
+
+export const SortItemOptions = Object.freeze({
+  name: 'name' as 'name',
+  rating: 'rating' as 'rating',
+  state: 'state' as 'state'
+})
+
+export type SortItemOptions = EnumLiteralsOf<typeof SortItemOptions>;
+
+export const SortItemOrder = Object.freeze({
+  increase: 'increase' as 'increase',
+  decrease: 'decrease' as 'decrease'
+})
+
+export type SortItemOrder = EnumLiteralsOf<typeof SortItemOrder>;

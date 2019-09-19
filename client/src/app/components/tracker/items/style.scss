@@ -40,5 +40,24 @@
       max-height: 12px;
       width: 400px;
 		}
-	}
+  }
+
+  &__sort {
+    display: flex;
+    flex-direction: row;
+    margin-bottom: 20px;
+    margin-left: auto;
+    width: 150px;
+
+    &__direction {
+      cursor: pointer;
+      font-size: 15px;
+      font-weight: bold;
+      margin-left: 10px;
+
+      &:hover {
+        transform: scale(1.3);
+      }
+    }
+  }
 }
