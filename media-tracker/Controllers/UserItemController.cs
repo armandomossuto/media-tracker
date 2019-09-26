@@ -43,12 +43,22 @@ namespace media_tracker.Controllers
         /// <param name="userId"></param>
         /// <returns></returns>
         [HttpGet("{categoryId}/{userId}")]
-        public async Task<ActionResult<List<UserItemView>>> GetAllItemsFromUserCategory(int categoryId, int userId) =>
-            await _userItemService.GetAllItemsFromUserCategory(new UserCategory
+        public async Task<ActionResult<List<UserItemView>>> GetAllItemsFromUserCategory(int categoryId, int userId)
+        {
+            try
             {
-                CategoryId = categoryId,
-                UserId = userId
-            });
+                return await _userItemService.GetAllItemsFromUserCategory(new UserCategory
+                {
+                    CategoryId = categoryId,
+                    UserId = userId
+                });
+            } catch (DbUpdateException ex)
+            {
+                _logger.LogError("Error when getting items from user categories", ex);
+                return StatusCode(500);
+            }
+
+        }
 
         /// <summary>
         /// Adds an existing Item to the User Tracker
@@ -118,7 +128,7 @@ namespace media_tracker.Controllers
             {
                 await _userItemService.DeleteUserItem(userItemToDelete);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 _logger.LogError("Error when deleting a user item", ex);
                 return StatusCode(500);
@@ -139,6 +149,32 @@ namespace media_tracker.Controllers
                 return StatusCode(500);
             }
             return Ok();
+        }
+
+        /// <summary>
+        /// Retrieves a list of items according to a user search
+        /// </summary>
+        /// <param name="itemSearchRequest"></param>
+        /// <returns></returns>
+        [HttpPost("search")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<ActionResult<object>> SearchItems([FromBody] ItemSearchRequest itemSearchRequest)
+        {
+            try
+            {
+                 switch(itemSearchRequest.CategoryId)
+                {
+                    case 2: return await _userItemService.SearchMovieItems(itemSearchRequest.SearchTerm);
+                    default: return StatusCode(StatusCodes.Status400BadRequest);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("Error when searching for items", ex);
+                return StatusCode(500);
+            }
         }
     }
 

@@ -27,8 +27,12 @@ namespace media_tracker.Services
         private readonly MediaTrackerContext _context;
         private readonly HttpClient HttpClient;
 
-        public UserItemService(MediaTrackerContext _context, HttpClient httpClient)
+        public UserItemService(MediaTrackerContext _context, HttpClient httpClient = null)
         {
+            if(httpClient == null)
+            {
+                httpClient = new HttpClient();
+            }
             this._context = _context;
             HttpClient = httpClient;
         }
