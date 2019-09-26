@@ -12,6 +12,7 @@ namespace media_tracker.Tests.MockedData
         public List<UserCategory> UsersCategories { get; set; }
         public List<UserItem> UsersItems { get; set; }
         public List<UserToken> UsersTokens { get; set; }
+        public List<MovieGenre> MovieGenres { get; set; }
 
         /// <summary>
         /// Generates a default mocked data to be used for testing
@@ -116,12 +117,19 @@ namespace media_tracker.Tests.MockedData
                 });
             }
 
+            var movieGenres = new List<MovieGenre>()
+            {
+                new MovieGenre { Id = 28, Name = "Action" },
+                new MovieGenre { Id = 12, Name = "Adventure" }
+            };
+
             Users = users;
             UsersTokens = usersTokens;
             Categories = categories;
             UsersCategories = usersCategories;
             Items = items;
             UsersItems = usersItems;
+            MovieGenres = movieGenres;
         }
     }
 }
