@@ -30,6 +30,7 @@ namespace media_tracker
 
         public virtual DbSet<UserToken> UsersTokens { get; set; }
 
+        public virtual DbSet<MovieGenre> MovieGenres { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {

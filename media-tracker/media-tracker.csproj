@@ -32,5 +32,7 @@
     <Folder Include="Models\User\" />
     <Folder Include="Models\Category\" />
     <Folder Include="Models\Item\" />
+    <Folder Include="Models\Item\ItemSearch\" />
+    <Folder Include="Models\Item\Movie\" />
   </ItemGroup>
 </Project>

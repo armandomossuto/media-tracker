@@ -5,6 +5,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "media-tracker", "media-trac
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "media-tracker.Tests", "media-tracker.Tests\media-tracker.Tests.csproj", "{C1237F28-B217-42AE-9D55-DA934C1F03B6}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "media-tracker.Integration", "media-tracker.Integration\media-tracker.Integration.csproj", "{1F36663F-1C56-473A-B236-49ED80D4C214}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -19,5 +21,9 @@ Global
 		{C1237F28-B217-42AE-9D55-DA934C1F03B6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C1237F28-B217-42AE-9D55-DA934C1F03B6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C1237F28-B217-42AE-9D55-DA934C1F03B6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1F36663F-1C56-473A-B236-49ED80D4C214}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1F36663F-1C56-473A-B236-49ED80D4C214}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1F36663F-1C56-473A-B236-49ED80D4C214}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1F36663F-1C56-473A-B236-49ED80D4C214}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
