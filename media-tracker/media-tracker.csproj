@@ -34,5 +34,6 @@
     <Folder Include="Models\Item\" />
     <Folder Include="Models\Item\ItemSearch\" />
     <Folder Include="Models\Item\Movie\" />
+    <Folder Include="Services\Item\" />
   </ItemGroup>
 </Project>

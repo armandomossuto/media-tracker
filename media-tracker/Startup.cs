@@ -48,6 +48,7 @@ namespace media_tracker
             services.AddScoped<IUserCategoryService, UserCategoryService>();
             services.AddScoped<IUserItemService, UserItemService>();
             services.AddScoped<IUserTokenService, UserTokenService>();
+            services.AddScoped<IMovieService, MovieService>();
 
             // configure strongly typed settings objects
             var appSettingsSection = Configuration.GetSection("AppSettings");

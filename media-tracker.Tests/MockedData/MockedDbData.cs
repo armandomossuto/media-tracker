@@ -13,6 +13,7 @@ namespace media_tracker.Tests.MockedData
         public List<UserItem> UsersItems { get; set; }
         public List<UserToken> UsersTokens { get; set; }
         public List<MovieGenre> MovieGenres { get; set; }
+        public List<Movie> Movies { get; set; }
 
         /// <summary>
         /// Generates a default mocked data to be used for testing
@@ -130,6 +131,7 @@ namespace media_tracker.Tests.MockedData
             Items = items;
             UsersItems = usersItems;
             MovieGenres = movieGenres;
+            Movies = new List<Movie> { };
         }
     }
 }

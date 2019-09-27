@@ -21,11 +21,13 @@ namespace media_tracker.Controllers
     {
         //Injecting Service with controller actions
         private readonly IUserItemService _userItemService;
+        private readonly IMovieService _movieService;
         private readonly ILogger<UserItemController> _logger;
 
-        public UserItemController(IUserItemService userItemService, ILogger<UserItemController> logger)
+        public UserItemController(IUserItemService userItemService, IMovieService movieService, ILogger<UserItemController> logger)
         {
             _userItemService = userItemService;
+            _movieService = movieService;
             _logger = logger;
         }
 
@@ -166,7 +168,7 @@ namespace media_tracker.Controllers
             {
                  switch(itemSearchRequest.CategoryId)
                 {
-                    case 2: return await _userItemService.SearchMovieItems(itemSearchRequest.SearchTerm);
+                    case 2: return await _movieService.SearchMovieItems(itemSearchRequest.SearchTerm);
                     default: return StatusCode(StatusCodes.Status400BadRequest);
                 }
             }

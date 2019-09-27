@@ -16,6 +16,7 @@ namespace media_tracker.Tests.MockedData
         public MockedSet<Item> ItemsSet { get; set; }
         public MockedSet<UserItem> UsersItemsSet { get; set; }
         public MockedSet<MovieGenre> MovieGenresSet { get; set; }
+        public MockedSet<Movie> MoviesSet { get; set; }
 
         public MockedContext(MockedDbData mockedData)
         {
@@ -27,6 +28,7 @@ namespace media_tracker.Tests.MockedData
             ItemsSet = new MockedSet<Item>(mockedData.Items);
             UsersItemsSet = new MockedSet<UserItem>(mockedData.UsersItems);
             MovieGenresSet = new MockedSet<MovieGenre>(mockedData.MovieGenres);
+            MoviesSet = new MockedSet<Movie>(mockedData.Movies);
 
             // Mocking context
             Context = new Mock<MediaTrackerContext>();
@@ -39,6 +41,7 @@ namespace media_tracker.Tests.MockedData
             Context.Setup(m => m.Items).Returns(ItemsSet.Data.Object);
             Context.Setup(m => m.UsersItems).Returns(UsersItemsSet.Data.Object);
             Context.Setup(m => m.MovieGenres).Returns(MovieGenresSet.Data.Object);
+            Context.Setup(m => m.Movies).Returns(MoviesSet.Data.Object);
         }
     }
 }

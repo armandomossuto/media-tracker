@@ -4,7 +4,6 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using media_tracker.Models;
 using Microsoft.EntityFrameworkCore;
-using Newtonsoft.Json;
 
 namespace media_tracker.Services
 {
@@ -19,7 +18,6 @@ namespace media_tracker.Services
         Task<Item> AddNewItem(Item newItem, int userId);
         Task DeleteUserItem(UserItem userItemToDelete);
         Task UpdateUserItem(UpdateUserItem updateUserItem);
-        Task<List<MovieSearchView>> SearchMovieItems(string searchTerm);
     }
 
     public class UserItemService : IUserItemService
@@ -27,14 +25,9 @@ namespace media_tracker.Services
         private readonly MediaTrackerContext _context;
         private readonly HttpClient HttpClient;
 
-        public UserItemService(MediaTrackerContext _context, HttpClient httpClient = null)
+        public UserItemService(MediaTrackerContext _context)
         {
-            if(httpClient == null)
-            {
-                httpClient = new HttpClient();
-            }
             this._context = _context;
-            HttpClient = httpClient;
         }
 
         /// <summary>
@@ -114,15 +107,6 @@ namespace media_tracker.Services
             UserItem userItem = await _context.UsersItems.SingleOrDefaultAsync(u => u.UserId == updateUserItem.UserId & u.ItemId == updateUserItem.ItemId);
             userItem.UpdateExistingUserItem(updateUserItem.NewUserItemInformation);
             await _context.SaveChangesAsync();
-        }
-
-        public async Task<List<MovieSearchView>> SearchMovieItems(string searchTerm)
-        {
-            string urlRequest = $"https://api.themoviedb.org/3/search/movie?api_key=5db2d2b2ae57b67c6d0db0fbebbe22ec&language=en-US&query={searchTerm}&page=1&include_adult=false";
-            string jsonResponse = await HttpClient.GetStringAsync(urlRequest);
-            var movieSearchResults = JsonConvert.DeserializeObject<MovieSearchResults>(jsonResponse).Results;
-            // Converting the results to the MovieSearchView model
-            return movieSearchResults.Select(m => new MovieSearchView(m, _context)).ToList();
         }
 
     }

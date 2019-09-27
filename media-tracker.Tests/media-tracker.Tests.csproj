@@ -23,5 +23,6 @@
   <ItemGroup>
     <Folder Include="UnitTests\" />
     <Folder Include="MockedData\" />
+    <Folder Include="UnitTests\Item\" />
   </ItemGroup>
 </Project>

@@ -32,6 +32,9 @@ namespace media_tracker
 
         public virtual DbSet<MovieGenre> MovieGenres { get; set; }
 
+        public virtual DbSet<Movie> Movies { get; set; }
+
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             if (!optionsBuilder.IsConfigured)
