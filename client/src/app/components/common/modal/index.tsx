@@ -14,6 +14,7 @@ import AddSingleElement from './add-single-element';
 // State
 import reducer from './reducer';
 import { closeModal } from './actions';
+import ModalWithBody from './modal-with-body';
 
 // Creating state and dispatch contexts
 const StateContext = createContext(initialState);
@@ -58,16 +59,17 @@ export const useModal: UseModal = () => ([useContext(StateContext), useContext(D
  * Simple selector for the different types of modals
  */
 const ModalSelector: React.FunctionComponent<ModalSelectorProps> = ({ params, closeModal }: ModalSelectorProps) => {
-  const { 
+  const {
     type,
     // className, 
     onConfirmAction,
     onSearchAction,
     // title, 
-    message, 
+    message,
     // confirmButton, 
     // cancelButton, 
-    notification 
+    notification,
+    ModalBody,
   } = params;
   switch (type) {
     case ModalType.addValueInput:
@@ -79,5 +81,12 @@ const ModalSelector: React.FunctionComponent<ModalSelectorProps> = ({ params, cl
           closeModal={closeModal}
           notification={notification}
         />)
+    case ModalType.modalWithBody:
+      return (
+        <ModalWithBody
+          ModalBody={ModalBody}
+          closeModal={closeModal}
+        />
+      )
   }
 }

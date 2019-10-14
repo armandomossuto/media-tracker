@@ -4,4 +4,6 @@ export type AddSingleElementProps = {
     onSearchAction: Function;
     closeModal: Function;
     notification: string;
+    showOptions?: boolean;
+    ModalBody?: React.FunctionComponent;
 }

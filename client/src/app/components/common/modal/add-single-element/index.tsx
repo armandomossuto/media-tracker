@@ -15,7 +15,8 @@ const AddSingleElement: React.FunctionComponent<AddSingleElementProps> = ({
   onConfirmAction,
   onSearchAction,
   closeModal,
-  notification 
+  notification,
+  showOptions = true,
 }: AddSingleElementProps) => {
 
   // Value of the input
@@ -40,12 +41,17 @@ const AddSingleElement: React.FunctionComponent<AddSingleElementProps> = ({
           onChange={(e): Promise<void> => onHandleChange(e.target.value)}
           list="options"
         ></input>
-        <datalist id="options">
-          {/* For displaying a list of options in the input */
-            options.map(option =>
-              <option value={option} key={`option${option}`}></option>
-            )}
-        </datalist>
+        {showOptions
+          ? <datalist id="options">
+            {/* For displaying a list of options in the input */
+              options.map(option =>
+                <option value={option} key={`option${option}`}></option>
+              )}
+          </datalist>
+          : null
+        }
+      </div>
+      <div>
       </div>
       <div className="modal__buttons">
         <div

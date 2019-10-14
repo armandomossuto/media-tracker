@@ -15,6 +15,8 @@ export type ModalParams = {
   confirmButton?: string;
   cancelButton?: string;
   notification?: string;
+  showOptions?: boolean; 
+  ModalBody?: JSX.Element;
 }
 
 export type UseModal = () => ([ModalState, React.Dispatch<ModalAction>]);
@@ -26,7 +28,8 @@ export type ModalSelectorProps = {
 
 export const ModalType = Object.freeze({
   default: '' as '',
-  addValueInput: 'add-value-input' as 'add-value-input'
+  addValueInput: 'add-value-input' as 'add-value-input',
+  modalWithBody: 'modal-with-body' as 'modal-with-body',
 })
 
 export type ModalType = EnumLiteralsOf<typeof ModalType>

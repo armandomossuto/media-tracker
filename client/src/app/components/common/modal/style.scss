@@ -16,7 +16,7 @@
   text-align: center;
   top: 50%;
   transform: translateX(-50%) translateY(-50%); //Centers the modal-box in the center of the screen
-
+  z-index: 5;
 
   &__buttons {
     align-items: center;
