@@ -1,9 +1,5 @@
-﻿using System;
-using System.Linq;
-using System.Reflection;
-using media_tracker.Models;
+﻿using media_tracker.Models;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace media_tracker
 {

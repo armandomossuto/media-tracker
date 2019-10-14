@@ -72,21 +72,33 @@ namespace media_tracker.Tests.UnitTests
 
             int userId = 1;
 
-            await userItemService.AddNewItem(newItem, userId);
+            await userItemService.AddNewItem(newItem);
+
+            // Checking that the new Item was added correctly
+            mockedContext.ItemsSet.Data.Verify(m => m.AddAsync(It.IsAny<Item>(), cancellationToken), Times.Once());
+            mockedContext.Context.Verify(m => m.SaveChangesAsync(cancellationToken), Times.Once());
+        }
+
+        [Fact]
+        public async Task AddUserItem()
+        {
+            var cancellationToken = new CancellationToken();
+            // Creating context, data and a new instance of the service that we want to test
+            var mockedData = new MockedDbData();
+            MockedContext mockedContext = new MockedContext(mockedData);
+            UserItemService userItemService = GetMockedService(mockedContext.Context);
+
+            var userItem = new UserItem
+            {
+                ItemId = 5,
+                UserId = 1,
+            };
+
+            await userItemService.AddUserItem(userItem);
 
             // Checking that the new Item was added correctly
             mockedContext.UsersItemsSet.Data.Verify(m => m.AddAsync(It.IsAny<UserItem>(), cancellationToken), Times.Once());
-            mockedContext.Context.Verify(m => m.SaveChangesAsync(cancellationToken), Times.Exactly(2));
-
-
-            // Getting the list of user items and checking that the new user item is there
-            var expectedUserCategory = new UserCategory
-            {
-                CategoryId = 2,
-                UserId = userId
-            };
-            var itemsInUser = await userItemService.GetAllItemsFromUserCategory(expectedUserCategory);
-            Assert.Equal(newItem.Name, itemsInUser.Find(i => i.Name == newItem.Name).Name);
+            mockedContext.Context.Verify(m => m.SaveChangesAsync(cancellationToken), Times.Once());
         }
 
         [Fact]

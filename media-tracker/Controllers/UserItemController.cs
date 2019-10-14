@@ -92,18 +92,36 @@ namespace media_tracker.Controllers
         /// <summary>
         /// Adds a new Item to the DB and to the User account
         /// </summary>
-        /// <param name="newItem"></param>
-        /// <param name="userId"></param>
+        /// <param name="addItemRequest"></param>
         /// <returns></returns>
         [HttpPost("add/new")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status409Conflict)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<Item>> AddUserItem([FromBody] Item newItem, [FromQuery] int userId)
+        public async Task<ActionResult<int>> AddItem([FromBody]AddItem addItemRequest)
         {
+
             try
             {
-                return await _userItemService.AddNewItem(newItem, userId);
+                // First we generate the new item
+                Item item = await _userItemService.AddNewItem(addItemRequest.ToItem());
+
+                // Then we add to the corresponding table depending on the category Id
+                switch (addItemRequest.CategoryId)
+                {
+                    case 2:
+                        await _movieService.AddMovieItem(addItemRequest.ToMovie(item.Id));
+                        break;
+                    default:
+                        return StatusCode(StatusCodes.Status400BadRequest);
+                }
+                UserItem userItem = new UserItem
+                {
+                    ItemId = item.Id,
+                    UserId = addItemRequest.UserId,
+                };
+                await _userItemService.AddUserItem(userItem);
+                return item.Id;
             }
             catch (DbUpdateException ex)
             {

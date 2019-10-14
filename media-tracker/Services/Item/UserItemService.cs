@@ -15,7 +15,7 @@ namespace media_tracker.Services
         Task<List<Item>> GetAllItemsFromCategory(int categoryId);
         Task<List<UserItemView>> GetAllItemsFromUserCategory(UserCategory userCategory);
         Task AddUserItem(UserItem userItem);
-        Task<Item> AddNewItem(Item newItem, int userId);
+        Task<Item> AddNewItem(Item newItem);
         Task DeleteUserItem(UserItem userItemToDelete);
         Task UpdateUserItem(UpdateUserItem updateUserItem);
     }
@@ -23,7 +23,6 @@ namespace media_tracker.Services
     public class UserItemService : IUserItemService
     {
         private readonly MediaTrackerContext _context;
-        private readonly HttpClient HttpClient;
 
         public UserItemService(MediaTrackerContext _context)
         {
@@ -64,14 +63,10 @@ namespace media_tracker.Services
         /// Adds a new Item to Items and UsersItems tables
         /// </summary>
         /// <param name="newItem"></param>
-        /// <param name="userId"></param>
         /// <returns>The new Item</returns>
-        public async Task<Item> AddNewItem(Item newItem, int userId)
+        public async Task<Item> AddNewItem(Item newItem)
         {
             await CreateItem(newItem);
-            UserItem newUserItem = new UserItem { UserId = userId, ItemId = newItem.Id };
-            await _context.UsersItems.AddAsync(newUserItem);
-            await _context.SaveChangesAsync();
             return newItem;
         }
 
