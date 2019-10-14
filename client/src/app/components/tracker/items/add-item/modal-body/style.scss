@@ -1,0 +1,19 @@
+.add-item-modal {
+  max-height: 60vh;
+  overflow: auto;
+
+  &__result {
+    display: flex;
+    flex-direction: row;
+    margin: 5px;
+
+    &__image {
+      height: auto;
+      width: 50px;
+    }
+
+    &__title {
+      width: 100%;
+    }
+  }
+}

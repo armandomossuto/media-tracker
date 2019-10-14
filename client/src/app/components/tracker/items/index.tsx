@@ -26,6 +26,7 @@ import EmptyList from 'components/common/generic-messages/empty-list';
 import CustomMessage from 'components/common/generic-messages/custom-message';
 import Dropdown from 'components/common/dropdown';
 import ItemComponent from './item';
+import AddItem from './add-item';
 
 const Items: React.FunctionComponent<ItemsProps> = ({ match }: ItemsProps) => {
 
@@ -39,7 +40,7 @@ const Items: React.FunctionComponent<ItemsProps> = ({ match }: ItemsProps) => {
   const [{ userCategories }, categoriesStateDispatch] = useCategoriesState();
 
   // Items component internal state is managed by useReducer hook
-  const [{ items, status }, dispatch] = useReducer(reducer, initialState);
+  const [{ items, status, categoryId }, dispatch] = useReducer(reducer, initialState);
 
   // We fetch the list of items corresponding to the user for the category when mounting the component
   useEffect(() => {
@@ -150,20 +151,25 @@ const Items: React.FunctionComponent<ItemsProps> = ({ match }: ItemsProps) => {
               onSelect={setSearchType}
             />
           </div>
-          <div className="items__sort">
-            <Dropdown
-              options={Object.values(SortItemOptions)}
-              buttonText={`Sort by ${sortOption}`}
-              onSelect={setSortOption}
-            />
-            <div 
-              className="items__sort__direction"
-              onClick={(): void => setSortOrder(sortOrder === SortItemOrder.increase ? SortItemOrder.decrease : SortItemOrder.increase)}
-            >
-              {sortOrder === SortItemOrder.increase
-                ? <span>↓</span>
-                : <span>↑</span>
-              }
+          <div className="items__options">
+            <div className="items__add-button">
+              <AddItem categoryId={categoryId} />
+            </div>
+            <div className="items__sort">
+              <Dropdown
+                options={Object.values(SortItemOptions)}
+                buttonText={`Sort by ${sortOption}`}
+                onSelect={setSortOption}
+              />
+              <div 
+                className="items__sort__direction"
+                onClick={(): void => setSortOrder(sortOrder === SortItemOrder.increase ? SortItemOrder.decrease : SortItemOrder.increase)}
+              >
+                {sortOrder === SortItemOrder.increase
+                  ? <span>↓</span>
+                  : <span>↑</span>
+                }
+              </div>
             </div>
           </div>
           <div className="items__list">

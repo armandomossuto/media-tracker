@@ -20,7 +20,7 @@ namespace media_tracker.Models
         public string Description { get; set; }
 
         [JsonProperty(PropertyName = "poster_path")]
-        public string PosterUrl{ get; set; }
+        public string ImageUrl{ get; set; }
 
         [JsonProperty(PropertyName = "genre_ids")]
         public List<int> Genres { get; set; }
@@ -32,16 +32,30 @@ namespace media_tracker.Models
         public string ReleaseDate { get; set; }
     }
 
-    public class MovieSearchView : MovieResult
+    public class MovieSearchView
     {
-        public new List<MovieGenre> Genres { get; set; }
+        public int ExternalId { get; set; }
+        public string Title { get; set; }
+        public string Description { get; set; }
+        public string ImageUrl { get; set; }
+        public string OriginalLanguage { get; set; }
+        public string ReleaseDate { get; set; }
+        public List<MovieGenre> Genres { get; set; }
 
         public MovieSearchView(MovieResult movieResult, MediaTrackerContext context)
         {
             ExternalId = movieResult.ExternalId;
             Title = movieResult.Title;
             Description = movieResult.Description;
-            PosterUrl = movieResult.PosterUrl;
+            // If we don't have a poster URL, we use our placeholder
+            if (movieResult.ImageUrl != null)
+            {
+                ImageUrl = "https://image.tmdb.org/t/p/w200" + movieResult.ImageUrl;
+            }
+            else
+            {
+                ImageUrl = "/images/image-not-available.png";
+            }
             OriginalLanguage = movieResult.OriginalLanguage;
             ReleaseDate = movieResult.ReleaseDate;
 

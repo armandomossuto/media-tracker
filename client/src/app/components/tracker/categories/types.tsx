@@ -59,3 +59,9 @@ export type CategoriesAction = {
  * Action function type for the session reducer
  */
 export type CategoriesActionCreator = (message: any) => (CategoriesAction)
+
+export enum CategoriesTypes {
+  books=1,
+  movies=2,
+  comics=3
+}
