@@ -5,7 +5,13 @@ import { useSessionState } from 'state';
 import { fetchRequest } from 'utils/fetch';
 import ItemResult from './item-result';
 
-const AddItemModal: React.FunctionComponent<AddItemModalProps> = ({ categoryId }: AddItemModalProps) => {
+/**
+ * Body for the Add an item modal
+ * @param categoryId - Id of the category where we are currently making changes
+ * @param addItem - Function to be excuted when the user adds a new Item to trigger an update of the items list 
+ */
+const AddItemModal: React.FunctionComponent<AddItemModalProps> = ({ categoryId, addItem }: AddItemModalProps) => {
+  // Session state dispatch to use our custom fetch request
   const [, sessionStateDispatch] = useSessionState();
 
   // Term from the user input for searching items
@@ -29,7 +35,8 @@ const AddItemModal: React.FunctionComponent<AddItemModalProps> = ({ categoryId }
     // First we update the input value
     setSearchedTerm(searchTerm);
 
-    // We only perform the fetch request of we have more than 3 characters
+    // We only perform the fetch request if we have more than 3 characters
+    // Needs improvement TODO #68
     if(searchTerm.length < 4) {
       return;
     }
@@ -62,6 +69,8 @@ const AddItemModal: React.FunctionComponent<AddItemModalProps> = ({ categoryId }
         <ItemResult 
           key={`item-result${index}`}
           item={item}
+          categoryId={categoryId}
+          addItem={addItem}
         />
       )
       }

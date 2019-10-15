@@ -85,7 +85,7 @@ describe("Items Component", () => {
 
   it("Works when changing search type dropdown", async (done) => {
     // Click on dropdown button to open options
-    fireEvent.click(container.getByText("Search by name"));
+    fireEvent.click(container.getByText("Search by title"));
     fireEvent.click(container.getByText("description"));
     expect(container.queryByText('Item1')).toBeTruthy();
     expect(container.queryByText('Item2')).toBeTruthy();
@@ -139,23 +139,23 @@ describe("Items Component", () => {
 
   it("Sort items properly", () => {
 
-    expect(container.getByText('Sort by name'));
+    expect(container.getByText('Sort by title'));
     // By default items are sorted by name and in increasing order
-    expect(container.container.querySelector('.items-element__name').textContent).toBe('Item1');
+    expect(container.container.querySelector('.items-element__title').textContent).toBe('Item1');
 
     // Click on the sort dropdown meny and change to rating option
-    fireEvent.click(container.getByText('Sort by name'));
+    fireEvent.click(container.getByText('Sort by title'));
     fireEvent.click(container.getByText('rating'));
 
     // Tect of the button changed to current option
     expect(container.getByText('Sort by rating'));
 
     // Now Item2 is the first one becuase it has the lowest rating
-    expect(container.container.querySelector('.items-element__name').textContent).toBe('Item2');
+    expect(container.container.querySelector('.items-element__title').textContent).toBe('Item2');
 
     // Change sorting order
     fireEvent.click(container.getByText('↓'));
-    expect(container.container.querySelector('.items-element__name').textContent).toBe('Item1');
+    expect(container.container.querySelector('.items-element__title').textContent).toBe('Item1');
     expect(container.queryByText('↑')).toBeTruthy();
     expect(container.queryByText('↓')).toBeFalsy();
   })

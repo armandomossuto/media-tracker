@@ -1,34 +1,19 @@
+import { Movie } from "../types";
+
 export type ItemSearchRequest = {
   categoryId: string;
   searchTerm: string;
 }
 
-export type ItemSearchView = MovieSearchView;
-
-export type MovieSearchView = {
-  externalId: string;
-  title: string;
-  description: string;
-  imageUrl: string;
-  originalLanguage: string;
-  releaseDate: string;
-  genres: Array<MovieGenre>;
-}
-
-export type MovieGenre = {
-  name: string;
-  id: string;
-}
+export type ItemSearchView = Movie;
 
 export type AddItemProps = {
   categoryId: string;
+  addItem: Function;
 }
 
 
 export type AddItemModalProps = {
   categoryId: string;
-}
-
-export type ItemResultProps = {
-  item: MovieSearchView;
+  addItem: Function;
 }

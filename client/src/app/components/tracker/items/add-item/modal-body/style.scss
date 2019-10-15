@@ -15,5 +15,26 @@
     &__title {
       width: 100%;
     }
+
+    &__button {
+      @include genericButton;
+      border: 0.5px solid;
+      border-radius: 50%;
+      font-weight: bold;
+      height: 25px;
+      width: 25px;
+
+      &__add {
+        position: relative;
+        top: 2px;
+      }
+
+      &__check {
+        color: $font-color-success;
+        left: -1px;
+        position: relative;
+        top: 4px;
+      }
+    }
   }
 }

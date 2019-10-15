@@ -1,11 +1,11 @@
-import { ItemsActionCreator, Item, ItemsActionType, ItemsStatus } from './types';
+import { ItemsActionCreator, ItemsActionType, ItemsStatus, UserItemView } from './types';
 
 export const setCategoryId: ItemsActionCreator = (categoryId: string) => ({
   type: ItemsActionType.SET_CATEGORY_ID,
   payload: categoryId,
 });
 
-export const setItems: ItemsActionCreator = (items: Array<Item>) => ({
+export const setItems: ItemsActionCreator = (items: Array<UserItemView>) => ({
   type: ItemsActionType.SET_ITEMS,
   payload: items,
 });
@@ -15,7 +15,7 @@ export const setItemsStatus: ItemsActionCreator = (status: ItemsStatus) => ({
   payload: status,
 });
 
-export const addItem: ItemsActionCreator = (item: Item) => ({
+export const addItem: ItemsActionCreator = (item: UserItemView) => ({
   type: ItemsActionType.ADD_ITEM,
   payload: item,
 });

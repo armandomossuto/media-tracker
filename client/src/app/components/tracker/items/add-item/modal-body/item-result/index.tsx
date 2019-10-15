@@ -1,42 +1,85 @@
 import * as React from 'react';
-import { ItemResultProps } from '../../types';
+
+// types
+import { ItemResultProps, AddItemRequest } from './types';
+import { UserItemView } from 'components/tracker/items/types';
+
+// Hooks, actions and utils
 import { useState } from 'react'
-import * as imageNotAvailable from 'images/image-not-available.png';
+import { fetchRequest } from 'utils/fetch';
+import { useSessionState } from 'state';
+
+// Components
+import ImageWithFallback from 'components/common/images/image-with-fallback';
 
 /**
- * Component for rendering an item result
- * @param item 
+ * Component for rendering an item result for the add item modal
+ * @param item - Item from the search request
+ * @param categoryId - Id of the category where we are currently making changes
+ * @param addItem - Function to be excuted when the user adds a new Item to trigger an update of the items list 
  */
-const ItemResult: React.FunctionComponent<ItemResultProps> = ({ item }: ItemResultProps) => {
-
-  // Source for the image
-  const [imgSrc, setImageSrc] = useState(item.imageUrl);
+const ItemResult: React.FunctionComponent<ItemResultProps> = ({ item, categoryId, addItem }: ItemResultProps) => {
 
   // Whether or not this item has been added
   const [isAdded, setIsAdded] = useState(false);
 
-  /**
-   * Handles error from trying to render an image and replaces it with our placeholder
-   */
-  const onHandleImageError = (): void => setImageSrc('/images/image-not-available.png');
+  const [ { accountInfo } , sessionStateDispatch] = useSessionState();
 
+  /**
+   * Sends request to add Item to the user and/or the category if needed
+   */
+  const onAddItem = async (): Promise<void> => {
+    // If we have an itemId, it means that this item is already in our DB
+    if (item.itemId) {
+      // do something. TODO #63
+    }
+
+    // Request to add the item to the DB and also the user
+    try {
+      const body: AddItemRequest = {
+        item,
+        userId: accountInfo.id,
+        categoryId,
+      };
+
+      const itemId: string = await fetchRequest('api/entries/add/new', 'POST', sessionStateDispatch, body);
+      const newItem: UserItemView = {
+        id: itemId,
+        categoryId,
+        title: item.title,
+        description: item.description,
+        imageUrl: item.imageUrl,
+        rating: "0",
+        state: "0"
+      }
+      addItem(newItem);
+      setIsAdded(!!itemId);
+    } catch(error) {
+      // show error message TODO #64
+    }
+  }
 
   return (
     <div
       className="add-item-modal__result"
     >
-      <img
-        src={imgSrc === '/images/image-not-available.png' ? imageNotAvailable : item.imageUrl}
+      <ImageWithFallback
         title={item.title}
-        className="add-item-modal__result__image"
-        onError={(): void => onHandleImageError()}
-      ></img>
+        imageUrl={item.imageUrl}
+        className={"add-item-modal__result__image"} 
+      />
       <h3 className="add-item-modal__result__title">{item.title}</h3>
-      {isAdded
-        ? <span> ✓ </span>
-        : <span> + </span> 
-      }
-      
+      <div className={"add-item-modal__result__button"}>
+        {isAdded
+          ? <span className={"add-item-modal__result__button__check"}> ✓ </span>
+          : <span 
+            className={"add-item-modal__result__button__add"}
+            onClick={(): Promise<void> => onAddItem()}
+          >
+            +
+          </span> 
+        }
+      </div>
     </div>
   )
 }

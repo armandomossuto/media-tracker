@@ -14,7 +14,7 @@ import { useSessionState } from 'state';
 // useReducer elements
 import reducer from './reducer';
 import { initialState } from './store'
-import { setItemsStatus, setCategoryId, setItems } from './actions';
+import { setItemsStatus, setCategoryId, setItems, addItem } from './actions';
 
 // Utils
 import { fetchRequest } from 'utils/fetch';
@@ -28,6 +28,10 @@ import Dropdown from 'components/common/dropdown';
 import ItemComponent from './item';
 import AddItem from './add-item';
 
+/**
+ * Displays the list of items in a specific category
+ * @param match - Router path, used to determine current category dynamically
+ */
 const Items: React.FunctionComponent<ItemsProps> = ({ match }: ItemsProps) => {
 
   // The category name comes in the URL
@@ -153,7 +157,7 @@ const Items: React.FunctionComponent<ItemsProps> = ({ match }: ItemsProps) => {
           </div>
           <div className="items__options">
             <div className="items__add-button">
-              <AddItem categoryId={categoryId} />
+              <AddItem categoryId={categoryId} addItem={(item: UserItemView): void => dispatch(addItem(item))} />
             </div>
             <div className="items__sort">
               <Dropdown
