@@ -44,8 +44,8 @@ namespace media_tracker.Tests.UnitTests
             UserItemService userItemService = GetMockedService(mockedContext.Context);
 
             var userCategory = new UserCategory {
-                CategoryId = 1,
-                UserId = 1
+                CategoryId = 2,
+                UserId = 2
             };
 
             List<UserItemView> itemsInCategory = await userItemService.GetAllItemsFromUserCategory(userCategory);
@@ -66,11 +66,7 @@ namespace media_tracker.Tests.UnitTests
             var newItem = new Item
             {
                 CategoryId = 2,
-                Name = "newItem",
-                Description = "description"
             };
-
-            int userId = 1;
 
             await userItemService.AddNewItem(newItem);
 
@@ -111,15 +107,15 @@ namespace media_tracker.Tests.UnitTests
 
             var userItemToDelete = new UserItem
             {
-                Id = 1,
-                ItemId = 1,
-                UserId = 1
+                Id = 3,
+                ItemId = 3,
+                UserId = 2
             };
 
             var userCategory = new UserCategory
             {
-                CategoryId = 1,
-                UserId = 1
+                CategoryId = 2,
+                UserId = 2
             };
 
             var itemsInCategory = await userItemService.GetAllItemsFromUserCategory(userCategory);

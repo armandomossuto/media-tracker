@@ -60,14 +60,14 @@ namespace media_tracker.Tests.MockedData
                 });
             }
 
-            // Adding category with id 1 to all Users
+            // Adding category with id 2 to all Users
             var usersCategories = new List<UserCategory>();
             for (int i = 1; i < 6; i++)
             {
                 usersCategories.Add(new UserCategory
                 {
                     Id = i,
-                    CategoryId = 1,
+                    CategoryId = 2,
                     UserId = i,
                 });
             }
@@ -80,8 +80,6 @@ namespace media_tracker.Tests.MockedData
                 {
                     Id = i,
                     CategoryId = 1,
-                    Name = "item" + i,
-                    Description = "description" + i
                 });
             }
 
@@ -92,8 +90,6 @@ namespace media_tracker.Tests.MockedData
                 {
                     Id = i,
                     CategoryId = 2,
-                    Name = "item" + i,
-                    Description = "description" + i
                 });
             }
 
@@ -124,6 +120,12 @@ namespace media_tracker.Tests.MockedData
                 new MovieGenre { Id = 12, Name = "Adventure" }
             };
 
+            var movies = new List<Movie>()
+            {
+                new Movie { ItemId = 3, Title="Movie1" },
+                new Movie { ItemId = 4, Title="Movie2" }
+            };
+
             Users = users;
             UsersTokens = usersTokens;
             Categories = categories;
@@ -131,7 +133,7 @@ namespace media_tracker.Tests.MockedData
             Items = items;
             UsersItems = usersItems;
             MovieGenres = movieGenres;
-            Movies = new List<Movie> { };
+            Movies = movies;
         }
     }
 }

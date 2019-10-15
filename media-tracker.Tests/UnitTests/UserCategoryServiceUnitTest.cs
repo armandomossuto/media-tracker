@@ -44,7 +44,7 @@ namespace media_tracker.Tests.UnitTests
             MockedContext mockedContext = new MockedContext(mockedData);
             UserCategoryService userCategoryService = GetMockedService(mockedContext.Context);
 
-            int userId = 1;
+            int userId = 2;
             List<Category> categoriesInUser = await userCategoryService.GetUserCategories(userId);
 
             var expectedCategory = new Category

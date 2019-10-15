@@ -43,10 +43,30 @@ namespace media_tracker.Services
         /// <returns></returns>
         public async Task<List<UserItemView>> GetAllItemsFromUserCategory(UserCategory userCategory)
         {
-            return await (from userItem in _context.UsersItems
-                    join item in _context.Items on userItem.ItemId equals item.Id
-                    where item.CategoryId == userCategory.CategoryId & userItem.UserId == userCategory.UserId 
-                    select new UserItemView(userItem, item)).ToListAsync();
+            // Depending on the categoryId, we will query a different table
+            switch (userCategory.CategoryId)
+            {
+                // Movies
+                case 2:
+                    return await (from userItem in _context.UsersItems
+                                  join item in _context.Items on userItem.ItemId equals item.Id
+                                  join movie in _context.Movies on userItem.ItemId equals movie.ItemId
+                                  where item.CategoryId == userCategory.CategoryId & userItem.UserId == userCategory.UserId
+                                  select new UserItemView
+                                  {
+                                      Id = item.Id,
+                                      CategoryId = userCategory.CategoryId,
+                                      Title = movie.Title,
+                                      Description = movie.Description,
+                                      ImageUrl = movie.ImageUrl,
+                                      Rating = userItem.Rating,
+                                      State = userItem.State
+                                  }).ToListAsync();
+                default:
+                    // For the case of a wrong categoryId coming from the request
+                    throw new System.Exception("Category non existent");
+            }
+            
         }
 
         /// <summary>
@@ -103,6 +123,5 @@ namespace media_tracker.Services
             userItem.UpdateExistingUserItem(updateUserItem.NewUserItemInformation);
             await _context.SaveChangesAsync();
         }
-
     }
 }

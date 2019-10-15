@@ -1,11 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
-using System.Security.Cryptography;
-using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 using media_tracker.Services;
 using media_tracker.Models;
 using Microsoft.EntityFrameworkCore;
@@ -32,7 +29,7 @@ namespace media_tracker.Controllers
         }
 
         /// <summary>
-        /// Returns all available categories
+        /// Returns all available items form a category
         /// </summary>
         [HttpGet("{categoryId}")]
         public async Task<ActionResult<List<Item>>> GetAllItemsFromCategory(int categoryId) =>
