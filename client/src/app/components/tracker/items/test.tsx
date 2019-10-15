@@ -22,8 +22,8 @@ describe("Items Component", () => {
     { id: "3", name: "Category3", description: "" }
   ];
   const userItems: Array<UserItemView> = [
-    { id: "1", categoryId, rating: "5", state: "1", name: "Item1", description: "" },
-    { id: "2", categoryId, rating: "3", state: "0", name: "Item2", description: "description2" }
+    { id: "1", categoryId, rating: "5", state: "1", title: "Item1", description: "", imageUrl: "" },
+    { id: "2", categoryId, rating: "3", state: "0", title: "Item2", description: "description2", imageUrl: "" }
   ];
   // Mocking the props for the component
   const ItemsProps: ItemsProps = {

@@ -85,7 +85,7 @@ const Items: React.FunctionComponent<ItemsProps> = ({ match }: ItemsProps) => {
 
   // Term from the user input for searching items
   const [searchedTerm, setSearchedTerm] = useState('');
-  const [searchType, setSearchType] = useState<SearchItemType>('name');
+  const [searchType, setSearchType] = useState<SearchItemType>('title');
 
   /**
    * Handler for changing searchedTerm when the input search changes
@@ -94,7 +94,7 @@ const Items: React.FunctionComponent<ItemsProps> = ({ match }: ItemsProps) => {
   const onSearchItem = (value: string): void => setSearchedTerm(value);
 
   // Variables for handling the sorting of items
-  const [sortOption, setSortOption] = useState<SortItemOptions>(SortItemOptions.name);
+  const [sortOption, setSortOption] = useState<SortItemOptions>(SortItemOptions.title);
   const [sortOrder, setSortOrder] = useState<SortItemOrder>(SortItemOrder.increase);
 
   /**
@@ -174,7 +174,7 @@ const Items: React.FunctionComponent<ItemsProps> = ({ match }: ItemsProps) => {
           </div>
           <div className="items__list">
             {items.length > 0
-              ? filteredItems.map(item => <ItemComponent item={item} key={item.name} itemsDispatch={dispatch} />)
+              ? filteredItems.map(item => <ItemComponent item={item} key={item.title} itemsDispatch={dispatch} />)
               : <EmptyList type={categoryName} className="item__list__empty" />
             }
           </div>

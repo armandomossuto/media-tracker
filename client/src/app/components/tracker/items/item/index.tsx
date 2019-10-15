@@ -13,6 +13,7 @@ import { updateItemRating, updateItemState } from '../actions';
 // Components
 import Rating from './rating';
 import State from './state';
+import ImageWithFallback from 'components/common/images/image-with-fallback';
 
 /**
  * Component belonging to one item inside the items page of the tracker
@@ -77,7 +78,12 @@ const Item: React.FunctionComponent<ItemDescriptionProps> = ({ item, itemsDispat
 
   return (
     <div className="items-element" onClick={(): void => setShowMoreInfo(!showMoreInfo)} >
-      <h3 className="items-element__name">{item.name}</h3>
+      <ImageWithFallback
+        title={item.title}
+        imageUrl={item.imageUrl}
+        className={"items-element__image"} 
+      />
+      <h3 className="items-element__title">{item.title}</h3>
       <div className="items-element__rating-and-state">
         <Rating rating={item.rating} updateRating={updateRating} />
         <State state={item.state} updateState={updateState} />

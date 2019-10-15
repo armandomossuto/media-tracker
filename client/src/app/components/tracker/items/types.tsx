@@ -4,8 +4,6 @@ import { match } from "react-router";
 export interface Item {
   id: string;
   categoryId: string;
-  name: string;
-  description: string;
 }
 
 export const ItemState = Object.freeze({
@@ -51,6 +49,9 @@ export class UserItem implements UserItem {
 }
 
 export interface UserItemView extends Item {
+  [title: string]: string;
+  description: string;
+  imageUrl: string;
   rating: ItemRating;
   state: ItemState;
 }
@@ -96,12 +97,12 @@ export type ItemsAction = {
 
 export type ItemsActionCreator = (message: any) => (ItemsAction);
 
-export type SearchItemType = Exclude<keyof Item,  "id" | "categoryId">;
+export type SearchItemType = Exclude<keyof UserItemView,  "id" | "categoryId">;
 
-export const searchItemTypes: Array<SearchItemType> = ["name", "description"];
+export const searchItemTypes: Array<string> = ["title", "description"];
 
 export const SortItemOptions = Object.freeze({
-  name: 'name' as 'name',
+  title: 'title' as 'title',
   rating: 'rating' as 'rating',
   state: 'state' as 'state'
 })
@@ -114,3 +115,19 @@ export const SortItemOrder = Object.freeze({
 })
 
 export type SortItemOrder = EnumLiteralsOf<typeof SortItemOrder>;
+
+export type Movie = {
+  itemId?: string;
+  externalId: string;
+  title: string;
+  description: string;
+  imageUrl: string;
+  originalLanguage: string;
+  releaseDate: string;
+  genres: Array<MovieGenre>;
+}
+
+export type MovieGenre = {
+  name: string;
+  id: string;
+}

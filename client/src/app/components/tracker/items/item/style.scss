@@ -6,20 +6,27 @@
   border-style: solid;
   border-width: 1px;
   cursor: pointer;
+  display: flex;
   font-size: 20px;
   margin-bottom: 10px;
   min-height: 30px;
+  padding: 20px;
   position: relative;
   text-align: center;
 
-  &__name {
-    margin: 20px auto;
+  &__image {
+    height: auto;
+    width: 50px;
+  }
+
+  &__title {
+    flex-grow: 1;
+    margin: auto;
   }
 
   &__rating-and-state {
-    position: absolute;
-    right: 50px;
-    top: 10px;
+    margin: auto;
+    margin-right: 20px;
   }
 
   &__notification {
