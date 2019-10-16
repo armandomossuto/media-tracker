@@ -22,7 +22,7 @@ export type UpdateUserItem = {
   userId: string;
   newUserItemInformation: {
     rating?: ItemRating;
-    state?: ItemState;
+    state?: number;
   };
 }
 

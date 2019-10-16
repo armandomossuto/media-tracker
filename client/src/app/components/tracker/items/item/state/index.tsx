@@ -17,7 +17,7 @@ const State: React.FunctionComponent<ItemStateProps> = ({ state, updateState }: 
   const onClickOption = (event: React.MouseEvent, stateIndex: number): void => {
     event.stopPropagation();
     setShowOptions(false);
-    updateState(stateIndex.toString());
+    updateState(stateIndex);
   }
   return (
     <div className="item-state">

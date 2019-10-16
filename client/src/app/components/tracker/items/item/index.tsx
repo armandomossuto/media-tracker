@@ -58,7 +58,7 @@ const Item: React.FunctionComponent<ItemDescriptionProps> = ({ item, itemsDispat
    * @param event
    * @param newState 
    */
-  const updateState = (newState: ItemState): void => {
+  const updateState = (newState: number): void => {
     // Creating the object necessary for the update user item request
     const updateUser: UpdateUserItem = {
       userId: accountInfo.id,
