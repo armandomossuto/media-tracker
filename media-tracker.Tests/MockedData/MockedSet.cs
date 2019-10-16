@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Entity.Infrastructure;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading;
@@ -7,6 +8,7 @@ using System.Threading.Tasks;
 using media_tracker.Models;
 using Microsoft.EntityFrameworkCore;
 using Moq;
+using TestingDemo;
 
 namespace media_tracker.Tests.MockedData
 {
@@ -24,10 +26,10 @@ namespace media_tracker.Tests.MockedData
             var queryable = mockedData.AsQueryable();
 
             var mockSet = new Mock<DbSet<Model>>();
-            mockSet.As<IQueryable<Model>>().Setup(m => m.Provider).Returns(new TestAsyncQueryProvider<Model>(queryable.Provider));
+            mockSet.As<IQueryable<Model>>().Setup(m => m.Provider).Returns(new TestDbAsyncQueryProvider<Model>(queryable.Provider));
             mockSet.As<IQueryable<Model>>().Setup(m => m.Expression).Returns(queryable.Expression);
             mockSet.As<IQueryable<Model>>().Setup(m => m.ElementType).Returns(queryable.ElementType);
-            mockSet.As<IAsyncEnumerable<Model>>().Setup(m => m.GetEnumerator()).Returns(new TestAsyncEnumerator<Model>(queryable.GetEnumerator()));
+            mockSet.As<IDbAsyncEnumerable<Model>>().Setup(m => m.GetAsyncEnumerator()).Returns(new TestDbAsyncEnumerator<Model>(queryable.GetEnumerator()));
             mockSet.As<IQueryable<Model>>().Setup(m => m.GetEnumerator()).Returns(() => queryable.GetEnumerator());
 
             // Mocking add method in the context

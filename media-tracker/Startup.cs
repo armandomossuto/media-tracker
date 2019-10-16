@@ -1,23 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using Microsoft.EntityFrameworkCore;
 using media_tracker.Services;
 using media_tracker.Helpers;
 using System.Text;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.Tokens;
 using Serilog;
 using System.IO;
+using Microsoft.Extensions.Hosting;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
 
 namespace media_tracker
 {
@@ -42,7 +38,7 @@ namespace media_tracker
             services.AddDbContext<MediaTrackerContext>(options =>
                 options.UseNpgsql(Configuration.GetConnectionString("DefaultConnection")));
 
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
 
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IUserCategoryService, UserCategoryService>();
@@ -80,7 +76,7 @@ namespace media_tracker
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILoggerFactory loggerFactory)
         {
             if (env.IsDevelopment())
             {
@@ -94,9 +90,13 @@ namespace media_tracker
 
             app.UseCors(builder => builder.WithOrigins("http://localhost:8080").WithMethods("GET", "POST", "OPTIONS").AllowCredentials().AllowAnyHeader());
             app.UseHttpsRedirection();
-            app.UseMvc();
+            app.UseRouting();
             app.UseAuthentication();
-
+            app.UseAuthorization();
+            app.UseEndpoints(routes =>
+            {
+                routes.MapDefaultControllerRoute();
+            });
             loggerFactory.AddSerilog();
         }
 

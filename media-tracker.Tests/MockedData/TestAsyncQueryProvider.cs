@@ -1,30 +1,30 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.Data.Entity.Infrastructure;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore.Query.Internal;
 
-namespace media_tracker.Tests.MockedData
+namespace TestingDemo
 {
-    public class TestAsyncQueryProvider<TEntity> : IAsyncQueryProvider
+    internal class TestDbAsyncQueryProvider<TEntity> : IDbAsyncQueryProvider
     {
         private readonly IQueryProvider _inner;
 
-        internal TestAsyncQueryProvider(IQueryProvider inner)
+        internal TestDbAsyncQueryProvider(IQueryProvider inner)
         {
             _inner = inner;
         }
 
         public IQueryable CreateQuery(Expression expression)
         {
-            return new TestAsyncEnumerable<TEntity>(expression);
+            return new TestDbAsyncEnumerable<TEntity>(expression);
         }
 
         public IQueryable<TElement> CreateQuery<TElement>(Expression expression)
         {
-            return new TestAsyncEnumerable<TElement>(expression);
+            return new TestDbAsyncEnumerable<TElement>(expression);
         }
 
         public object Execute(Expression expression)
@@ -37,9 +37,9 @@ namespace media_tracker.Tests.MockedData
             return _inner.Execute<TResult>(expression);
         }
 
-        public IAsyncEnumerable<TResult> ExecuteAsync<TResult>(Expression expression)
+        public Task<object> ExecuteAsync(Expression expression, CancellationToken cancellationToken)
         {
-            return new TestAsyncEnumerable<TResult>(expression);
+            return Task.FromResult(Execute(expression));
         }
 
         public Task<TResult> ExecuteAsync<TResult>(Expression expression, CancellationToken cancellationToken)
@@ -48,32 +48,37 @@ namespace media_tracker.Tests.MockedData
         }
     }
 
-    internal class TestAsyncEnumerable<T> : EnumerableQuery<T>, IAsyncEnumerable<T>, IQueryable<T>
+    internal class TestDbAsyncEnumerable<T> : EnumerableQuery<T>, IDbAsyncEnumerable<T>, IQueryable<T>
     {
-        public TestAsyncEnumerable(IEnumerable<T> enumerable)
+        public TestDbAsyncEnumerable(IEnumerable<T> enumerable)
             : base(enumerable)
         { }
 
-        public TestAsyncEnumerable(Expression expression)
+        public TestDbAsyncEnumerable(Expression expression)
             : base(expression)
         { }
 
-        public IAsyncEnumerator<T> GetEnumerator()
+        public IDbAsyncEnumerator<T> GetAsyncEnumerator()
         {
-            return new TestAsyncEnumerator<T>(this.AsEnumerable().GetEnumerator());
+            return new TestDbAsyncEnumerator<T>(this.AsEnumerable().GetEnumerator());
+        }
+
+        IDbAsyncEnumerator IDbAsyncEnumerable.GetAsyncEnumerator()
+        {
+            return GetAsyncEnumerator();
         }
 
         IQueryProvider IQueryable.Provider
         {
-            get { return new TestAsyncQueryProvider<T>(this); }
+            get { return (System.Linq.IQueryProvider)new TestDbAsyncQueryProvider<T>(this); }
         }
     }
 
-    internal class TestAsyncEnumerator<T> : IAsyncEnumerator<T>
+    internal class TestDbAsyncEnumerator<T> : IDbAsyncEnumerator<T>
     {
         private readonly IEnumerator<T> _inner;
 
-        public TestAsyncEnumerator(IEnumerator<T> inner)
+        public TestDbAsyncEnumerator(IEnumerator<T> inner)
         {
             _inner = inner;
         }
@@ -83,17 +88,19 @@ namespace media_tracker.Tests.MockedData
             _inner.Dispose();
         }
 
-        public T Current
-        {
-            get
-            {
-                return _inner.Current;
-            }
-        }
-
-        public Task<bool> MoveNext(CancellationToken cancellationToken)
+        public Task<bool> MoveNextAsync(CancellationToken cancellationToken)
         {
             return Task.FromResult(_inner.MoveNext());
+        }
+
+        public T Current
+        {
+            get { return _inner.Current; }
+        }
+
+        object IDbAsyncEnumerator.Current
+        {
+            get { return Current; }
         }
     }
 }
