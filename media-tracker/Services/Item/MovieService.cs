@@ -15,6 +15,7 @@ namespace media_tracker.Services
     {
         Task<List<MovieView>> SearchMovieItems(string searchTerm);
         Task AddMovieItem(Movie movie);
+        Task<Movie> FindMovieByExtId(int externalId);
     }
 
     public class MovieService : IMovieService
@@ -86,5 +87,13 @@ namespace media_tracker.Services
             await _context.Movies.AddAsync(movie);
             await _context.SaveChangesAsync();
         }
+
+        /// <summary>
+        /// Finds a movie item by the external Id
+        /// </summary>
+        /// <param name="externalId"></param>
+        /// <returns></returns>
+        public async Task<Movie> FindMovieByExtId(int externalId) =>
+            await _context.Movies.SingleOrDefaultAsync(m => m.ExternalId == externalId);
     }
 }

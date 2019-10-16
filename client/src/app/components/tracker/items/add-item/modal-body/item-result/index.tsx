@@ -1,7 +1,7 @@
 import * as React from 'react';
 
 // types
-import { ItemResultProps, AddItemRequest } from './types';
+import { ItemResultProps, AddItemRequest, AddItemNotification } from './types';
 import { UserItemView } from 'components/tracker/items/types';
 
 // Hooks, actions and utils
@@ -23,7 +23,10 @@ const ItemResult: React.FunctionComponent<ItemResultProps> = ({ item, categoryId
   // Whether or not this item has been added
   const [isAdded, setIsAdded] = useState(false);
 
-  const [ { accountInfo } , sessionStateDispatch] = useSessionState();
+  const [{ accountInfo }, sessionStateDispatch] = useSessionState();
+
+  // For handling notifications
+  const [notification, setNotification] = useState<AddItemNotification>(AddItemNotification.initial);
 
   /**
    * Sends request to add Item to the user and/or the category if needed
@@ -54,8 +57,9 @@ const ItemResult: React.FunctionComponent<ItemResultProps> = ({ item, categoryId
       }
       addItem(newItem);
       setIsAdded(!!itemId);
-    } catch(error) {
-      // show error message TODO #64
+      setNotification(AddItemNotification.initial);
+    } catch (error) {
+      setNotification(AddItemNotification.error);
     }
   }
 
@@ -66,20 +70,21 @@ const ItemResult: React.FunctionComponent<ItemResultProps> = ({ item, categoryId
       <ImageWithFallback
         title={item.title}
         imageUrl={item.imageUrl}
-        className={"add-item-modal__result__image"} 
+        className={"add-item-modal__result__image"}
       />
       <h3 className="add-item-modal__result__title">{item.title}</h3>
       <div className={"add-item-modal__result__button"}>
         {isAdded
           ? <span className={"add-item-modal__result__button__check"}> ✓ </span>
-          : <span 
+          : <span
             className={"add-item-modal__result__button__add"}
             onClick={(): Promise<void> => onAddItem()}
           >
             +
-          </span> 
+          </span>
         }
       </div>
+      <div className="add-item-modal__result__notification"> {notification} </div>
     </div>
   )
 }

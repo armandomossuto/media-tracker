@@ -103,6 +103,21 @@ namespace media_tracker.Controllers
                 // First we generate the new item
                 Item item = await _userItemService.AddNewItem(addItemRequest.ToItem());
 
+                // Adding the new element to the user item DB
+                UserItem userItem = new UserItem
+                {
+                    ItemId = item.Id,
+                    UserId = addItemRequest.UserId,
+                };
+                await _userItemService.AddUserItem(userItem);
+
+                // We double check if the movie really isn't already on DB
+                if (await _movieService.FindMovieByExtId(addItemRequest.Item.ExternalId) is Movie movie)
+                {
+                    // If it is, we don't need to perform the 
+                    return movie.ItemId;
+                }
+
                 // Then we add to the corresponding table depending on the category Id
                 switch (addItemRequest.CategoryId)
                 {
@@ -112,22 +127,11 @@ namespace media_tracker.Controllers
                     default:
                         return StatusCode(StatusCodes.Status400BadRequest);
                 }
-                UserItem userItem = new UserItem
-                {
-                    ItemId = item.Id,
-                    UserId = addItemRequest.UserId,
-                };
-                await _userItemService.AddUserItem(userItem);
+
                 return item.Id;
             }
             catch (DbUpdateException ex)
             {
-                // Handling if the username or the email, which have unique constraints in the DB
-                // have already been created
-                if (ex.InnerException is Npgsql.PostgresException)
-                {
-                    return StatusCode(409);
-                }
                 _logger.LogError("Error when adding new item", ex);
                 return StatusCode(500);
             }

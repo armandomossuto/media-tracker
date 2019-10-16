@@ -1,4 +1,5 @@
 import { Movie } from "components/tracker/items/types";
+import { EnumLiteralsOf } from "types";
 
 export type ItemResultProps = {
     item: Movie;
@@ -11,3 +12,10 @@ export type AddItemRequest = {
     userId: string;
     categoryId: string;
   }
+
+export const AddItemNotification = Object.freeze({
+  initial: '' as 'initial',
+  error: 'Something went wrong. Please try again.' as 'error'
+})
+  
+export type AddItemNotification = EnumLiteralsOf<typeof AddItemNotification>
