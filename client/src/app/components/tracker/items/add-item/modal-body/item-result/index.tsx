@@ -2,7 +2,7 @@ import * as React from 'react';
 
 // types
 import { ItemResultProps, AddItemRequest, AddItemNotification } from './types';
-import { UserItemView } from 'components/tracker/items/types';
+import { UserItemView, UserItem } from 'components/tracker/items/types';
 
 // Hooks, actions and utils
 import { useState } from 'react'
@@ -32,13 +32,18 @@ const ItemResult: React.FunctionComponent<ItemResultProps> = ({ item, categoryId
    * Sends request to add Item to the user and/or the category if needed
    */
   const onAddItem = async (): Promise<void> => {
-    // If we have an itemId, it means that this item is already in our DB
-    if (item.itemId) {
-      // do something. TODO #63
-    }
-
-    // Request to add the item to the DB and also the user
     try {
+      // If we have an itemId, it means that this item is already in our DB
+      if (item.itemId) {
+        const userItem = new UserItem(item.itemId, accountInfo.id);
+        // Request to add the new UserItem
+        await fetchRequest('api/entries/add', 'POST', sessionStateDispatch, userItem);
+        addItem(new UserItemView(item));
+        setIsAdded(true);
+        setNotification(AddItemNotification.initial);
+        return;
+      }
+      // Request to add the item to the DB and also the user
       const body: AddItemRequest = {
         item,
         userId: accountInfo.id,
@@ -46,16 +51,7 @@ const ItemResult: React.FunctionComponent<ItemResultProps> = ({ item, categoryId
       };
 
       const itemId: string = await fetchRequest('api/entries/add/new', 'POST', sessionStateDispatch, body);
-      const newItem: UserItemView = {
-        id: itemId,
-        categoryId,
-        title: item.title,
-        description: item.description,
-        imageUrl: item.imageUrl,
-        rating: "0",
-        state: "0"
-      }
-      addItem(newItem);
+      addItem(new UserItemView(item, itemId));
       setIsAdded(!!itemId);
       setNotification(AddItemNotification.initial);
     } catch (error) {

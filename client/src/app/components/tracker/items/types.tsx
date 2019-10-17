@@ -40,9 +40,9 @@ export interface UserItem {
 }
 
 export class UserItem implements UserItem {
-  constructor(item: Item, user: User) {
-    this.itemId = item.id;
-    this.userId = user.id;
+  constructor(itemId: string, userId: string) {
+    this.itemId = itemId;
+    this.userId = userId;
     this.rating = ItemRating.notSet;
     this.state = ItemState.notSet;
   }
@@ -54,6 +54,18 @@ export interface UserItemView extends Item {
   imageUrl: string;
   rating: ItemRating;
   state: ItemState;
+}
+
+export class UserItemView implements UserItemView {
+  constructor(item: Movie, itemId: string = null) {
+    // ItemId is optional in Item classes, so if we don't have it, we used the one from the argument
+    this.id = itemId ? itemId : item.itemId;
+    this.title = item.title;
+    this.description = item.description;
+    this.imageUrl = item.imageUrl;
+    this.rating = ItemRating.notSet;
+    this.state = ItemState.notSet;
+  }
 }
 
 export const ItemsStatus = Object.freeze({
