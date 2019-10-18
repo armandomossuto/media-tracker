@@ -12,7 +12,7 @@ import ItemResult from './item-result';
  */
 const AddItemModal: React.FunctionComponent<AddItemModalProps> = ({ categoryId, addItem }: AddItemModalProps) => {
   // Session state dispatch to use our custom fetch request
-  const [, sessionStateDispatch] = useSessionState();
+  const [ { accountInfo }, sessionStateDispatch] = useSessionState();
 
   // Term from the user input for searching items
   const [searchedTerm, setSearchedTerm] = useState('');
@@ -46,6 +46,7 @@ const AddItemModal: React.FunctionComponent<AddItemModalProps> = ({ categoryId, 
       const itemSearchRequestBody: ItemSearchRequest = {
         categoryId,
         searchTerm,
+        userId: accountInfo.id,
       }
       const results: Array<ItemSearchView> = await fetchRequest('api/entries/search', 'POST', sessionStateDispatch, itemSearchRequestBody);
       setResults(results);

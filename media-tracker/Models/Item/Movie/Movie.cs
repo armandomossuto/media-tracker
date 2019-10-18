@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Threading.Tasks;
 
 namespace media_tracker.Models
 {
@@ -22,16 +23,17 @@ namespace media_tracker.Models
         /// </summary>
         /// <param name="context"></param>
         /// <returns></returns>
-        public new MovieView ToMovieView(MediaTrackerContext context) =>
+        public new async Task<MovieView> ToMovieView(MediaTrackerContext context) =>
             new MovieView
             {
+                ItemId =  this.ItemId,
                 ExternalId = this.ExternalId,
                 Title = this.Title,
                 Description = this.Description,
                 ImageUrl = this.ImageUrl,
                 OriginalLanguage = this.OriginalLanguage,
                 ReleaseDate = this.ReleaseDate,
-                Genres = GetMovieGenres(this.Genres, context),
+                Genres = await GetMovieGenres(context),
             };
     }
 

@@ -13,7 +13,7 @@ namespace media_tracker.Services
     /// </summary>
     public interface IMovieService
     {
-        Task<List<MovieView>> SearchMovieItems(string searchTerm);
+        Task<List<MovieView>> SearchMovieItems(int userId, string searchTerm);
         Task AddMovieItem(Movie movie);
         Task<Movie> FindMovieByExtId(int externalId);
     }
@@ -39,20 +39,27 @@ namespace media_tracker.Services
         /// </summary>
         /// <param name="searchTerm"></param>
         /// <returns></returns>
-        public async Task<List<MovieView>> SearchMovieItems(string searchTerm)
+        public async Task<List<MovieView>> SearchMovieItems(int userId, string searchTerm)
         {
             // First we check if we have enough results from the Movie Table in local context
-            var moviesResultDb = await GetMoviesByTitle(searchTerm);
+            var moviesResultDb = await GetMoviesByTitleAndNotInUserList(searchTerm, userId);
 
             if (moviesResultDb.Count() > 10)
             {
                 // Converting the results to the view model and sending them to the client
-                return moviesResultDb.Select(m => m.ToMovieView(_context)).ToList();
+                var moviesResultDbTasks = moviesResultDb.Select(m => m.ToMovieView(_context));
+                return (await Task.WhenAll(moviesResultDbTasks)).ToList();
             }
             // If  we don't have enough results from DB, we fetch them from the external API
             var movieExternalResults = await GetMoviesFromExt(searchTerm);
+            // Filtering items already on the userItem
             // Converting the results to the view model and sending them to the client
-            return movieExternalResults.Select(m => m.ToMovieView(_context)).ToList();
+            var movieExternalResultsTasks = movieExternalResults.Select(m => m.ToMovieView(_context));
+            var movieViewResults = (await Task.WhenAll(movieExternalResultsTasks)).ToList();
+
+            // Remove items already on the userItems list
+            movieViewResults.RemoveAll(m => IsItemInUsersItems(userId, m.ItemId));
+            return movieViewResults;
         }
 
         /// <summary>
@@ -60,9 +67,11 @@ namespace media_tracker.Services
         /// </summary>
         /// <param name="searchTerm"></param>
         /// <returns></returns>
-        private async Task<List<Movie>> GetMoviesByTitle(string searchTerm) =>
+        private async Task<List<Movie>> GetMoviesByTitleAndNotInUserList(string searchTerm, int userId) =>
              await (from movie in _context.Movies
+                    from userItem in _context.UsersItems
                     where movie.Title.Contains(searchTerm)
+                    where movie.ItemId != userItem.ItemId && userItem.UserId != userId
                     select movie).ToListAsync();
 
         /// <summary>
@@ -95,5 +104,31 @@ namespace media_tracker.Services
         /// <returns></returns>
         public async Task<Movie> FindMovieByExtId(int externalId) =>
             await _context.Movies.SingleOrDefaultAsync(m => m.ExternalId == externalId);
+
+        /// <summary>
+        /// Returns whether or not an item has been added to a user
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <param name="itemId"></param>
+        /// <returns></returns>
+        public bool IsItemInUsersItems(int userId, int? itemId)
+        {
+            // If there is no itemId, the item is not yet in the DB, no need to check anything
+            if (itemId == null)
+            {
+                return false;
+            }
+
+            var userItem = _context.UsersItems.SingleOrDefault(u => u.ItemId == itemId && u.UserId == userId);
+
+            // If we didn't find any result, we return false
+            if (userItem == null)
+            {
+                return false;
+            }
+
+            // Item is already in the userItem table for this user
+            return true;
+        }
     }
 }

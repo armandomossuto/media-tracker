@@ -1,6 +1,8 @@
 ﻿using System.Linq;
 using System.Collections.Generic;
 using Newtonsoft.Json;
+using Microsoft.EntityFrameworkCore;
+using System.Threading.Tasks;
 
 namespace media_tracker.Models
 {
@@ -34,31 +36,41 @@ namespace media_tracker.Models
         /// </summary>
         /// <param name="context"></param>
         /// <returns></returns>
-        public MovieView ToMovieView(MediaTrackerContext context) =>
+        public async Task<MovieView> ToMovieView(MediaTrackerContext context) =>
             new MovieView
             {
+                ItemId = await GetItemId(context),
                 ExternalId = this.ExternalId,
                 Title = this.Title,
                 Description = this.Description,
                 ImageUrl = GenerateImageUrl(),
                 OriginalLanguage = this.OriginalLanguage,
                 ReleaseDate = this.ReleaseDate,
-                Genres = GetMovieGenres(this.Genres, context),
+                Genres = await GetMovieGenres(context),
             };
 
         /// <summary>
         /// Gets the movie genres from a list of genre ids
         /// </summary>
-        /// <param name="genreIds"></param>
-        /// <param name="context"></param>
+        /// <param name="_context"></param>
         /// <returns></returns>
-        public List<MovieGenre> GetMovieGenres(List<int> genreIds, MediaTrackerContext context)
+        public async Task<List<MovieGenre>> GetMovieGenres(MediaTrackerContext _context)
         {
-            return (from genre in context.MovieGenres
-                    where genreIds.Contains(genre.Id)
-                    select genre).ToList();
+            // If the list of genres is empty, there is no need to query the DB
+            if (this.Genres.Count == 0)
+            {
+                return null;
+            }
+
+            return await (from genre in _context.MovieGenres
+                    where this.Genres.Contains(genre.Id)
+                    select genre).ToListAsync();
         }
 
+        /// <summary>
+        /// Generates the complete poster image URL from the external result
+        /// </summary>
+        /// <returns></returns>
         public string GenerateImageUrl()
         {
             // If we don't have a poster URL, we use our placeholder
@@ -72,6 +84,15 @@ namespace media_tracker.Models
             }
         }
 
-
+        /// <summary>
+        /// For a movie external result, checks if it is already on the DB and returns itemId if it is
+        /// </summary>
+        /// <param name="_context"></param>
+        /// <returns></returns>
+        public async Task<int?> GetItemId(MediaTrackerContext _context)
+        {
+            var movie = await _context.Movies.SingleOrDefaultAsync(m => m.ExternalId == this.ExternalId);
+            return movie?.ItemId;
+        }
     }
 }

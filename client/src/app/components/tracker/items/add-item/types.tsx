@@ -3,6 +3,7 @@ import { Movie } from "../types";
 export type ItemSearchRequest = {
   categoryId: string;
   searchTerm: string;
+  userId: string;
 }
 
 export type ItemSearchView = Movie;

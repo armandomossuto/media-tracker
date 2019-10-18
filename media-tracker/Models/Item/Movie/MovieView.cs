@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 
 namespace media_tracker.Models
 {
@@ -7,6 +9,7 @@ namespace media_tracker.Models
     /// </summary>
     public class MovieView
     {
+        public int? ItemId { get; set; }
         public int ExternalId { get; set; }
         public string Title { get; set; }
         public string Description { get; set; }

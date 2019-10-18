@@ -187,7 +187,7 @@ namespace media_tracker.Controllers
             {
                  switch(itemSearchRequest.CategoryId)
                 {
-                    case 2: return await _movieService.SearchMovieItems(itemSearchRequest.SearchTerm);
+                    case 2: return await _movieService.SearchMovieItems(itemSearchRequest.UserId, itemSearchRequest.SearchTerm);
                     default: return StatusCode(StatusCodes.Status400BadRequest);
                 }
             }
