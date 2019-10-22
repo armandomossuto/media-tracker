@@ -1,9 +1,10 @@
 import * as React from 'react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { AddItemModalProps, ItemSearchRequest, ItemSearchView } from '../types';
 import { useSessionState } from 'state';
 import { fetchRequest } from 'utils/fetch';
 import ItemResult from './item-result';
+import useDebounce from 'utils/hooks/use-debounce';
 
 /**
  * Body for the Add an item modal
@@ -20,32 +21,19 @@ const AddItemModal: React.FunctionComponent<AddItemModalProps> = ({ categoryId, 
   // Results for the user to select which one to add
   const [results, setResults] = useState<Array<ItemSearchView>>([]);
 
+  // We are going to use a debounce for not triggering a request to the server with each change to the imput 
+  const debouncedSearchTerm = useDebounce<string>(searchedTerm, 500);
+
   /**
    * Updates Search Results with a list of ItemSearchView retrieved for a specific searched term
    * @param searchTerm - current value of the input field
    */
-  const onSearchAction = async (searchTerm: string, currentValue: string): Promise<void> => {
-
-    // This method can be triggered even if there were no changes in the input value
-    // In that case, we just return to avoid unnecessary calls to the API
-    if (searchTerm === currentValue) {
-      return;
-    }
-
-    // First we update the input value
-    setSearchedTerm(searchTerm);
-
-    // We only perform the fetch request if we have more than 3 characters
-    // Needs improvement TODO #68
-    if(searchTerm.length < 4) {
-      return;
-    }
-    
+  const onSearchAction = async (debouncedSearchTerm: string): Promise<void> => {
     try {
       // Fetching item results to display on the modal
       const itemSearchRequestBody: ItemSearchRequest = {
         categoryId,
-        searchTerm,
+        searchTerm: debouncedSearchTerm,
         userId: accountInfo.id,
       }
       const results: Array<ItemSearchView> = await fetchRequest('api/entries/search', 'POST', sessionStateDispatch, itemSearchRequestBody);
@@ -55,6 +43,12 @@ const AddItemModal: React.FunctionComponent<AddItemModalProps> = ({ categoryId, 
       return;
     }
   };
+  /**
+   * We use useEffect for triggering onSearchAction when debouncedSearchTerm value gets updated
+   */
+  useEffect(() => {
+    onSearchAction(debouncedSearchTerm);
+  }, [debouncedSearchTerm]);
 
   return (
     <div className="add-item-modal">
@@ -62,7 +56,7 @@ const AddItemModal: React.FunctionComponent<AddItemModalProps> = ({ categoryId, 
         <input
           type="text"
           value={searchedTerm}
-          onChange={(e): Promise<void> => onSearchAction(e.target.value, searchedTerm)}
+          onChange={(e): void => setSearchedTerm(e.target.value)}
           className="items__search__input"
         ></input>
       </div>
