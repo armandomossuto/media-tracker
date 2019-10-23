@@ -3,7 +3,7 @@ import { useState } from 'react';
 
 // Types
 import { ItemDescriptionProps, UpdateUserItem, UpdateItemNotification } from './types';
-import { ItemRating, ItemState } from '../types';
+import { ItemRating } from '../types';
 
 // Custom hooks, utils and action creators
 import { useSessionState } from 'state';

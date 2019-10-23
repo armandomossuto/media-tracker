@@ -45,4 +45,8 @@
       right: 0;
     }
   }
+
+  &__more-button {
+    @include styledButton;
+  }
 }

@@ -13,7 +13,7 @@ namespace media_tracker.Services
     /// </summary>
     public interface IMovieService
     {
-        Task<List<MovieView>> SearchMovieItems(int userId, string searchTerm);
+        Task<List<MovieView>> SearchMovieItems(int userId, string searchTerm, int page);
         Task AddMovieItem(Movie movie);
         Task<Movie> FindMovieByExtId(int externalId);
     }
@@ -39,10 +39,10 @@ namespace media_tracker.Services
         /// </summary>
         /// <param name="searchTerm"></param>
         /// <returns></returns>
-        public async Task<List<MovieView>> SearchMovieItems(int userId, string searchTerm)
+        public async Task<List<MovieView>> SearchMovieItems(int userId, string searchTerm, int page)
         {
             // First we check if we have enough results from the Movie Table in local context
-            var moviesResultDb = await GetMoviesByTitleAndNotInUserList(searchTerm, userId);
+            var moviesResultDb = await GetMoviesByTitleAndNotInUserList(searchTerm, userId, 20, page);
 
             if (moviesResultDb.Count() > 10)
             {
@@ -51,7 +51,7 @@ namespace media_tracker.Services
                 return (await Task.WhenAll(moviesResultDbTasks)).ToList();
             }
             // If  we don't have enough results from DB, we fetch them from the external API
-            var movieExternalResults = await GetMoviesFromExt(searchTerm);
+            var movieExternalResults = await GetMoviesFromExt(searchTerm, page);
             // Filtering items already on the userItem
             // Converting the results to the view model and sending them to the client
             var movieExternalResultsTasks = movieExternalResults.Select(m => m.ToMovieView(_context));
@@ -67,21 +67,21 @@ namespace media_tracker.Services
         /// </summary>
         /// <param name="searchTerm"></param>
         /// <returns></returns>
-        private async Task<List<Movie>> GetMoviesByTitleAndNotInUserList(string searchTerm, int userId) =>
+        private async Task<List<Movie>> GetMoviesByTitleAndNotInUserList(string searchTerm, int userId, int pageSize, int page) =>
              await (from movie in _context.Movies
                     from userItem in _context.UsersItems
                     where movie.Title.Contains(searchTerm)
                     where movie.ItemId != userItem.ItemId && userItem.UserId != userId
-                    select movie).ToListAsync();
+                    select movie).Skip(pageSize * page).Take(pageSize).ToListAsync();
 
         /// <summary>
         /// Gets a list of movies from the external API which titles matches the searched term
         /// </summary>
         /// <param name="searchTerm"></param>
         /// <returns></returns>
-        private async Task<List<MovieExternal>> GetMoviesFromExt(string searchTerm)
+        private async Task<List<MovieExternal>> GetMoviesFromExt(string searchTerm, int page)
         {
-            string urlRequest = $"https://api.themoviedb.org/3/search/movie?api_key=5db2d2b2ae57b67c6d0db0fbebbe22ec&language=en-US&query={searchTerm}&page=1&include_adult=false";
+            string urlRequest = $"https://api.themoviedb.org/3/search/movie?api_key=5db2d2b2ae57b67c6d0db0fbebbe22ec&language=en-US&query={searchTerm}&page={page}&include_adult=false";
             string jsonResponse = await HttpClient.GetStringAsync(urlRequest);
             return JsonConvert.DeserializeObject<MovieExternalResults>(jsonResponse).Results;
         }

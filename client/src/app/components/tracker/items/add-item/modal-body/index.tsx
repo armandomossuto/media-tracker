@@ -18,6 +18,9 @@ const AddItemModal: React.FunctionComponent<AddItemModalProps> = ({ categoryId, 
   // Term from the user input for searching items
   const [searchedTerm, setSearchedTerm] = useState('');
 
+  // Current page of paginated search results
+  const [searchResultsPage, setSearchResultsPage] = useState(1);
+
   // Results for the user to select which one to add
   const [results, setResults] = useState<Array<ItemSearchView>>([]);
 
@@ -25,30 +28,54 @@ const AddItemModal: React.FunctionComponent<AddItemModalProps> = ({ categoryId, 
   const debouncedSearchTerm = useDebounce<string>(searchedTerm, 500);
 
   /**
+   * Handles changes in the input for the search term
+   */
+  const onChangeSearchTerm = (searchTerm: string): void => {
+    setSearchedTerm(searchTerm);
+    // For a new search term, we reset current page to 1
+    setSearchResultsPage(1);
+  }
+
+  /**
    * Updates Search Results with a list of ItemSearchView retrieved for a specific searched term
    * @param searchTerm - current value of the input field
+   * @param searchResultsPage - page of the results to fetch
+   * @param keepPreviousResults - whether or not we should keep showing the previous results after fetching the new results
    */
-  const onSearchAction = async (debouncedSearchTerm: string): Promise<void> => {
+  const onSearchAction = async (debouncedSearchTerm: string, searchResultsPage: number, keepPreviousResults: boolean): Promise<void> => {
     try {
       // Fetching item results to display on the modal
       const itemSearchRequestBody: ItemSearchRequest = {
         categoryId,
         searchTerm: debouncedSearchTerm,
         userId: accountInfo.id,
+        page: searchResultsPage,
       }
       const results: Array<ItemSearchView> = await fetchRequest('api/entries/search', 'POST', sessionStateDispatch, itemSearchRequestBody);
-      setResults(results);
+      setResults(previousResults => keepPreviousResults ? previousResults.concat(results) : results);
   
     } catch (err) {
       return;
     }
   };
+
   /**
    * We use useEffect for triggering onSearchAction when debouncedSearchTerm value gets updated
    */
   useEffect(() => {
-    onSearchAction(debouncedSearchTerm);
+    onSearchAction(debouncedSearchTerm, searchResultsPage, false);
   }, [debouncedSearchTerm]);
+
+  /**
+   * Fetches next page of current results
+   * @param currentPage - current page of the results
+   * @param debouncedSearchTerm - search term for the fetch request
+   */
+  const onSearchMoreResults = (currentPage: number, debouncedSearchTerm: string): void => {
+    const page = currentPage + 1;
+    setSearchResultsPage(page);
+    onSearchAction(debouncedSearchTerm, searchResultsPage, true);
+  };
 
   return (
     <div className="add-item-modal">
@@ -56,7 +83,7 @@ const AddItemModal: React.FunctionComponent<AddItemModalProps> = ({ categoryId, 
         <input
           type="text"
           value={searchedTerm}
-          onChange={(e): void => setSearchedTerm(e.target.value)}
+          onChange={(e): void => onChangeSearchTerm(e.target.value)}
           className="items__search__input"
         ></input>
       </div>
@@ -67,8 +94,13 @@ const AddItemModal: React.FunctionComponent<AddItemModalProps> = ({ categoryId, 
           categoryId={categoryId}
           addItem={addItem}
         />
-      )
-      }
+      )}
+      <button
+        className="add-item-modal__more-button"
+        onClick={(): void => onSearchMoreResults(searchResultsPage, debouncedSearchTerm)}
+      >
+        Show me more results
+      </button>
     </div>
   )
 }

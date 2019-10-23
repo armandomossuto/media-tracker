@@ -4,6 +4,7 @@ export type ItemSearchRequest = {
   categoryId: string;
   searchTerm: string;
   userId: string;
+  page: number;
 }
 
 export type ItemSearchView = Movie;
