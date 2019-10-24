@@ -16,7 +16,7 @@ namespace media_tracker.Models
         public new string ImageUrl { get; set; }
         public new string OriginalLanguage { get; set; }
         public new string ReleaseDate { get; set; }
-        public new List<int> Genres { get; set; }
+        public new List<MovieGenre> Genres { get; set; }
 
         /// <summary>
         /// Converts from Movie class to MovieView

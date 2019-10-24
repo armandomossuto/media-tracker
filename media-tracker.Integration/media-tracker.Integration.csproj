@@ -18,7 +18,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="2.2.4" />
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="3.0.1" />
     <PackageReference Include="Microsoft.Extensions.Configuration.CommandLine" Version="3.0.0" />
   </ItemGroup>
 </Project>

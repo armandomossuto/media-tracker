@@ -1,5 +1,5 @@
-﻿using media_tracker.Models;
-using Moq;
+﻿using Microsoft.Data.Sqlite;
+using Microsoft.EntityFrameworkCore;
 
 namespace media_tracker.Tests.MockedData
 {
@@ -8,40 +8,39 @@ namespace media_tracker.Tests.MockedData
     /// </summary>
     public class MockedContext
     {
-        public Mock<MediaTrackerContext> Context { get; set; }
-        public MockedSet<User> UsersSet { get; set; }
-        public MockedSet<UserToken> UsersTokensSet { get; set; }
-        public MockedSet<Category> CategoriesSet { get; set; }
-        public MockedSet<UserCategory> UsersCategoriesSet { get; set; }
-        public MockedSet<Item> ItemsSet { get; set; }
-        public MockedSet<UserItem> UsersItemsSet { get; set; }
-        public MockedSet<MovieGenre> MovieGenresSet { get; set; }
-        public MockedSet<Movie> MoviesSet { get; set; }
+        public MediaTrackerContext Context { get; set; }
 
+        /// <summary>
+        /// We are using SqlLite in memory DB for the tests
+        /// </summary>
+        /// <param name="mockedData"></param>
         public MockedContext(MockedDbData mockedData)
         {
-            // Generating mocked DB Sets
-            UsersSet = new MockedSet<User>(mockedData.Users);
-            UsersTokensSet = new MockedSet<UserToken>(mockedData.UsersTokens);
-            CategoriesSet = new MockedSet<Category>(mockedData.Categories);
-            UsersCategoriesSet = new MockedSet<UserCategory>(mockedData.UsersCategories);
-            ItemsSet = new MockedSet<Item>(mockedData.Items);
-            UsersItemsSet = new MockedSet<UserItem>(mockedData.UsersItems);
-            MovieGenresSet = new MockedSet<MovieGenre>(mockedData.MovieGenres);
-            MoviesSet = new MockedSet<Movie>(mockedData.Movies);
+            // Using in memory DB
+            var connection = new SqliteConnection("DataSource=:memory:");
+            connection.Open();
 
-            // Mocking context
-            Context = new Mock<MediaTrackerContext>();
+            var options = new DbContextOptionsBuilder<MediaTrackerContext>()
+                .UseSqlite(connection)
+                .Options;
 
-            // Mocking each of the entities
-            Context.Setup(m => m.Users).Returns(UsersSet.Data.Object);
-            Context.Setup(m => m.UsersTokens).Returns(UsersTokensSet.Data.Object);
-            Context.Setup(m => m.Categories).Returns(CategoriesSet.Data.Object);
-            Context.Setup(m => m.UsersCategories).Returns(UsersCategoriesSet.Data.Object);
-            Context.Setup(m => m.Items).Returns(ItemsSet.Data.Object);
-            Context.Setup(m => m.UsersItems).Returns(UsersItemsSet.Data.Object);
-            Context.Setup(m => m.MovieGenres).Returns(MovieGenresSet.Data.Object);
-            Context.Setup(m => m.Movies).Returns(MoviesSet.Data.Object);
+            // Create an instance of the db context
+            var _context = new MediaTrackerContext(options);
+           
+            _context.Database.EnsureCreated();
+
+            // Adding the mocked data
+            _context.Users.AddRange(mockedData.Users);
+            _context.UsersTokens.AddRange(mockedData.UsersTokens);
+            _context.Categories.AddRange(mockedData.Categories);
+            _context.UsersCategories.AddRange(mockedData.UsersCategories);
+            _context.Items.AddRange(mockedData.Items);
+            _context.UsersItems.AddRange(mockedData.UsersItems);
+            _context.MovieGenres.AddRange(mockedData.MovieGenres);
+            _context.Movies.AddRange(mockedData.Movies);
+            _context.SaveChanges();
+
+            Context = _context;
         }
     }
 }

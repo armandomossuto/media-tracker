@@ -1,10 +1,9 @@
 ﻿using System.Collections.Generic;
-using System.Threading;
+using System.Linq;
 using System.Threading.Tasks;
 using media_tracker.Models;
 using media_tracker.Services;
 using media_tracker.Tests.MockedData;
-using Moq;
 using Xunit;
 
 namespace media_tracker.Tests.UnitTests
@@ -15,8 +14,8 @@ namespace media_tracker.Tests.UnitTests
         /// Generating the service to test with a mocked context
         /// </summary>
         /// <returns></returns>
-        public UserItemService GetMockedService(Mock<MediaTrackerContext> mockContext) =>
-            new UserItemService(mockContext.Object);
+        public UserItemService GetMockedService(MediaTrackerContext mockContext) =>
+            new UserItemService(mockContext);
      
 
     [Fact]
@@ -57,7 +56,6 @@ namespace media_tracker.Tests.UnitTests
         [Fact]
         public async Task AddNewItem()
         {
-            var cancellationToken = new CancellationToken();
             // Creating context, data and a new instance of the service that we want to test
             var mockedData = new MockedDbData();
             MockedContext mockedContext = new MockedContext(mockedData);
@@ -68,17 +66,13 @@ namespace media_tracker.Tests.UnitTests
                 CategoryId = 2,
             };
 
-            await userItemService.AddNewItem(newItem);
-
-            // Checking that the new Item was added correctly
-            mockedContext.ItemsSet.Data.Verify(m => m.AddAsync(It.IsAny<Item>(), cancellationToken), Times.Once());
-            mockedContext.Context.Verify(m => m.SaveChangesAsync(cancellationToken), Times.Once());
+            var item = await userItemService.AddNewItem(newItem);
+            Assert.NotNull(mockedContext.Context.Items.Find(item.Id));
         }
 
         [Fact]
         public async Task AddUserItem()
         {
-            var cancellationToken = new CancellationToken();
             // Creating context, data and a new instance of the service that we want to test
             var mockedData = new MockedDbData();
             MockedContext mockedContext = new MockedContext(mockedData);
@@ -93,8 +87,7 @@ namespace media_tracker.Tests.UnitTests
             await userItemService.AddUserItem(userItem);
 
             // Checking that the new Item was added correctly
-            mockedContext.UsersItemsSet.Data.Verify(m => m.AddAsync(It.IsAny<UserItem>(), cancellationToken), Times.Once());
-            mockedContext.Context.Verify(m => m.SaveChangesAsync(cancellationToken), Times.Once());
+            Assert.NotNull(mockedContext.Context.UsersItems.Single(i => i.ItemId == userItem.ItemId & i.UserId == userItem.UserId));
         }
 
         [Fact]
@@ -151,8 +144,8 @@ namespace media_tracker.Tests.UnitTests
             await userItemService.UpdateUserItem(updateUserItem);
 
             // Checking that the item rating was correctly updated and the other properties remain without any change
-            Assert.Equal(updateUserItem.NewUserItemInformation.Rating, mockedData.UsersItems.Find(u => u.UserId == 1 && u.ItemId == 1).Rating);
-            Assert.Equal(ItemState.NotSet, mockedData.UsersItems.Find(u => u.UserId == 1 && u.ItemId == 1).State);
+            Assert.Equal(updateUserItem.NewUserItemInformation.Rating, mockedContext.Context.UsersItems.Single(u => u.UserId == 1 && u.ItemId == 1).Rating);
+            Assert.Equal(ItemState.NotSet, mockedContext.Context.UsersItems.Single(u => u.UserId == 1 && u.ItemId == 1).State);
         }
 
         [Fact]
@@ -176,8 +169,8 @@ namespace media_tracker.Tests.UnitTests
             await userItemService.UpdateUserItem(updateUserItem);
 
             // Checking that the item rating was correctly updated and the other properties remain without any change
-            Assert.Equal(0, mockedData.UsersItems.Find(u => u.UserId == 1 && u.ItemId == 1).Rating);
-            Assert.Equal(ItemState.Completed, mockedData.UsersItems.Find(u => u.UserId == 1 && u.ItemId == 1).State);
+            Assert.Equal(0, mockedContext.Context.UsersItems.Single(u => u.UserId == 1 && u.ItemId == 1).Rating);
+            Assert.Equal(ItemState.Completed, mockedContext.Context.UsersItems.Single(u => u.UserId == 1 && u.ItemId == 1).State);
         }
     }
 }

@@ -1,9 +1,8 @@
-﻿using System.Threading;
+﻿using System.Linq;
 using System.Threading.Tasks;
 using media_tracker.Models;
 using media_tracker.Services;
 using media_tracker.Tests.MockedData;
-using Moq;
 using Xunit;
 
 namespace media_tracker.Tests.UnitTests
@@ -15,9 +14,9 @@ namespace media_tracker.Tests.UnitTests
         /// Generating the service to test with a mocked context
         /// </summary>
         /// <returns></returns>
-        public UserService GetMockedService(Mock<MediaTrackerContext> mockContext)
+        public UserService GetMockedService(MediaTrackerContext mockContext)
         {
-            return new UserService(mockContext.Object);
+            return new UserService(mockContext);
         }
 
         [Fact]
@@ -80,7 +79,6 @@ namespace media_tracker.Tests.UnitTests
         [Fact]
         public async Task AddUserSuccess()
         {
-            var cancellationToken = new CancellationToken();
             // Creating context, data and a new instance of the service that we want to test
             var mockedData = new MockedDbData();
             MockedContext mockedContext = new MockedContext(mockedData);
@@ -94,17 +92,13 @@ namespace media_tracker.Tests.UnitTests
             };
 
             await userService.AddUser(newUser);
-
             // Verify the new User has been added
-            mockedContext.UsersSet.Data.Verify(m => m.AddAsync(It.IsAny<User>(), cancellationToken), Times.Once());
-            mockedContext.Context.Verify(m => m.SaveChangesAsync(cancellationToken), Times.Once());
-            Assert.NotEmpty(mockedData.Users.FindAll(u => u.Username == newUser.Username));
+            Assert.NotNull(mockedContext.Context.Users.Single(u => u.Username == newUser.Username));
         }
 
         [Fact]
         public async Task UpdateUser()
         {
-            var cancellationToken = new CancellationToken();
             // Creating context, data and a new instance of the service that we want to test
             var mockedData = new MockedDbData();
             MockedContext mockedContext = new MockedContext(mockedData);
@@ -122,7 +116,7 @@ namespace media_tracker.Tests.UnitTests
 
             // Verify results
             Assert.Equal(user.Username, newUserInformation.Username);
-            mockedContext.Context.Verify(m => m.SaveChangesAsync(cancellationToken), Times.Once());
+            Assert.NotNull(mockedContext.Context.Users.SingleOrDefault(u => newUserInformation.Username == u.Username));
         }
     }
 }

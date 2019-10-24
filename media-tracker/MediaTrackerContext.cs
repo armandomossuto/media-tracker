@@ -1,4 +1,5 @@
-﻿using media_tracker.Models;
+﻿using System;
+using media_tracker.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace media_tracker
@@ -42,12 +43,6 @@ namespace media_tracker
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.HasAnnotation("ProductVersion", "2.2.4-servicing-10062");
-
-            modelBuilder.HasSequence<int>("users_id_seq");
-
-            modelBuilder.HasSequence<int>("userscategories_id_seq");
-
-            modelBuilder.HasSequence<int>("usersitems_id_seq");
 
         }
     }

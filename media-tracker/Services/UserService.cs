@@ -4,6 +4,7 @@ using System.Security.Cryptography;
 using System.Threading.Tasks;
 using media_tracker.Models;
 using Microsoft.AspNetCore.Cryptography.KeyDerivation;
+using Microsoft.EntityFrameworkCore;
 
 namespace media_tracker.Services
 {
@@ -45,7 +46,7 @@ namespace media_tracker.Services
         /// <param name="username"></param>
         /// <returns> User information </returns>
         public async Task<User> GetUserByUsername(string username) =>
-            await _context.Users.ToAsyncEnumerable().SingleOrDefault(c => c.Username == username);
+            await _context.Users.SingleOrDefaultAsync(c => c.Username == username);
 
         /// <summary>
         /// Hash user password with generated salt
