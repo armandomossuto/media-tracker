@@ -21,9 +21,8 @@ namespace media_tracker.Models
         /// <summary>
         /// Converts from Movie class to MovieView
         /// </summary>
-        /// <param name="context"></param>
         /// <returns></returns>
-        public new async Task<MovieView> ToMovieView(MediaTrackerContext context) =>
+        public MovieView ToMovieView() =>
             new MovieView
             {
                 ItemId =  this.ItemId,
@@ -33,7 +32,7 @@ namespace media_tracker.Models
                 ImageUrl = this.ImageUrl,
                 OriginalLanguage = this.OriginalLanguage,
                 ReleaseDate = this.ReleaseDate,
-                Genres = await GetMovieGenres(context),
+                Genres = this.Genres,
             };
     }
 

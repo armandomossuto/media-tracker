@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -43,12 +44,10 @@ namespace media_tracker.Services
         {
             // First we check if we have enough results from the Movie Table in local context
             var moviesResultDb = await GetMoviesByTitleAndNotInUserList(searchTerm, userId, 20, page);
-
             if (moviesResultDb.Count() > 10)
             {
                 // Converting the results to the view model and sending them to the client
-                var moviesResultDbTasks = moviesResultDb.Select(m => m.ToMovieView(_context));
-                return (await Task.WhenAll(moviesResultDbTasks)).ToList();
+                return moviesResultDb.Select(m => m.ToMovieView()).ToList();
             }
             // If  we don't have enough results from DB, we fetch them from the external API
             var movieExternalResults = await GetMoviesFromExt(searchTerm, page);
@@ -68,11 +67,11 @@ namespace media_tracker.Services
         /// <param name="searchTerm"></param>
         /// <returns></returns>
         private async Task<List<Movie>> GetMoviesByTitleAndNotInUserList(string searchTerm, int userId, int pageSize, int page) =>
-             await (from movie in _context.Movies
-                    from userItem in _context.UsersItems
-                    where movie.Title.Contains(searchTerm)
-                    where movie.ItemId != userItem.ItemId && userItem.UserId != userId
-                    select movie).Skip(pageSize * page).Take(pageSize).ToListAsync();
+            await _context.Movies
+                .Where(m => m.Title.Contains(searchTerm) & !_context.UsersItems.Any(u => u.UserId == userId & u.ItemId == m.ItemId))
+                .Skip((pageSize - 1) * (page - 1))
+                .Take(pageSize)
+                .ToListAsync();
 
         /// <summary>
         /// Gets a list of movies from the external API which titles matches the searched term
@@ -111,7 +110,7 @@ namespace media_tracker.Services
         /// <param name="userId"></param>
         /// <param name="itemId"></param>
         /// <returns></returns>
-        public bool IsItemInUsersItems(int userId, int? itemId)
+        private bool IsItemInUsersItems(int userId, int? itemId)
         {
             // If there is no itemId, the item is not yet in the DB, no need to check anything
             if (itemId == null)

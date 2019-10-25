@@ -7,8 +7,10 @@ namespace media_tracker.Tests.MockedData
     /// For easily storing and having access to both the mocked context and set
     /// </summary>
     public class MockedContext
+
     {
         public MediaTrackerContext Context { get; set; }
+        public SqliteConnection Connection { get; set; }
 
         /// <summary>
         /// We are using SqlLite in memory DB for the tests
@@ -41,6 +43,16 @@ namespace media_tracker.Tests.MockedData
             _context.SaveChanges();
 
             Context = _context;
+            Connection = connection;
+        }
+
+        /// <summary>
+        /// Dispose the Database to ensure that it will be clean for the next instance
+        /// </summary>
+        public void DisposeContext()
+        {
+            Context.Database.EnsureDeleted();
+            Connection.Close();
         }
     }
 }
