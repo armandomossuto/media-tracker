@@ -5,6 +5,7 @@ import { EnumLiteralsOf } from "types";
 export type ItemDescriptionProps = {
   item: UserItemView;
   itemsDispatch: Dispatch<ItemsAction>;
+  onRemoveItem: Function;
 }
 
 export type ItemRatingProps = {
@@ -29,7 +30,8 @@ export type UpdateUserItem = {
 export const UpdateItemNotification = Object.freeze({
   initial: '' as 'initial',
   ratingError: 'There was an error when we tried to update the rating. Please try again' as 'ratingError',
-  stateError: 'There was an error when we tried to update the state. Please try again' as 'stateError'
+  stateError: 'There was an error when we tried to update the state. Please try again' as 'stateError',
+  removeError: 'There was an error when we tried to remove this item. Please try again' as 'removeError',
 })
 
 export type UpdateItemNotification = EnumLiteralsOf<typeof UpdateItemNotification>

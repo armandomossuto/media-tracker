@@ -143,7 +143,7 @@ namespace media_tracker.Controllers
         /// <param name="userItemToDelete"></param>
         /// <returns></returns>
         [HttpDelete()]
-        public async Task<ActionResult> DeleteItemFromUser([FromBody] UserItem userItemToDelete)
+        public async Task<ActionResult> DeleteItemFromUser([FromBody] DeleteUserItem userItemToDelete)
         {
             try
             {

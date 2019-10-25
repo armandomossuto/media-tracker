@@ -16,7 +16,7 @@ namespace media_tracker.Services
         Task<List<UserItemView>> GetAllItemsFromUserCategory(UserCategory userCategory);
         Task AddUserItem(UserItem userItem);
         Task<Item> AddNewItem(Item newItem);
-        Task DeleteUserItem(UserItem userItemToDelete);
+        Task DeleteUserItem(DeleteUserItem userItemToDelete);
         Task UpdateUserItem(UpdateUserItem updateUserItem);
     }
 
@@ -105,7 +105,7 @@ namespace media_tracker.Services
         /// </summary>
         /// <param name="userItemToDelete"></param>
         /// <returns></returns>
-        public async Task DeleteUserItem(UserItem userItemToDelete)
+        public async Task DeleteUserItem(DeleteUserItem userItemToDelete)
         {
             UserItem userItemDb = _context.UsersItems.SingleOrDefault(userItem => userItem.UserId == userItemToDelete.UserId & userItem.ItemId == userItemToDelete.ItemId);
             _context.UsersItems.Remove(userItemDb);

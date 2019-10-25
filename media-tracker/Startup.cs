@@ -88,7 +88,7 @@ namespace media_tracker
                 app.UseHsts();
             }
 
-            app.UseCors(builder => builder.WithOrigins("http://localhost:8080").WithMethods("GET", "POST", "OPTIONS").AllowCredentials().AllowAnyHeader());
+            app.UseCors(builder => builder.WithOrigins("http://localhost:8080").WithMethods("GET", "POST", "OPTIONS", "DELETE").AllowCredentials().AllowAnyHeader());
             app.UseHttpsRedirection();
             app.UseRouting();
             app.UseAuthentication();

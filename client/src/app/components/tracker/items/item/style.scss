@@ -2,11 +2,9 @@
 
 .items-element {
   @include secondaryCombo;
-  @include genericButton;
   border-style: solid;
   border-width: 1px;
   cursor: pointer;
-  display: flex;
   font-size: 20px;
   margin-bottom: 10px;
   min-height: 30px;
@@ -14,19 +12,42 @@
   position: relative;
   text-align: center;
 
-  &__image {
-    height: auto;
-    width: 50px;
+  &__body {
+    display: flex;
+
+    &__image {
+      height: auto;
+      width: 50px;
+    }
+
+    &__title {
+      flex-grow: 1;
+      margin: auto;
+    }
+
+    &__rating-and-state {
+      margin: auto;
+      margin-right: 20px;
+    }
+
+    &__remove-button {
+      @include genericButton;
+      border: 0.5px solid;
+      border-radius: 50%;
+      font-weight: bold;
+      height: 25px;
+      position: relative;
+      top: 2px;
+      width: 25px;
+
+      &:hover {
+        color: $font-color-alert;
+      }
+    }
   }
 
-  &__title {
-    flex-grow: 1;
-    margin: auto;
-  }
-
-  &__rating-and-state {
-    margin: auto;
-    margin-right: 20px;
+  &__extra-info {
+    margin-top: 20px;
   }
 
   &__notification {

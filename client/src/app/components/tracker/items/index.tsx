@@ -14,7 +14,7 @@ import { useSessionState } from 'state';
 // useReducer elements
 import reducer from './reducer';
 import { initialState } from './store'
-import { setItemsStatus, setCategoryId, setItems, addItem } from './actions';
+import { setItemsStatus, setCategoryId, setItems, addItem, removeItem } from './actions';
 
 // Utils
 import { fetchRequest } from 'utils/fetch';
@@ -131,6 +131,19 @@ const Items: React.FunctionComponent<ItemsProps> = ({ match }: ItemsProps) => {
   // Items filtered after a search or change of the filter options
   const filteredItems = filterItems(items, searchedTerm, searchType);
 
+  /**
+   * Removes an item from the user's tracker
+   * @param itemId 
+   */
+  const onRemoveItem = async (itemId: string): Promise<void> => {
+    const deleteUserItem = {
+      itemId,
+      userId: accountInfo.id,
+    };
+    fetchRequest('api/entries', 'DELETE', sessionStateDispatch, deleteUserItem)
+      .then(() => dispatch(removeItem(itemId)));
+  }
+
   switch (status) {
     case ItemsStatus.loading:
       return (<Loading />);
@@ -178,7 +191,7 @@ const Items: React.FunctionComponent<ItemsProps> = ({ match }: ItemsProps) => {
           </div>
           <div className="items__list">
             {items.length > 0
-              ? filteredItems.map(item => <ItemComponent item={item} key={item.title} itemsDispatch={dispatch} />)
+              ? filteredItems.map(item => <ItemComponent item={item} key={item.title} itemsDispatch={dispatch} onRemoveItem={onRemoveItem} />)
               : <EmptyList type={categoryName} className="item__list__empty" />
             }
           </div>

@@ -21,7 +21,7 @@ export const addItem: ItemsActionCreator = (item: UserItemView) => ({
 });
 
 export const removeItem: ItemsActionCreator = (itemId: string) => ({
-  type: ItemsActionType.ADD_ITEM,
+  type: ItemsActionType.REMOVE_ITEM,
   payload: itemId,
 });
 

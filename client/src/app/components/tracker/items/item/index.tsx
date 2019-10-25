@@ -18,7 +18,7 @@ import ImageWithFallback from 'components/common/images/image-with-fallback';
 /**
  * Component belonging to one item inside the items page of the tracker
  */
-const Item: React.FunctionComponent<ItemDescriptionProps> = ({ item, itemsDispatch }: ItemDescriptionProps) => {
+const Item: React.FunctionComponent<ItemDescriptionProps> = ({ item, itemsDispatch, onRemoveItem }: ItemDescriptionProps) => {
 
   // For showing or hiding all the details of the item
   const [showMoreInfo, setShowMoreInfo] = useState(false);
@@ -76,28 +76,50 @@ const Item: React.FunctionComponent<ItemDescriptionProps> = ({ item, itemsDispat
       .catch(() => setNotification(UpdateItemNotification.stateError));
   };
 
+  const onHandleRemove = (e: React.MouseEvent): void => {
+    e.stopPropagation();
+    try {
+      onRemoveItem(item.id);
+    } catch(error) {
+      setNotification(UpdateItemNotification.removeError);
+    }
+  }
+
   return (
     <div className="items-element" onClick={(): void => setShowMoreInfo(!showMoreInfo)} >
-      <ImageWithFallback
-        title={item.title}
-        imageUrl={item.imageUrl}
-        className={"items-element__image"} 
-      />
-      <h3 className="items-element__title">{item.title}</h3>
-      <div className="items-element__rating-and-state">
-        <Rating rating={item.rating} updateRating={updateRating} />
-        <State state={item.state} updateState={updateState} />
-      </div>
+      <div className="items-element__body">
+        <ImageWithFallback
+          title={item.title}
+          imageUrl={item.imageUrl}
+          className={"items-element__body__image"} 
+        />
+        <h3 className="items-element__body__title">{item.title}</h3>
+        <div className="items-element__body__rating-and-state">
+          <Rating rating={item.rating} updateRating={updateRating} />
+          <State state={item.state} updateState={updateState} />
+        </div>
+        <span
+          className={"items-element__body__remove-button"}
+          onClick={(e): void => onHandleRemove(e)}
+          title="Click to remove this item from your tracker"
+        >
+          x
+        </span>
+      </div> 
+
       {showMoreInfo
         ?
-        <div className="items-elements__description">
+        <div className="items-element__extra-info">
           {item.description}
         </div>
         : null
       }
-      <div className="items-elements__notification">
-        {notification}
-      </div>
+      {notification !== UpdateItemNotification.initial
+        ? <div className="items-element__notification">
+          {notification}
+        </div>
+        : null
+      }
     </div>
   )
 }
