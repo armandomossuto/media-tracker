@@ -1,5 +1,5 @@
 import * as React from "react";
-import { render, RenderResult, fireEvent, waitForElement, wait } from '@testing-library/react'
+import { render, RenderResult, fireEvent, waitForElement, wait, waitForElementToBeRemoved } from '@testing-library/react'
 
 import * as nock from 'nock';
 import { serverUrl } from 'configuration';
@@ -141,7 +141,7 @@ describe("Items Component", () => {
 
     expect(container.getByText('Sort by title'));
     // By default items are sorted by name and in increasing order
-    expect(container.container.querySelector('.items-element__title').textContent).toBe('Item1');
+    expect(container.container.querySelector('.items-element__body__title').textContent).toBe('Item1');
 
     // Click on the sort dropdown meny and change to rating option
     fireEvent.click(container.getByText('Sort by title'));
@@ -151,12 +151,29 @@ describe("Items Component", () => {
     expect(container.getByText('Sort by rating'));
 
     // Now Item2 is the first one becuase it has the lowest rating
-    expect(container.container.querySelector('.items-element__title').textContent).toBe('Item2');
+    expect(container.container.querySelector('.items-element__body__title').textContent).toBe('Item2');
 
     // Change sorting order
     fireEvent.click(container.getByText('↓'));
-    expect(container.container.querySelector('.items-element__title').textContent).toBe('Item1');
+    expect(container.container.querySelector('.items-element__body__title').textContent).toBe('Item1');
     expect(container.queryByText('↑')).toBeTruthy();
     expect(container.queryByText('↓')).toBeFalsy();
+  })
+
+  it("Removes an item properly", async (done) => {
+    // Mocking delete api endpoint to return that removing the item was successful
+    nock(serverUrl)
+      .delete(`/api/entries`)
+      .reply(200);
+
+    // Item 1 is rendered
+    expect(container.getByText("Item1")).toBeTruthy();
+
+    // Click on the remove button for the first item
+    fireEvent.click(container.getAllByTitle("Click to remove this item from your tracker")[0]);
+
+    // Item 1 is no longer on the list
+    await waitForElementToBeRemoved(() => container.getByText("Item1"));
+    done();
   })
 });
