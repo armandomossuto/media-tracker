@@ -1,0 +1,16 @@
+.item-details {
+  margin-top: 20px;
+
+  &__row {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+
+    &__element {
+      margin-bottom: 10px;
+      margin-right: 10px;
+      white-space: nowrap;
+    }
+  }
+}
+

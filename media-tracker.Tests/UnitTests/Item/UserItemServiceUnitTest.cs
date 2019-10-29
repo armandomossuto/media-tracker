@@ -98,9 +98,8 @@ namespace media_tracker.Tests.UnitTests
             MockedContext mockedContext = new MockedContext(mockedData);
             UserItemService userItemService = GetMockedService(mockedContext.Context);
 
-            var userItemToDelete = new UserItem
+            var userItemToDelete = new DeleteUserItem
             {
-                Id = 3,
                 ItemId = 3,
                 UserId = 2
             };
@@ -171,6 +170,27 @@ namespace media_tracker.Tests.UnitTests
             // Checking that the item rating was correctly updated and the other properties remain without any change
             Assert.Equal(0, mockedContext.Context.UsersItems.Single(u => u.UserId == 1 && u.ItemId == 1).Rating);
             Assert.Equal(ItemState.Completed, mockedContext.Context.UsersItems.Single(u => u.UserId == 1 && u.ItemId == 1).State);
+        }
+
+        [Fact]
+        public async Task GetItemDetails()
+        {
+            // Creating context, data and a new instance of the service that we want to test
+            var mockedData = new MockedDbData();
+            MockedContext mockedContext = new MockedContext(mockedData);
+            UserItemService userItemService = GetMockedService(mockedContext.Context);
+
+            // Item id corresponding to the first movie in our mocked DB
+            var itemId = 3;
+            // Movies category
+            var categoryId = 2;
+            Movie item = (media_tracker.Models.Movie)await userItemService.GetDetailsFromItem(categoryId, itemId);
+            
+            // Checking that we have the correct item
+            Assert.Equal("Movie1", item.Title);
+
+            // Try to serch for a non existing movie. Result should be null
+            Assert.Null(await userItemService.GetDetailsFromItem(2, 7));
         }
     }
 }

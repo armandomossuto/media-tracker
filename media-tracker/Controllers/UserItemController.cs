@@ -197,6 +197,35 @@ namespace media_tracker.Controllers
                 return StatusCode(500);
             }
         }
+
+        /// <summary>
+        /// Get the details from an itemId
+        /// </summary>
+        /// <param name="categoryId"></param>
+        /// <param name="itemId"></param>
+        /// <returns></returns>
+        [HttpGet("details/{categoryId}/{itemId}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<ActionResult<object>> GetItemDetails(int categoryId, int itemId)
+        {
+            try
+            {
+                var item = await _userItemService.GetDetailsFromItem(categoryId, itemId);
+                if(item == null)
+                {
+                    _logger.LogError($"Item for Details request, not found. ItemId: {itemId}");
+                    return StatusCode(404);
+                }
+                return item;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("Error when retrieving for items", ex);
+                return StatusCode(500);
+            }
+        }
     }
 
 }

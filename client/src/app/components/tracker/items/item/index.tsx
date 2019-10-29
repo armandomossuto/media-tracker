@@ -14,6 +14,7 @@ import { updateItemRating, updateItemState } from '../actions';
 import Rating from './rating';
 import State from './state';
 import ImageWithFallback from 'components/common/images/image-with-fallback';
+import Details from './details';
 
 /**
  * Component belonging to one item inside the items page of the tracker
@@ -108,10 +109,7 @@ const Item: React.FunctionComponent<ItemDescriptionProps> = ({ item, itemsDispat
       </div> 
 
       {showMoreInfo
-        ?
-        <div className="items-element__extra-info">
-          {item.description}
-        </div>
+        ? <Details categoryId={item.categoryId} itemId={item.id} />
         : null
       }
       {notification !== UpdateItemNotification.initial

@@ -143,3 +143,5 @@ export type MovieGenre = {
   name: string;
   id: string;
 }
+
+export type ItemView = Movie | null;

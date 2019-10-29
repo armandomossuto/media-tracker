@@ -7,7 +7,6 @@ namespace media_tracker.Models
     public class UserItemView : Item
     {
         public string Title { get; set; }
-        public string Description { get; set; }
         public string ImageUrl { get; set; }
         public int Rating { get; set; }
         public ItemState State { get; set; }

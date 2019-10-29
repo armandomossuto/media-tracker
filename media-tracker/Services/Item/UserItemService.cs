@@ -18,6 +18,7 @@ namespace media_tracker.Services
         Task<Item> AddNewItem(Item newItem);
         Task DeleteUserItem(DeleteUserItem userItemToDelete);
         Task UpdateUserItem(UpdateUserItem updateUserItem);
+        Task<object> GetDetailsFromItem(int categoryId, int itemId);
     }
 
     public class UserItemService : IUserItemService
@@ -57,7 +58,6 @@ namespace media_tracker.Services
                                       Id = item.Id,
                                       CategoryId = userCategory.CategoryId,
                                       Title = movie.Title,
-                                      Description = movie.Description,
                                       ImageUrl = movie.ImageUrl,
                                       Rating = userItem.Rating,
                                       State = userItem.State
@@ -67,6 +67,28 @@ namespace media_tracker.Services
                     throw new System.Exception("Category non existent");
             }
             
+        }
+
+        /// <summary>
+        /// Retrieves the details from a specific itemId
+        /// </summary>
+        /// <param name="categoryId"></param>
+        /// <param name="itemId"></param>
+        /// <returns></returns>
+        public async Task<object> GetDetailsFromItem(int categoryId, int itemId)
+        {
+            // Depending on the categoryId, we will query a different table
+            switch (categoryId)
+            {
+                // Movies
+                case 2:
+                    var movie = await _context.Movies.FirstOrDefaultAsync(m => m.ItemId == itemId);
+                    return await movie.ToMovieView();
+                default:
+                    // For the case of a wrong categoryId coming from the request
+                    throw new System.Exception("Category non existent");
+            }
+
         }
 
         /// <summary>
