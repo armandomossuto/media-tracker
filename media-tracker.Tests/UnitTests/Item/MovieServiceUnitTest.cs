@@ -42,7 +42,11 @@ namespace media_tracker.Tests.UnitTests
                 {
                     ExternalId = i,
                     Title = "MovieExternal" + i,
-                    Genres = new List<int> { 28 }
+                    Genres = new List<int> { 28 },
+                    Description = "",
+                    ImageUrl = "",
+                    OriginalLanguage = "",
+                    ReleaseDate = "",
                 });
             }
             return moviesExternal;
@@ -62,7 +66,12 @@ namespace media_tracker.Tests.UnitTests
                     ItemId = i+200,
                     ExternalId = i+2,
                     Title = "Movie" + i,
-                });
+                    Genres = new List<int> { 28 },
+                    Description = "",
+                    ImageUrl = "",
+                    OriginalLanguage = "",
+                    ReleaseDate = "",
+                    });
             }
             return movies;
         }
@@ -79,7 +88,7 @@ namespace media_tracker.Tests.UnitTests
                 ItemId = 1,
                 ExternalId = 5,
                 Title = "Movie1",
-                Genres = new List<MovieGenre> { }
+                Genres = new List<int> { }
             };
 
             MovieService movieService = GetMockedService(mockedContext.Context);
@@ -89,6 +98,10 @@ namespace media_tracker.Tests.UnitTests
 
             // Checking that the new Item was added correctly
             Assert.Equal(movieInDb.Title, movie.Title);
+
+
+            // Cleaning DB after test
+            mockedContext.DisposeContext();
         }
 
         [Fact]
@@ -129,9 +142,6 @@ namespace media_tracker.Tests.UnitTests
             Assert.IsType<List<MovieView>>(results);
             Assert.Equal("Movie1", results[0].Title);
 
-            // Checking that the first result has the correct genre assigned
-            Assert.Equal(new List<MovieGenre>() { mockedContext.Context.MovieGenres.Single(g => g.Id == 12) }, results.Find(m => m.Title == "Movie1").Genres);
-
             // Cleaning DB after test
             mockedContext.DisposeContext();
         }
@@ -148,7 +158,7 @@ namespace media_tracker.Tests.UnitTests
                 ItemId = 1,
                 ExternalId = 1,
                 Title = "Movie1",
-                Genres = new List<MovieGenre> { }
+                Genres = new List<int> { }
             };
 
             MovieService movieService = GetMockedService(mockedContext.Context);
@@ -157,6 +167,10 @@ namespace media_tracker.Tests.UnitTests
 
             // Checking that the new Item was added correctly
             Assert.NotNull(mockedContext.Context.Movies.Single(m => m.ItemId == movie.ItemId & m.ExternalId == movie.ExternalId));
+
+
+            // Cleaning DB after test
+            mockedContext.DisposeContext();
         }
 
         [Fact]
@@ -181,7 +195,7 @@ namespace media_tracker.Tests.UnitTests
 
             MovieService movieService = GetMockedService(mockedContext.Context, mockedHttpResponse);
 
-            // Because there are enough results in the DB mathcing the search request, we will take them from there
+            // Because there are enough results in the DB matching the search request, we will take them from there
             var results = await movieService.SearchMovieItems(2, "Movie", 1);
 
             // Checking that the results are the correct type
@@ -215,8 +229,5 @@ namespace media_tracker.Tests.UnitTests
             // Cleaning DB after test
             mockedContext.DisposeContext();
         }
-
-
-
     }
 }

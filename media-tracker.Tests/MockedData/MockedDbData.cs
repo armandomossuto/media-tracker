@@ -120,11 +120,21 @@ namespace media_tracker.Tests.MockedData
                 new MovieGenre { Id = 12, Name = "Adventure" }
             };
 
-            var movies = new List<Movie>()
+            var movies = new List<Movie>();
+            for (int i = 3; i < 5; i++)
             {
-                new Movie { ItemId = 3, Title="Movie1" },
-                new Movie { ItemId = 4, Title="Movie2" }
-            };
+                movies.Add(new Movie
+                {
+                    ItemId = i,
+                    ExternalId = i + 400,
+                    Title = "Movie" + (i - 2),
+                    Genres = new List<int> { 28 },
+                    Description = "",
+                    ImageUrl = "",
+                    OriginalLanguage = "",
+                    ReleaseDate = "",
+                });
+            }
 
             Users = users;
             UsersTokens = usersTokens;

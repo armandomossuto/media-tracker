@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Newtonsoft.Json;
 using Microsoft.EntityFrameworkCore;
 using System.Threading.Tasks;
+using System;
 
 namespace media_tracker.Models
 {
@@ -37,20 +38,20 @@ namespace media_tracker.Models
         /// <returns></returns>
         public async Task<MovieView> ToMovieView()
             {
-            using var _context = new MediaTrackerContext();
-            var movieView = new MovieView
-            {
-                ItemId = await GetItemId(_context),
-                ExternalId = this.ExternalId,
-                Title = this.Title,
-                Description = this.Description,
-                ImageUrl = GenerateImageUrl(),
-                OriginalLanguage = this.OriginalLanguage,
-                ReleaseDate = this.ReleaseDate,
-                Genres = await GetMovieGenres(_context),
-            };
-            return movieView;
-        }
+                using var _context = new MediaTrackerContext();
+                var movieView = new MovieView
+                {
+                    ItemId = await GetItemId(_context),
+                    ExternalId = this.ExternalId,
+                    Title = this.Title,
+                    Description = this.Description,
+                    ImageUrl = GenerateImageUrl(),
+                    OriginalLanguage = this.OriginalLanguage,
+                    ReleaseDate = this.ReleaseDate,
+                    Genres = await GetMovieGenres(_context),
+                };
+                return movieView;
+            }
 
         /// <summary>
         /// Gets the movie genres from a list of genre ids

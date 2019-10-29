@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 
 namespace media_tracker.Models
 {
@@ -38,6 +40,22 @@ namespace media_tracker.Models
                 Genres = await GetMovieGenres(_context),
             };
             return movieView;
+        }
+
+        /// <summary>
+        /// Gets the movie genres from a list of genre ids
+        /// </summary>
+        /// <param name="_context"></param>
+        /// <returns></returns>
+        public new async Task<List<MovieGenre>> GetMovieGenres(MediaTrackerContext _context)
+        {
+            // If the list of genres is empty, there is no need to query the DB
+            if (this.Genres.Count == 0)
+            {
+                return null;
+            }
+
+            return await _context.MovieGenres.Where(g => this.Genres.Contains(g.Id)).ToListAsync();
         }
     }
 
