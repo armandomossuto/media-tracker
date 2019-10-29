@@ -47,13 +47,14 @@ namespace media_tracker.Services
             if (moviesResultDb.Count() > 10)
             {
                 // Converting the results to the view model and sending them to the client
-                return moviesResultDb.Select(m => m.ToMovieView()).ToList();
+                var moviesResultsTasks = moviesResultDb.Select(async m => await m.ToMovieView());
+                return (await Task.WhenAll(moviesResultsTasks)).ToList();
             }
             // If  we don't have enough results from DB, we fetch them from the external API
             var movieExternalResults = await GetMoviesFromExt(searchTerm, page);
             // Filtering items already on the userItem
             // Converting the results to the view model and sending them to the client
-            var movieExternalResultsTasks = movieExternalResults.Select(m => m.ToMovieView(_context));
+            var movieExternalResultsTasks = movieExternalResults.Select(async m => await m.ToMovieView());
             var movieViewResults = (await Task.WhenAll(movieExternalResultsTasks)).ToList();
 
             // Remove items already on the userItems list

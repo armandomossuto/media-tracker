@@ -34,20 +34,23 @@ namespace media_tracker.Models
         /// <summary>
         /// Convert from MovieResult to the class used in the FE
         /// </summary>
-        /// <param name="context"></param>
         /// <returns></returns>
-        public async Task<MovieView> ToMovieView(MediaTrackerContext context) =>
-            new MovieView
+        public async Task<MovieView> ToMovieView()
             {
-                ItemId = await GetItemId(context),
+            using var _context = new MediaTrackerContext();
+            var movieView = new MovieView
+            {
+                ItemId = await GetItemId(_context),
                 ExternalId = this.ExternalId,
                 Title = this.Title,
                 Description = this.Description,
                 ImageUrl = GenerateImageUrl(),
                 OriginalLanguage = this.OriginalLanguage,
                 ReleaseDate = this.ReleaseDate,
-                Genres = await GetMovieGenres(context),
+                Genres = await GetMovieGenres(_context),
             };
+            return movieView;
+        }
 
         /// <summary>
         /// Gets the movie genres from a list of genre ids
@@ -62,9 +65,7 @@ namespace media_tracker.Models
                 return null;
             }
 
-            return await (from genre in _context.MovieGenres
-                    where this.Genres.Contains(genre.Id)
-                    select genre).ToListAsync();
+            return await _context.MovieGenres.Where(g => this.Genres.Contains(g.Id)).ToListAsync();
         }
 
         /// <summary>

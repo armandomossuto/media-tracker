@@ -32,7 +32,7 @@ namespace media_tracker.Models
                 Title = this.Item.Title,
                 Description = this.Item.Description,
                 ExternalId = this.Item.ExternalId,
-                Genres = this.Item.Genres,
+                Genres = this.Item.Genres.Select(g => g.Id).ToList(),
                 ImageUrl = this.Item.ImageUrl,
                 OriginalLanguage = this.Item.OriginalLanguage,
                 ReleaseDate = this.Item.ReleaseDate

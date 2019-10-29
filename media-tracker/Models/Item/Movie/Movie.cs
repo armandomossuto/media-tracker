@@ -16,24 +16,29 @@ namespace media_tracker.Models
         public new string ImageUrl { get; set; }
         public new string OriginalLanguage { get; set; }
         public new string ReleaseDate { get; set; }
-        public new List<MovieGenre> Genres { get; set; }
+        public new List<int> Genres { get; set; }
+
 
         /// <summary>
         /// Converts from Movie class to MovieView
         /// </summary>
         /// <returns></returns>
-        public MovieView ToMovieView() =>
-            new MovieView
+        public new async Task<MovieView> ToMovieView()
+        {
+            using var _context = new MediaTrackerContext();
+            var movieView = new MovieView
             {
-                ItemId =  this.ItemId,
+                ItemId = this.ItemId,
                 ExternalId = this.ExternalId,
                 Title = this.Title,
                 Description = this.Description,
                 ImageUrl = this.ImageUrl,
                 OriginalLanguage = this.OriginalLanguage,
                 ReleaseDate = this.ReleaseDate,
-                Genres = this.Genres,
+                Genres = await GetMovieGenres(_context),
             };
+            return movieView;
+        }
     }
 
 }
