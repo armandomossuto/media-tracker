@@ -38,7 +38,7 @@ const ItemResult: React.FunctionComponent<ItemResultProps> = ({ item, categoryId
         const userItem = new UserItem(item.itemId, accountInfo.id);
         // Request to add the new UserItem
         await fetchRequest('api/entries/add', 'POST', sessionStateDispatch, userItem);
-        addItem(new UserItemView(item));
+        addItem(new UserItemView(item, categoryId));
         setIsAdded(true);
         setNotification(AddItemNotification.initial);
         return;
@@ -51,7 +51,7 @@ const ItemResult: React.FunctionComponent<ItemResultProps> = ({ item, categoryId
       };
 
       const itemId: string = await fetchRequest('api/entries/add/new', 'POST', sessionStateDispatch, body);
-      addItem(new UserItemView(item, itemId));
+      addItem(new UserItemView(item, categoryId, itemId));
       setIsAdded(!!itemId);
       setNotification(AddItemNotification.initial);
     } catch (error) {

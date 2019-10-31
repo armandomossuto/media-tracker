@@ -57,7 +57,7 @@ export interface UserItemView extends Item {
 }
 
 export class UserItemView implements UserItemView {
-  constructor(item: Movie, itemId: string = null) {
+  constructor(item: Movie, categoryId: string, itemId: string = null) {
     // ItemId is optional in Item classes, so if we don't have it, we used the one from the argument
     this.id = itemId ? itemId : item.itemId;
     this.title = item.title;
@@ -65,6 +65,7 @@ export class UserItemView implements UserItemView {
     this.imageUrl = item.imageUrl;
     this.rating = ItemRating.notSet;
     this.state = ItemState.notSet;
+    this.categoryId = categoryId;
   }
 }
 
