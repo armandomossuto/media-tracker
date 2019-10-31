@@ -9,7 +9,7 @@ import { ItemView } from '../../types';
 /**
  * Fetchs the item details from the server and renders them
  */
-const Details: React.FunctionComponent<ItemDetailProps> = ({ categoryId, itemId }: ItemDetailProps) => {
+const Details: React.FunctionComponent<ItemDetailProps> = ({ categoryId, itemId, showDetails }: ItemDetailProps) => {
 
   // For using our internal fetch request utility we need the session state dispatch
   const [, sessionStateDispatch] = useSessionState();
@@ -20,15 +20,17 @@ const Details: React.FunctionComponent<ItemDetailProps> = ({ categoryId, itemId 
   // For managing notifications if there is an issue fetching the item details
   const [item, setItem] = useState<ItemView>(null);
 
-  // When mounting the item for the first time we retrieve the details from the server
   useEffect(() => {
-    fetchRequest(`api/entries/details/${categoryId}/${itemId}`, 'GET', sessionStateDispatch)
-      .then((item: ItemView) => {
-        setNotification(ItemDetailsNotification.initial)
-        setItem(item)
-      })
-      .catch(() => setNotification(ItemDetailsNotification.error));
-  }, []);
+    // We only fetch the details if showDetails is TRUE and we still don't have them
+    if(showDetails && !item) {
+      fetchRequest(`api/entries/details/${categoryId}/${itemId}`, 'GET', sessionStateDispatch)
+        .then((item: ItemView) => {
+          setNotification(ItemDetailsNotification.initial)
+          setItem(item)
+        })
+        .catch(() => setNotification(ItemDetailsNotification.error));
+    }
+  }, [showDetails]);
 
   /**
    * Returns the component that will render the details depending of the category Id
@@ -46,6 +48,11 @@ const Details: React.FunctionComponent<ItemDetailProps> = ({ categoryId, itemId 
     }
   }
   const itemComponent = returnItemComponent(item);
+
+  // If showDetails is false, we don't render them
+  if (!showDetails) {
+    return null;
+  }
 
   return (
     <div className="item-details">

@@ -4,6 +4,7 @@ import { Movie } from "../../types";
 export type ItemDetailProps = {
   categoryId: string;
   itemId: string;
+  showDetails: boolean;
 }
 
 export const ItemDetailsNotification = Object.freeze({

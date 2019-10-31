@@ -22,7 +22,7 @@ import Details from './details';
 const Item: React.FunctionComponent<ItemDescriptionProps> = ({ item, itemsDispatch, onRemoveItem }: ItemDescriptionProps) => {
 
   // For showing or hiding all the details of the item
-  const [showMoreInfo, setShowMoreInfo] = useState(false);
+  const [showDetails, setShowDetails] = useState(false);
 
   // Session state for user Id and using fetchRequest
   const [{ accountInfo }, sessionStateDispatch] = useSessionState();
@@ -87,7 +87,7 @@ const Item: React.FunctionComponent<ItemDescriptionProps> = ({ item, itemsDispat
   }
 
   return (
-    <div className="items-element" onClick={(): void => setShowMoreInfo(!showMoreInfo)} >
+    <div className="items-element" onClick={(): void => setShowDetails(!showDetails)} >
       <div className="items-element__body">
         <ImageWithFallback
           title={item.title}
@@ -108,10 +108,8 @@ const Item: React.FunctionComponent<ItemDescriptionProps> = ({ item, itemsDispat
         </span>
       </div> 
 
-      {showMoreInfo
-        ? <Details categoryId={item.categoryId} itemId={item.id} />
-        : null
-      }
+      <Details categoryId={item.categoryId} itemId={item.id} showDetails={showDetails}/>
+
       {notification !== UpdateItemNotification.initial
         ? <div className="items-element__notification">
           {notification}
