@@ -22,6 +22,10 @@
     &__image {
       height: auto;
       width: 50px;
+
+      &:hover {
+        transform: scale(1.5, 1.5);
+      }
     }
 
     &__title {
