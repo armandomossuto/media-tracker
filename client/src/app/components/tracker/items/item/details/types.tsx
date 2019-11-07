@@ -1,10 +1,11 @@
 import { EnumLiteralsOf } from "types";
-import { Movie } from "../../types";
+import { Movie, ItemView } from "../../types";
 
 export type ItemDetailProps = {
   categoryId: string;
-  itemId: string;
+  itemId?: string;
   showDetails: boolean;
+  itemDetails?: ItemView;
 }
 
 export const ItemDetailsNotification = Object.freeze({

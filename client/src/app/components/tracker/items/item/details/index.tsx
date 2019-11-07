@@ -9,16 +9,16 @@ import { ItemView } from '../../types';
 /**
  * Fetchs the item details from the server and renders them
  */
-const Details: React.FunctionComponent<ItemDetailProps> = ({ categoryId, itemId, showDetails }: ItemDetailProps) => {
+const Details: React.FunctionComponent<ItemDetailProps> = ({ categoryId, itemId = null, showDetails, itemDetails = null }: ItemDetailProps) => {
 
   // For using our internal fetch request utility we need the session state dispatch
   const [, sessionStateDispatch] = useSessionState();
 
   // For managing notifications if there is an issue fetching the item details
-  const [notification, setNotification] = useState<ItemDetailsNotification>(ItemDetailsNotification.loading);
+  const [notification, setNotification] = useState<ItemDetailsNotification>(itemDetails ? ItemDetailsNotification.initial : ItemDetailsNotification.loading);
 
   // For managing notifications if there is an issue fetching the item details
-  const [item, setItem] = useState<ItemView>(null);
+  const [item, setItem] = useState<ItemView>(itemDetails);
 
   useEffect(() => {
     // We only fetch the details if showDetails is TRUE and we still don't have them

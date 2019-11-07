@@ -1,12 +1,23 @@
 .add-item-modal {
+  display: flex;
+  flex-direction: column;
   max-height: 60vh;
+  min-width: 700px;
   overflow: auto;
+  text-align: center;
 
   &__result {
-    display: flex;
-    flex-direction: row;
     margin: 5px;
-    position: relative;
+
+    &:hover {
+      cursor: pointer;
+    }
+
+    &__header {
+      display: flex;
+      flex-direction: row;
+      position: relative;
+    }
 
     &__image {
       height: auto;
@@ -48,5 +59,8 @@
 
   &__more-button {
     @include styledButton;
+    margin: auto;
+    margin-bottom: 20px;
+    max-width: 100px;
   }
 }

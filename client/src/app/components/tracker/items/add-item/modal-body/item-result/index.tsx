@@ -11,6 +11,7 @@ import { useSessionState } from 'state';
 
 // Components
 import ImageWithFallback from 'components/common/images/image-with-fallback';
+import Details from 'components/tracker/items/item/details';
 
 /**
  * Component for rendering an item result for the add item modal
@@ -27,6 +28,9 @@ const ItemResult: React.FunctionComponent<ItemResultProps> = ({ item, categoryId
 
   // For handling notifications
   const [notification, setNotification] = useState<AddItemNotification>(AddItemNotification.initial);
+
+  // For showing or hiding all the details of the item
+  const [showDetails, setShowDetails] = useState(false);
 
   /**
    * Sends request to add Item to the user and/or the category if needed
@@ -62,24 +66,31 @@ const ItemResult: React.FunctionComponent<ItemResultProps> = ({ item, categoryId
   return (
     <div
       className="add-item-modal__result"
+      onClick={(): void => setShowDetails(!showDetails)}
     >
-      <ImageWithFallback
-        title={item.title}
-        imageUrl={item.imageUrl}
-        className={"add-item-modal__result__image"}
-      />
-      <h3 className="add-item-modal__result__title">{item.title}</h3>
-      <div className={"add-item-modal__result__button"}>
-        {isAdded
-          ? <span className={"add-item-modal__result__button__check"}> ✓ </span>
-          : <span
-            className={"add-item-modal__result__button__add"}
-            onClick={(): Promise<void> => onAddItem()}
-          >
-            +
-          </span>
-        }
+      <div
+        className="add-item-modal__result__header"
+        title="Click to see the details"
+      >
+        <ImageWithFallback
+          title={item.title}
+          imageUrl={item.imageUrl}
+          className={"add-item-modal__result__image"}
+        />
+        <h3 className="add-item-modal__result__title">{item.title}</h3>
+        <div className={"add-item-modal__result__button"}>
+          {isAdded
+            ? <span className={"add-item-modal__result__button__check"}> ✓ </span>
+            : <span
+              className={"add-item-modal__result__button__add"}
+              onClick={(): Promise<void> => onAddItem()}
+            >
+              +
+            </span>
+          }
+        </div>
       </div>
+      <Details categoryId={categoryId} showDetails={showDetails} itemDetails={item}/>
       <div className="add-item-modal__result__notification"> {notification} </div>
     </div>
   )
