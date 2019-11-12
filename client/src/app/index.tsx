@@ -11,6 +11,7 @@ import Footer from 'components/common/footer';
 // With Sesion Service, which will handle the user session
 import { useSessionState, GlobalStateProvider } from 'state';
 import { SessionStatus } from "types";
+import Loading from "components/common/loading";
 
 const Index: React.FunctionComponent = () => {
   // We check the session status, because we only grant access to the tracker route if the user has logged in
@@ -19,12 +20,17 @@ const Index: React.FunctionComponent = () => {
     <Router>
       <div className="app-container">
         <Navbar />
-        <Route exact path="/" component={Home} />
+        {status === SessionStatus.notInitialised
+          ? <Loading />
+          : <span>
+            <Route exact path="/" component={Home} />
+            <Route path="/account" component={Account} />
+          </span>
+        }
         {status === SessionStatus.ok
           ? <Route path="/tracker" component={Tracker} />
           : null
         }
-        <Route path="/account" component={Account} />
         <Footer />
       </div>
     </Router>
