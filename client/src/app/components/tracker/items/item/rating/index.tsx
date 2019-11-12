@@ -8,8 +8,16 @@ import { ItemRatingProps } from '../types';
 const Rating: React.FunctionComponent<ItemRatingProps> = ({ rating, updateRating }: ItemRatingProps) => {
   // For keeping track of which star is currently on mouse hover
   const [hoverStar, changeHoverStar] = useState<number>(0); 
+
+  // For showing the remove button when user hovers over the rating stars
+  const [showRemoveButton, setShowRemoveButton] = useState<boolean>(false); 
+
   return (
-    <div className="item-rating">
+    <div
+      className="item-rating"
+      onMouseEnter={(): void => setShowRemoveButton(true)}
+      onMouseLeave={(): void => setShowRemoveButton(false)}
+    >
       { //We will generate 5 stars, and we will apply full star class for representing the rating
         Array.from(Array(5).keys()).map(star =>
           <span
@@ -25,6 +33,14 @@ const Rating: React.FunctionComponent<ItemRatingProps> = ({ rating, updateRating
             }
           </span>
         )}
+      {showRemoveButton
+        ? <span 
+          className="item-rating__remove-button"
+          title="Remove rating"
+          onClick={(e): void => updateRating(e, 0)}
+        >x</span>
+        : null
+      }
     </div>
   )
 }

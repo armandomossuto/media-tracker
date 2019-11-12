@@ -1,0 +1,12 @@
+.item-rating {
+
+  &__remove-button {
+    font-size: $font-big;
+
+    &:hover {
+      color: $font-color-alert;
+      cursor: pointer;
+      font-weight: bold;
+    }
+  }
+}
