@@ -35,7 +35,8 @@ const ItemResult: React.FunctionComponent<ItemResultProps> = ({ item, categoryId
   /**
    * Sends request to add Item to the user and/or the category if needed
    */
-  const onAddItem = async (): Promise<void> => {
+  const onAddItem = async (event: React.MouseEvent): Promise<void> => {
+    event.stopPropagation();
     try {
       // If we have an itemId, it means that this item is already in our DB
       if (item.itemId) {
@@ -83,7 +84,7 @@ const ItemResult: React.FunctionComponent<ItemResultProps> = ({ item, categoryId
             ? <span className={"add-item-modal__result__button__check"}> ✓ </span>
             : <span
               className={"add-item-modal__result__button__add"}
-              onClick={(): Promise<void> => onAddItem()}
+              onClick={(e): Promise<void> => onAddItem(e)}
             >
               +
             </span>

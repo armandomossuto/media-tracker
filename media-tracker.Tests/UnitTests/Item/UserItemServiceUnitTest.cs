@@ -184,7 +184,7 @@ namespace media_tracker.Tests.UnitTests
             var itemId = 3;
             // Movies category
             var categoryId = 2;
-            Movie item = (media_tracker.Models.Movie)await userItemService.GetDetailsFromItem(categoryId, itemId);
+            MovieView item = (media_tracker.Models.MovieView)await userItemService.GetDetailsFromItem(categoryId, itemId);
             
             // Checking that we have the correct item
             Assert.Equal("Movie1", item.Title);

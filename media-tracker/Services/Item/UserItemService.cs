@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -82,7 +83,12 @@ namespace media_tracker.Services
             {
                 // Movies
                 case 2:
-                    var movie = await _context.Movies.FirstOrDefaultAsync(m => m.ItemId == itemId);
+                    Movie movie = await _context.Movies.FirstOrDefaultAsync(m => m.ItemId == itemId);
+                    // If we didn't find the movie, we return null
+                    if (movie == null)
+                    {
+                        return null;
+                    }
                     return await movie.ToMovieView();
                 default:
                     // For the case of a wrong categoryId coming from the request
